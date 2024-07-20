@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>custumer</artifactId>
+    <artifactId>booking</artifactId>
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>

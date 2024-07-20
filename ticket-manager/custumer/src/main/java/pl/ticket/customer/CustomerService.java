@@ -1,4 +1,4 @@
-package pl.ticket;
+package pl.ticket.customer;
 
 import org.springframework.stereotype.Service;
 
