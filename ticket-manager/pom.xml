@@ -17,6 +17,7 @@
         <module>booking</module>
         <module>eureka-server</module>
         <module>feign</module>
+        <module>apigw</module>
     </modules>
     <!-- update versions -->
     <properties>

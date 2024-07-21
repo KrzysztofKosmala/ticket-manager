@@ -1,4 +1,4 @@
-package pl.ticket;
+package pl.ticket.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

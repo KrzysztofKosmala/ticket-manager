@@ -1,4 +1,4 @@
-package pl.ticket;
+package pl.ticket.booking;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package pl.ticket;
+package pl.ticket.booking;
 
 import java.util.List;
 
