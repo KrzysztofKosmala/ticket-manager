@@ -26,6 +26,7 @@ public class Event
                     generator = "event_id_sequence"
             )
     private Integer id;
+    private Integer capacity;
     private String title;
     private String description;
 }

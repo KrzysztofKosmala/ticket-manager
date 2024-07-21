@@ -1,6 +1,7 @@
 package pl.ticket.event;
 
 import org.springframework.stereotype.Service;
+import pl.ticket.feign.event.CapacityCheckResponse;
 
 @Service
 public record EventService(EventRepository eventRepository)
@@ -11,8 +12,15 @@ public record EventService(EventRepository eventRepository)
         Event event = Event.builder()
                 .title(eventCreationRequest.title())
                 .description(eventCreationRequest.description())
+                .capacity(eventCreationRequest.capacity())
                 .build();
 
         eventRepository.save(event);
+    }
+
+    public CapacityCheckResponse checkCapacity(Integer eventId)
+    {
+        boolean hasAvailableCapacity = eventRepository.hasAvailableCapacity(eventId);
+        return new CapacityCheckResponse(hasAvailableCapacity);
     }
 }
