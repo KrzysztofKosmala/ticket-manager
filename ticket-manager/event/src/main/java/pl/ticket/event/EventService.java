@@ -20,7 +20,6 @@ public record EventService(EventRepository eventRepository)
 
     public CapacityCheckResponse checkCapacity(Integer eventId)
     {
-        boolean hasAvailableCapacity = eventRepository.hasAvailableCapacity(eventId);
-        return new CapacityCheckResponse(hasAvailableCapacity);
+        return new CapacityCheckResponse(eventRepository.hasAvailableCapacity(eventId));
     }
 }
