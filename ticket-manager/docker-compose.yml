@@ -32,6 +32,23 @@ services:
     container_name: zipkin
     ports:
       - "9411:9411"
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - DB_VENDOR=postgres
+      - DB_ADDR=postgres
+      - DB_DATABASE=keycloakdb
+      - DB_USER=admin
+      - DB_PASSWORD=password
+    ports:
+      - "8085:8080"
+    networks:
+      - postgres
+    restart: always
+    command: start-dev
 
 networks:
   postgres:

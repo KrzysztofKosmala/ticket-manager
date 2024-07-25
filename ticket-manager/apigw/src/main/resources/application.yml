@@ -21,6 +21,22 @@ spring:
           uri: lb://EVENT
           predicates:
             - Path=/api/v1/events/**
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8085/realms/ticket-manager-realm
+
+keycloak:
+  realm: ticket-manager-realm
+  auth-server-url: http://localhost:8085/auth
+  resource: ticket-manager-apigw
+  credentials:
+    secret: RKUjRqsUMzf7UWhcIZ7Ik5RjGsgmO3Gd
+  bearer-only: true
+
+
 eureka:
   client:
     service-url:
