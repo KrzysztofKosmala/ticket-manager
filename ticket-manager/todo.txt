@@ -1,0 +1,16 @@
+dane do ustawienia keycloack:
+realm: ticket-managet-realm
+client: ticket-manager-apigw
+Client Secret: sam sie generuje
+zrobić użytkownika admin z haslem password z rolą manage-users
+
+
+dodać swaggera
+dodanie większej ilości atrybutów w keycloacku
+update tworzenia użytkownika z większą ilością atrybutów
+zrobic tak żeby uzytkownicy byli zapisywani w postgresie
+usuwanie użytkowników
+uodate użytkownikow
+dodać role w keycloacku
+obsługa roli w mikroservisach
+pozyskiwanie danych uzytkownikow w innych serwisach

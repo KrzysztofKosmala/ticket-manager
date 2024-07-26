@@ -29,3 +29,12 @@ eureka:
       defaultZone: http://localhost:8761/eureka
     fetch-registry: true
     register-with-eureka: true
+
+
+realm: ticket-manager-realm
+server-url: http://localhost:8085
+client-id: admin-cli
+grand-type: password
+admin-client-secret: Uf4JI5OVCqAJ3MmNx0e0MB3JrDsYrPwt
+password: password
+name: admin
