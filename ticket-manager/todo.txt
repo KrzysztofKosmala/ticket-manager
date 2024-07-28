@@ -14,3 +14,13 @@ uodate użytkownikow
 dodać role w keycloacku
 obsługa roli w mikroservisach
 pozyskiwanie danych uzytkownikow w innych serwisach
+dodac liquibase
+walidacja danych podczas rejestracji logowania itp
+dodanie security do innych serwisow
+implementacja wysylania maili wraz z konfiguracja
+obsluga wyjatkow aspektowo przez advice
+centralizacja zmiennych globalnych propeties
+dodanie testow jednostkowych i IT z testcontainers
+
+
+potem zgodnie z nullponterem
