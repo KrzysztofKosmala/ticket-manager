@@ -40,7 +40,7 @@ public class KeycloackSecurityUtils
                     .serverUrl(serverUrl)
                     .realm(realm)
                     .clientId(clientId)
-                    .username("krzysiek")
+                    .username("test")
                     .password(password)
                     .clientSecret(adminClientSecret)
                     .grantType(grantType)

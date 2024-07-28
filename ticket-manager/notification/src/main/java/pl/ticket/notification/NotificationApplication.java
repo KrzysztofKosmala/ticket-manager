@@ -1,20 +1,23 @@
-package pl.ticket.customer;
+package pl.ticket.notification;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+
 @SpringBootApplication(
+
         scanBasePackages = {
-                "pl.ticket.customer",
-                "pl.ticket.amqp"
+                "pl.ticket.notification",
+                "pl.ticket.amqp",
+                "pl.ticket.feign"
         }
 )
 @EnableFeignClients(
-                basePackages = "pl.ticket.feign"
-        )
-public class CustomerApplication {
+        basePackages = "pl.ticket.feign"
+)
+public class NotificationApplication {
     public static void main(String[] args) {
-        SpringApplication.run(CustomerApplication.class);
+        SpringApplication.run(NotificationApplication.class);
     }
 }

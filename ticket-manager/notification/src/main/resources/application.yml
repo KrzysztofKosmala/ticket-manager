@@ -1,0 +1,34 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: customer
+  rabbitmq:
+    addresses: localhost:5672
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+
+
+rabbitmq:
+  exchanges:
+    internal: internal.exchange
+  queue:
+    orderConfirmation: orderConfirmation.queue
+    accountConfirmation: accountConfirmation.queue
+    resetPassword: resetPassword.queue
+  routing-keys:
+    internal-orderConfirmation: internal.orderConfirmation.routing-key
+    internal-accountConfirmation: internal.accountConfirmation.routing-key
+    internal-resetPassword: internal.resetPassword.routing-key
+
+
+email:
+    sender:
+      strategy: fakeEmailService

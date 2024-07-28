@@ -18,6 +18,8 @@
         <module>eureka-server</module>
         <module>feign</module>
         <module>apigw</module>
+        <module>ampq</module>
+        <module>notification</module>
     </modules>
     <!-- update versions -->
     <properties>
