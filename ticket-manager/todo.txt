@@ -2,10 +2,13 @@ dane do ustawienia keycloack:
 realm: ticket-managet-realm
 client: ticket-manager-apigw
 Client Secret: sam sie generuje
-zrobić użytkownika admin z haslem password z rolą manage-users
-
+zrobić użytkownika test z haslem password z rolą manage-users
 
 dodać swaggera
+centralizacja zmiennych globalnych propeties
+dodać zipkin dla springa nowego
+dodać logowanie
+fetchUserFromDatabase
 dodanie większej ilości atrybutów w keycloacku
 update tworzenia użytkownika z większą ilością atrybutów
 zrobic tak żeby uzytkownicy byli zapisywani w postgresie
@@ -19,7 +22,6 @@ walidacja danych podczas rejestracji logowania itp
 dodanie security do innych serwisow
 implementacja wysylania maili wraz z konfiguracja
 obsluga wyjatkow aspektowo przez advice
-centralizacja zmiennych globalnych propeties
 dodanie testow jednostkowych i IT z testcontainers
 
 
