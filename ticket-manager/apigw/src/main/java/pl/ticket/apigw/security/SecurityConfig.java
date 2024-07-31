@@ -15,7 +15,12 @@ public class SecurityConfig
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/api/v1/customers/login", "/api/v1/customers/register").permitAll()
+                        .pathMatchers("/api/v1/customers/login",
+                                "/api/v1/customers/register",
+                                "http://localhost:8080/**", // temporary
+                                "http://localhost:8082/**", // temporary
+                                "http://localhost:8084/**") // temporary
+                        .permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt());
