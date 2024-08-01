@@ -24,3 +24,14 @@ eureka:
       defaultZone: http://localhost:8761/eureka
     fetch-registry: true
     register-with-eureka: true
+openapi:
+  service:
+    title: event doc # title that you will want to display in the Swagger UI
+    version: 1.0.0
+    url: http://localhost:8084 #api gateway url
+  springdoc:
+    api-docs:
+      path: /events/v3/api-docs
+    swagger-ui:
+      path: /events/swagger-ui.html
+

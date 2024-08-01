@@ -1,4 +1,4 @@
-package pl.ticket.booking;
+package pl.ticket.event.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.OpenAPI;

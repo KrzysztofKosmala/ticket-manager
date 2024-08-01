@@ -1,4 +1,4 @@
-package pl.ticket.customer;
+package pl.ticket.customer.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
