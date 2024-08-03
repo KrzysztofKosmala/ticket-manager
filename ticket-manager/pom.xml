@@ -20,6 +20,7 @@
         <module>apigw</module>
         <module>ampq</module>
         <module>notification</module>
+        <module>mainTicket</module>
     </modules>
     <!-- update versions -->
     <properties>

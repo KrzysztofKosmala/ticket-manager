@@ -1,0 +1,37 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ticket
+  datasource:
+    password: password
+    url: jdbc:postgresql://localhost:51/ticket
+    username: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  liquibase:
+    change-log: classpath:liquibase-changelog.xml
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+openapi:
+  service:
+    title: ticket doc # title that you will want to display in the Swagger UI
+    version: 1.0.0
+    url: http://localhost:8084 #api gateway url
+  springdoc:
+    api-docs:
+      path: /tickets/v3/api-docs
+    swagger-ui:
+      path: /tickets/swagger-ui.html
+
