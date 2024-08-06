@@ -14,6 +14,7 @@ public class SecurityConfig
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(corsSpec -> corsSpec.disable())
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/v1/customers/login",
                                 "/api/v1/customers/register",

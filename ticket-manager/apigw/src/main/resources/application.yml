@@ -20,7 +20,7 @@ spring:
         - id: event
           uri: lb://EVENT
           predicates:
-            - Path=/api/v1/events/**
+            - Path=/api/v1/events/**, /api/v1/admin/events/**
         - id: ticket
           uri: lb://TICKET
           predicates:
