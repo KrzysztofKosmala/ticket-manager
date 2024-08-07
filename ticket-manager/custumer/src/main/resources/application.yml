@@ -35,14 +35,6 @@ openapi:
     title: customer doc
     version: 1.0.0
     url: http://localhost:8080
-  springdoc:
-    api-docs:
-      path: /customers/v3/api-docs
-    swagger-ui:
-      path: /customers/swagger-ui.html
-
-
-
 
 realm: ticket-manager-realm
 server-url: http://localhost:8085

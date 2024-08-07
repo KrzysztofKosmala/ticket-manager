@@ -48,4 +48,13 @@ public class KeycloackSecurityUtils
         }
         return keycloak;
     }
+    public KeycloakBuilder loadKeycloakUser(String username, String password) {
+        return KeycloakBuilder.builder()
+                .realm(realm)
+                .serverUrl(serverUrl)
+                .clientId(clientId)
+                .clientSecret(adminClientSecret)
+                .username(username)
+                .password(password);
+    }
 }
