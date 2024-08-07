@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.controller;
+package pl.ticket.event.admin.event.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.ticket.event.admin.dto.AdminEventCreationDto;
-import pl.ticket.event.admin.service.AdminEventService;
+import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
+import pl.ticket.event.admin.event.service.AdminEventService;
 
 @Slf4j
 @RestController

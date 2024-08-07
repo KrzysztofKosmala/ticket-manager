@@ -1,4 +1,4 @@
-package pl.ticket.event;
+package pl.ticket.event.customer.event.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,8 @@
-package pl.ticket.event;
+package pl.ticket.event.customer.event.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import pl.ticket.event.customer.event.service.EventService;
 import pl.ticket.feign.event.CapacityCheckResponse;
 
 @Slf4j
@@ -9,12 +10,7 @@ import pl.ticket.feign.event.CapacityCheckResponse;
 @RequestMapping("api/v1/events")
 public record EventController(EventService eventService)
 {
-    @PostMapping
-    public void createEvent(@RequestBody EventCreationRequest eventCreationRequest)
-    {
-        log.info("Event created {}", eventCreationRequest);
-        eventService.createEvent(eventCreationRequest);
-    }
+
 
     @GetMapping("/capacity-check/{eventId}")
     public CapacityCheckResponse capacityCheck(@PathVariable("eventId") Integer eventId)

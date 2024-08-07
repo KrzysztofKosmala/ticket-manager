@@ -1,10 +1,10 @@
-package pl.ticket.event.admin.service;
+package pl.ticket.event.admin.event.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.ticket.event.admin.dto.AdminEventCreationDto;
-import pl.ticket.event.admin.model.AdminEvent;
-import pl.ticket.event.admin.repository.AdminEventRepository;
+import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
+import pl.ticket.event.admin.event.model.AdminEvent;
+import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.utils.SlugifyUtils;
 
 @Service

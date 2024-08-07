@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.dto;
+package pl.ticket.event.admin.event.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 
 @Data

@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.dto;
+package pl.ticket.event.admin.event.dto;
 
 public enum EventType
 {
