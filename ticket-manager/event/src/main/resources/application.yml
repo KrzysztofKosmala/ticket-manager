@@ -18,6 +18,11 @@ spring:
     show-sql: true
   liquibase:
     change-log: classpath:liquibase-changelog.xml
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8085/realms/ticket-manager-realm
 eureka:
   client:
     service-url:

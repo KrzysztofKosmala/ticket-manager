@@ -32,15 +32,15 @@ public class CustomerService
     {
         UserRepresentation user = maptoUserRepresentation(customerRegistrationRequest);
 
-        //keycloackSecurityUtils.getKeycloakInstance().realm(realm).users().create(user);
+        keycloackSecurityUtils.getKeycloakInstance().realm(realm).users().create(user);
 
         EmailMessage confirmationMessage = new EmailMessage();
         confirmationMessage.setSubject(customerRegistrationRequest.firstName() + " please confirm your email");
         confirmationMessage.setBody("here should be link with generated url (klick to confirm your email)");
         confirmationMessage.setTo(customerRegistrationRequest.email());
 
-        //todo: przenieść te argumenty do jakiegos ogolnego miejsca
-        rabbitMqMessageProducer.publish(confirmationMessage, "internal.exchange", "internal.accountConfirmation.routing-key");
+//        //todo: przenieść te argumenty do jakiegos ogolnego miejsca
+//        rabbitMqMessageProducer.publish(confirmationMessage, "internal.exchange", "internal.accountConfirmation.routing-key");
 
         int i =0;
 

@@ -17,8 +17,7 @@ public class SecurityConfig
                 .cors(corsSpec -> corsSpec.disable())
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/v1/customers/login",
-                                "/api/v1/customers/register",
-                                "/api/v1/tickets/**").permitAll()
+                                "/api/v1/customers/register").permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt());

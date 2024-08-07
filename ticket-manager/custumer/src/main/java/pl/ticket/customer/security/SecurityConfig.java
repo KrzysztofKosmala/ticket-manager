@@ -23,7 +23,16 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/v1/customers/login").permitAll()
                         .pathMatchers("/api/v1/customers/register").permitAll()
-                        .anyExchange().permitAll()
+                        .pathMatchers("/swagger-ui.html").permitAll()
+                        .pathMatchers("/swagger-resources/**").permitAll()
+                        .pathMatchers("/swagger-resources/configuration/ui/**").permitAll()
+                        .pathMatchers("/swagger-resources/configuration/security/**").permitAll()
+                        .pathMatchers("/v2/api-docs/**").permitAll()
+                        .pathMatchers("/v2/api-docs/**").permitAll()
+                        .pathMatchers("/v3/api-docs/**").permitAll()
+                        .pathMatchers("/webjars/**").permitAll()
+                        .pathMatchers("/swagger-resources/**").permitAll()
+                        .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
