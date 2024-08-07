@@ -28,19 +28,11 @@ public record CustomerController(CustomerService customerService, KeycloackSecur
 
     @PostMapping("/login")
     public ResponseEntity<AccessTokenResponse> login(@RequestBody LoginRequest loginRequest) {
-        Keycloak keycloakUser = keycloackSecurityUtils.loadKeycloakUser(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword())
-                .build();
-
-        AccessTokenResponse accessToken = null;
-        try {
-            accessToken = keycloakUser.tokenManager().getAccessToken();
-            return ResponseEntity.status(HttpStatus.OK).body(accessToken);
-        } catch (BadRequestException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(accessToken);
-        }
+        return customerService.loginCustomer(loginRequest);
     }
+
+
+
     @GetMapping("/email")
     public String getUserEmail(@AuthenticationPrincipal Jwt jwt) {
         return jwt.getClaimAsString("email");
