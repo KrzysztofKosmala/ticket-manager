@@ -32,9 +32,9 @@ eureka:
     register-with-eureka: true
 openapi:
   service:
-    title: customer doc # title that you will want to display in the Swagger UI
+    title: customer doc
     version: 1.0.0
-    url: http://localhost:8084 #api gateway url
+    url: http://localhost:8080
   springdoc:
     api-docs:
       path: /customers/v3/api-docs

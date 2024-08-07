@@ -26,9 +26,9 @@ eureka:
     register-with-eureka: true
 openapi:
   service:
-    title: event doc # title that you will want to display in the Swagger UI
+    title: event doc
     version: 1.0.0
-    url: http://localhost:8084 #api gateway url
+    url: http://localhost:8081
   springdoc:
     api-docs:
       path: /events/v3/api-docs
