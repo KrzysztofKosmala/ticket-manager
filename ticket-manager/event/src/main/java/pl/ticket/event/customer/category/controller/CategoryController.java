@@ -3,7 +3,6 @@ package pl.ticket.event.customer.category.controller;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,16 +24,15 @@ public class CategoryController {
     public final CategoryService categoryService;
 
     @GetMapping
-    @Cacheable("categories")
     public List<Category> getCategories() {
         return categoryService.getCategories();
     }
 
-    @Cacheable("categoriesWithEvents")
-    @GetMapping("/{slug}/products")
+    @GetMapping("/{slug}/event")
     public CategoryEventsDto getCategoriesWithEvents(@PathVariable
                                               @Pattern(regexp = "[a-z0-9\\-]+")
                                               String slug, Pageable pageable) {
+
         return categoryService.getCategoriesWithEvents(slug, pageable);
     }
 }

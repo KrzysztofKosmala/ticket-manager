@@ -1,4 +1,4 @@
-package pl.ticket.event.swagger;
+package pl.ticket.event.configuration.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;

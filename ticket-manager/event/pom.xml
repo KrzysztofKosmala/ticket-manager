@@ -54,6 +54,11 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>3.0.5</version> <!-- Upewnij się, że wersja pasuje do Twojego projektu -->
+        </dependency>
+        <dependency>
             <groupId>pl.ticket</groupId>
             <artifactId>feign</artifactId>
             <version>1.0-SNAPSHOT</version>
