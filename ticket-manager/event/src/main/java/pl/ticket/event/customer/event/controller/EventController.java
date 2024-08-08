@@ -1,7 +1,9 @@
 package pl.ticket.event.customer.event.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import pl.ticket.event.common.dto.EventDto;
 import pl.ticket.event.customer.event.service.EventService;
 import pl.ticket.feign.event.CapacityCheckResponse;
 
@@ -18,5 +20,13 @@ public record EventController(EventService eventService)
         log.info("checking capacity for event: {}", eventId);
         CapacityCheckResponse capacityCheckResponse = eventService.checkCapacity(eventId);
         return capacityCheckResponse;
+    }
+
+    @GetMapping("/{eventId}")
+    public EventDto getEventById(@PathVariable("eventId") Long eventId)
+    {
+
+        EventDto eventById = eventService.getEventById(eventId);
+        return eventById;
     }
 }

@@ -25,9 +25,10 @@ public class AdminEvent
                     strategy = GenerationType.SEQUENCE,
                     generator = "event_id_sequence"
             )
-    private Integer id;
+    private Long id;
     private Integer capacity;
     private String title;
     private String description;
     private String slug;
+
 }
