@@ -12,8 +12,15 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-
-
+    private final String[] swaggerApis = {"/swagger-ui.html",
+            "/swagger-resources/**",
+            "/swagger-resources/configuration/ui/**",
+            "/swagger-resources/configuration/security/**",
+            "/v2/api-docs/**",
+            "/v2/api-docs/**",
+            "/v3/api-docs/**",
+            "/webjars/**",
+            "/swagger-resources/**"};
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -22,23 +29,15 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/v1/customers/login").permitAll()
                         .pathMatchers("/api/v1/customers/register").permitAll()
-                        .pathMatchers("/swagger-ui.html").permitAll()
-                        .pathMatchers("/swagger-resources/**").permitAll()
-                        .pathMatchers("/swagger-resources/configuration/ui/**").permitAll()
-                        .pathMatchers("/swagger-resources/configuration/security/**").permitAll()
-                        .pathMatchers("/v2/api-docs/**").permitAll()
-                        .pathMatchers("/v2/api-docs/**").permitAll()
-                        .pathMatchers("/v3/api-docs/**").permitAll()
-                        .pathMatchers("/webjars/**").permitAll()
-                        .pathMatchers("/swagger-resources/**").permitAll()
+                        .pathMatchers(swaggerApis).permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

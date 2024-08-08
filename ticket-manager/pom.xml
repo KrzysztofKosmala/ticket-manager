@@ -21,6 +21,7 @@
         <module>ampq</module>
         <module>notification</module>
         <module>mainTicket</module>
+        <module>image</module>
     </modules>
     <!-- update versions -->
     <properties>

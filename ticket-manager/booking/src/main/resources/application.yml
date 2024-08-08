@@ -30,9 +30,3 @@ openapi:
     title: booking doc
     version: 1.0.0
     url: http://localhost:8082
-  springdoc:
-    api-docs:
-      path: /bookings/v3/api-docs
-    swagger-ui:
-      path: /bookings/swagger-ui.html
-

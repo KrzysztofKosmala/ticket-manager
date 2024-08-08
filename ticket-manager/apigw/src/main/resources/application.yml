@@ -32,24 +32,6 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8085/realms/ticket-manager-realm
-
-springdoc:
-  enable-native-support: true
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-    config-url: /v3/api-docs/swagger-config
-    urls:
-      - url: /v3/api-docs
-        name: API Gateway Service
-      - url: /customers/v3/api-docs
-        name: Customer Service
-      - url: /bookings/v3/api-docs
-        name: Booking Service
-
-
 eureka:
   client:
     service-url:
