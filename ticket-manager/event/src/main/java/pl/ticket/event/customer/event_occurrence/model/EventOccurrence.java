@@ -17,6 +17,7 @@ public class EventOccurrence
 
     private Long eventId;
 
+    
     @Column(nullable = false)
     private LocalDate date;
 
