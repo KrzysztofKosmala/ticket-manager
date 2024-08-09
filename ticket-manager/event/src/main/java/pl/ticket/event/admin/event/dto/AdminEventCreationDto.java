@@ -26,6 +26,21 @@ public class AdminEventCreationDto {
     @NotNull
     private String slug;
 
+    //kategoria
+
     @NotNull
-    private EventType eventType; // OCCASIONAL or REGULAR
+    private EventType eventType; // na bazie tego będzie wybierany strategia do budodwania occurrences
+    //jak event type będzie okazjonalny to pobiera z jsona konkretne daty z pola occurrences np
+/*      "occurrences": [
+    {
+        "date": "2024-08-15",
+            "time": "19:00"
+    },
+    {
+        "date": "2024-08-16",
+            "time": "19:00"
+    }*/
+//jesli typ regular to w occurances już nie będzie listy
+// w occurances dni tygodnia (pon,czw,niedz,) godziny (10:00, 12:00), data od, data do, s
+    //lista biletow z ceną  maksymalna iloscia i typem
 }

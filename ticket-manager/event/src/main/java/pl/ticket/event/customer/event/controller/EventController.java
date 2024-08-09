@@ -29,4 +29,8 @@ public record EventController(EventService eventService)
         EventDto eventById = eventService.getEventById(eventId);
         return eventById;
     }
+
+    //po dacie zeby pozyskiwal event z godzinami
+
+    //po slug jak w niego wejdziesz to zeby bylo juz wiecej info jak wszystkie dostepne godziny tego dnia i rodzaje biletow i ceny
 }

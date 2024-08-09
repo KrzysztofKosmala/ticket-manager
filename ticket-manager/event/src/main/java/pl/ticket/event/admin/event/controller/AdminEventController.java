@@ -24,4 +24,5 @@ public class AdminEventController
         log.info("Event created {}", adminEventCreationDto);
         eventService.createEvent(adminEventCreationDto);
     }
+
 }
