@@ -27,7 +27,7 @@ public record CustomerController(CustomerService customerService, KeycloackSecur
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AccessTokenResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         return customerService.loginCustomer(loginRequest);
     }
 

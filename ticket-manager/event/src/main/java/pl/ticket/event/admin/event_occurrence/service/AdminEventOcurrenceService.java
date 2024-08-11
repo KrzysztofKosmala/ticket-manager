@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.admin.event_occurrence.repository.AdminEventOccurrenceRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminEventOcurrenceService
@@ -15,5 +17,10 @@ public class AdminEventOcurrenceService
     {
 
         return eventOccurrenceRepository.save(eventOccurrence);
+    }
+
+    public void addEventOccurrences(List<AdminEventOccurrence> eventOccurrences)
+    {
+        eventOccurrenceRepository.saveAll(eventOccurrences);
     }
 }

@@ -7,13 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceOccasionalCreationDto;
+
+import java.util.List;
 
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminEventCreationDto {
+public class AdminEventOccasionalCreationDto {
     @NotBlank
     private String title;
 
@@ -26,7 +29,8 @@ public class AdminEventCreationDto {
     @NotNull
     private String slug;
 
-    //kategoria
+    @NotNull
+    private Long categoryId;
 
     @NotNull
     private EventType eventType; // na bazie tego będzie wybierany strategia do budodwania occurrences
@@ -43,4 +47,6 @@ public class AdminEventCreationDto {
 //jesli typ regular to w occurances już nie będzie listy
 // w occurances dni tygodnia (pon,czw,niedz,) godziny (10:00, 12:00), data od, data do, s
     //lista biletow z ceną  maksymalna iloscia i typem
+
+    private List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences;
 }

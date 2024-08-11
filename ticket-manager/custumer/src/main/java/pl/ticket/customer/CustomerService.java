@@ -82,7 +82,7 @@ public class CustomerService
 
         return headers;
     }
-    public ResponseEntity<AccessTokenResponse> loginCustomer(LoginRequest loginRequest) {
+    public ResponseEntity<String> loginCustomer(LoginRequest loginRequest) {
         Keycloak keycloakUser = keycloackSecurityUtils.loadKeycloakUser(
                         loginRequest.getUsername(),
                         loginRequest.getPassword())
@@ -94,9 +94,9 @@ public class CustomerService
             HttpHeaders authorizationHeader = getRequestHeaderBearer(accessToken.getToken());
             return ResponseEntity.status(HttpStatus.OK)
                     .headers(authorizationHeader)
-                    .body(accessToken);
+                    .body(accessToken.getToken());
         } catch (BadRequestException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(accessToken);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(accessToken.getToken());
         }
     }
 }

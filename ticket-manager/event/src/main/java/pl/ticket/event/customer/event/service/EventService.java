@@ -3,6 +3,7 @@ package pl.ticket.event.customer.event.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import pl.ticket.event.common.dto.EventDto;
 import pl.ticket.event.common.dto.EventOccurrenceDto;
 import pl.ticket.event.customer.event.model.Event;

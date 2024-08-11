@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
+import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -30,5 +34,5 @@ public class AdminEvent
     private String title;
     private String description;
     private String slug;
-
+    private Long categoryId;
 }
