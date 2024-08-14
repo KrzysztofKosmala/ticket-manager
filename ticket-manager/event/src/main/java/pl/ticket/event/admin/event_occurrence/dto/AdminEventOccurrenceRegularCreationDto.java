@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,6 +19,6 @@ public class AdminEventOccurrenceRegularCreationDto {
     private LocalDate date;
     private LocalTime time;
     private Integer spaceLeft;
-    private String requiredNameDayOfWeek;
+    private String requestedNameDayOfWeek;
 
 }

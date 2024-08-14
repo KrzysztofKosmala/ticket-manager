@@ -2,6 +2,7 @@ package pl.ticket.event.admin.event.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventOccasionalCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceOccasionalCreationDto;
@@ -18,6 +19,7 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,135 +32,126 @@ public class AdminEventService {
 
     /**
      * {
-     *   "title": "Event 1",
-     *   "description": "Desc Event 1",
-     *   "capacity": 200,
-     *   "slug": "ev1",
-     *   "categoryId": 1,
-     *   "eventType": "OCCASIONAL",
-     *   "eventOccurrences": [
-     *     {
-     *       "date": "2024-08-13",
-     *       "time": "11:55",
-     *       "spaceLeft": 100
-     *     },
-     *     {
-     *       "date": "2024-10-28",
-     *       "time": "14:15",
-     *       "spaceLeft": 50
-     *     }
-     *   ]
+     * "title": "Event 1",
+     * "description": "Desc Event 1",
+     * "capacity": 200,
+     * "slug": "ev1",
+     * "categoryId": 1,
+     * "eventType": "OCCASIONAL",
+     * "eventOccurrences": [
+     * {
+     * "date": "2024-08-13",
+     * "time": "11:55",
+     * "spaceLeft": 100
+     * },
+     * {
+     * "date": "2024-10-28",
+     * "time": "14:15",
+     * "spaceLeft": 50
+     * }
+     * ]
      * }
      */
     public void createEventOccasional(AdminEventOccasionalCreationDto adminEventOccasionalCreationDto) {
         //poki co na sztywno wszystko, trzeba będzie dodać tworzenie ticketow, odpowiednich occurances dodać sprawdzania testy itp
-        AdminEvent event = createEventAsOccasional(adminEventOccasionalCreationDto);
 
         if (adminEventOccasionalCreationDto.getEventType().equals(EventType.OCCASIONAL)) {
-            List<AdminEventOccurrence> occurrencesToSave = new ArrayList<>();
-            // lista wystąpień
+
+            AdminEvent event = createEvent(adminEventOccasionalCreationDto);
+            // lista wystąpień z requestu
             List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
 
-            for (AdminEventOccurrenceOccasionalCreationDto eventOccurrence : eventOccurrences) {
-                // tworzymy konkretne egzemplarze wystąpień dla eventu
-                AdminEventOccurrence adminEventOccurrence = new AdminEventOccurrence();
-                adminEventOccurrence.setDate(eventOccurrence.getDate());
-                adminEventOccurrence.setTime(eventOccurrence.getTime());
-                adminEventOccurrence.setSpaceLeft(eventOccurrence.getSpaceLeft());
-                adminEventOccurrence.setEventId(event.getId());
-                occurrencesToSave.add(adminEventOccurrence);
-            }
-            adminEventOcurrenceService.addEventOccurrences(occurrencesToSave);
+            adminEventOcurrenceService.addEventOccurrences(mapToAdminEventOccurrence(event, eventOccurrences));
+        } else {
+            throw new NoSuchElementException("Wrong event type!");
         }
     }
 
-    private AdminEvent createEventAsOccasional(AdminEventOccasionalCreationDto adminEventOccasionalCreationDto) {
-        AdminEvent event = AdminEvent.builder()
-                .title(adminEventOccasionalCreationDto.getTitle())
-                .description(adminEventOccasionalCreationDto.getDescription())
-                .capacity(adminEventOccasionalCreationDto.getCapacity())
-                .slug(slugifyUtils.slugifySlug(adminEventOccasionalCreationDto.getSlug()))
-                .categoryId(adminEventOccasionalCreationDto.getCategoryId())
-                .build();
-        return adminEventRepository.save(event);
+    private static List<AdminEventOccurrence> mapToAdminEventOccurrence(AdminEvent event,
+                                                                        List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences) {
+        return eventOccurrences.stream()
+                .map(eventOccurrence -> AdminEventOccurrence.builder()
+                        .date(eventOccurrence.getDate())
+                        .time(eventOccurrence.getTime())
+                        .spaceLeft(eventOccurrence.getSpaceLeft())
+                        .eventId(event.getId())
+                        .build())
+                .toList();
     }
 
     /**
      * {
-     *   "title": "qwert",
-     *   "description": "qwert",
-     *   "capacity": 0,
-     *   "slug": "stringdsfdf",
+     *   "title": "Ev1",
+     *   "description": "Desv Ev1",
+     *   "capacity": 100,
+     *   "slug": "ev1",
      *   "categoryId": 1,
      *   "eventType": "REGULAR",
+     *   "from": "2024-08-14",
+     *   "to": "2024-08-31",
      *   "eventOccurrencesRegular": [
      *     {
-     *       "time": "10:20",
+     *       "time": "12:55",
      *       "spaceLeft": 50,
-     *       "requiredNameDayOfWeek": "środa"
+     *       "requestedNameDayOfWeek": "sobota"
      *     },
      *     {
-     *       "time": "11:45",
+     *       "time": "18:55",
      *       "spaceLeft": 100,
-     *       "requiredNameDayOfWeek": "sobota"
+     *       "requestedNameDayOfWeek": "środa"
+     *     },
+     *     {
+     *       "time": "20:20",
+     *       "spaceLeft": 50,
+     *       "requestedNameDayOfWeek": "poniedziałek"
      *     }
      *   ]
      * }
      */
-    public void createEventRegular(AdminEventRegularCreationDto adminEventRegularCreationDto, LocalDate from, LocalDate to) {
-
-        AdminEvent event = createEventAsRegular(adminEventRegularCreationDto);
-
+    public void createEventRegular(AdminEventRegularCreationDto adminEventRegularCreationDto) {
         if (adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR)) {
-            // pobieramy wszystkie daty z podanego przedziału
-            List<LocalDate> datesFromRange = datesFromRange(from, to);
+            AdminEvent event = createEvent(adminEventRegularCreationDto);
+            // pobieramy wszystkie daty z podanego przedziału z requestu
+            List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getFrom(),
+                    adminEventRegularCreationDto.getTo());
 
-            List<AdminEventOccurrenceRegularCreationDto> occurrences = prepareOccurrencesForRequestedRangeOfDate(
-                    adminEventRegularCreationDto, datesFromRange);
-
-            // zapisujemy wyżej przygotowane wystąpienia, które wybraliśmy z przedziału dat
-            for (AdminEventOccurrenceRegularCreationDto eventOccurrence : occurrences) {
-                AdminEventOccurrence adminEventOccurrence = new AdminEventOccurrence();
-                adminEventOccurrence.setDate(eventOccurrence.getDate());
-                adminEventOccurrence.setTime(eventOccurrence.getTime());
-                adminEventOccurrence.setSpaceLeft(eventOccurrence.getSpaceLeft());
-                adminEventOccurrence.setEventId(event.getId());
-                adminEventOcurrenceService.addEventOccurrence(adminEventOccurrence);
-            }
+            prepareOccurrencesForRequestedRangeOfDate(adminEventRegularCreationDto, datesFromRange, event.getId());
+        } else {
+            throw new NoSuchElementException("Wrong event type!");
         }
     }
 
-    private List<AdminEventOccurrenceRegularCreationDto> prepareOccurrencesForRequestedRangeOfDate(AdminEventRegularCreationDto adminEventRegularCreationDto,
-                                                                  List<LocalDate> datesFromRange) {
-        List<AdminEventOccurrenceRegularCreationDto> occurrences = new ArrayList<>();
+    private void prepareOccurrencesForRequestedRangeOfDate(AdminEventRegularCreationDto adminEventRegularCreationDto,
+                                                           List<LocalDate> datesFromRange, Long eventId) {
+        List<AdminEventOccurrence> occurrences = new ArrayList<>();
 
+        // pobieramy liste naszych occurences
         for (AdminEventOccurrenceRegularCreationDto regularEvent : adminEventRegularCreationDto.getEventOccurrencesRegular()) {
             for (LocalDate date : datesFromRange) {
-                // wyciągamy z daty dzień tygodnia w j. polskim
+                // wyciągamy z daty dzień tygodnia w j. polskim np. wtorek, sobota ..
                 String namOfDayWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("pl-PL"));
-
-                // parametr po jakim dniu tygodnia mamy tworzyć wystąpienie
-                if (namOfDayWeek.equals(regularEvent.getRequiredNameDayOfWeek())) {
-                    LocalDate dateToSave = LocalDate.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
-
+                // parametr po jakim dniu tygodnia mamy tworzyć wystąpienie - przyrownujemy z obiektem ktory otrzymalismy
+                if (namOfDayWeek.equals(regularEvent.getRequestedNameDayOfWeek())) {
                     // tworzymy listę wystąpień dla konkretnego czasu, dnia tygodnia wraz z pozostałymi miejscami
-                    occurrences.add(new AdminEventOccurrenceRegularCreationDto(dateToSave,
-                            regularEvent.getTime(),
-                            regularEvent.getSpaceLeft(),
-                            regularEvent.getRequiredNameDayOfWeek()));
+                    occurrences.add(AdminEventOccurrence.builder()
+                            .eventId(eventId)
+                            .date(date)
+                            .time(regularEvent.getTime())
+                            .spaceLeft(regularEvent.getSpaceLeft())
+                            .build());
                 }
             }
+            adminEventOcurrenceService.addEventOccurrences(occurrences);
         }
-        return occurrences;
     }
 
-    private AdminEvent createEventAsRegular(AdminEventRegularCreationDto adminEventRegularCreationDto) {
+    private AdminEvent createEvent(AdminEventCreationDto eventCreationDto) {
         AdminEvent event = AdminEvent.builder()
-                .title(adminEventRegularCreationDto.getTitle())
-                .description(adminEventRegularCreationDto.getDescription())
-                .capacity(adminEventRegularCreationDto.getCapacity())
-                .slug(slugifyUtils.slugifySlug(adminEventRegularCreationDto.getSlug()))
-                .categoryId(adminEventRegularCreationDto.getCategoryId())
+                .title(eventCreationDto.getTitle())
+                .description(eventCreationDto.getDescription())
+                .capacity(eventCreationDto.getCapacity())
+                .slug(slugifyUtils.slugifySlug(eventCreationDto.getSlug()))
+                .categoryId(eventCreationDto.getCategoryId())
                 .build();
 
         return adminEventRepository.save(event);

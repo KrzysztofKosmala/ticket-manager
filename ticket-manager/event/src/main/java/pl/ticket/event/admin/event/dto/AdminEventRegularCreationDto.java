@@ -1,6 +1,7 @@
 package pl.ticket.event.admin.event.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceRegularCreationDto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -16,27 +18,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminEventRegularCreationDto {
-    @NotBlank
-    private String title;
-
-    @NotBlank
-    private String description;
-
+public class AdminEventRegularCreationDto extends AdminEventCreationDto {
     @NotNull
-    private Integer capacity;
-
+    private LocalDate from;
     @NotNull
-    private String slug;
-
-    @NotNull
-    private Long categoryId;
-
-    @NotNull
-    private EventType eventType;
-
+    private LocalDate to;
     @NotNull
     private List<AdminEventOccurrenceRegularCreationDto> eventOccurrencesRegular;
-
-
 }

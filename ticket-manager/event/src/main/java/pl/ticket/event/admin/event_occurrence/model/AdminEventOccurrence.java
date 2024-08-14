@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Builder
 public class AdminEventOccurrence
 {
     @Id
