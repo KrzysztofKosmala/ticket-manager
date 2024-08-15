@@ -1,8 +1,6 @@
 package pl.ticket.event.admin.event.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +18,9 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminEventRegularCreationDto extends AdminEventCreationDto {
     @NotNull
-    private LocalDate from;
+    private LocalDate startDate;
     @NotNull
-    private LocalDate to;
+    private LocalDate endDate;
     @NotNull
-    private List<AdminEventOccurrenceRegularCreationDto> eventOccurrencesRegular;
+    private List<AdminEventOccurrenceRegularCreationDto> occurrences;
 }

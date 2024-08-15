@@ -27,4 +27,11 @@ public class AdminEventController
         log.info("Event created {}", adminEventRegularCreationDto);
         eventService.createEventRegular(adminEventRegularCreationDto);
     }
+
+    @PostMapping("/regular2")
+    public void createEventWithRange2(@RequestBody @Valid AdminEventRegularCreationDto adminEventRegularCreationDto)
+    {
+        log.info("Event created {}", adminEventRegularCreationDto);
+        eventService.createEventRegular2(adminEventRegularCreationDto);
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventOccasionalCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
+import pl.ticket.event.admin.event.exception.InvalidRequestedDataException;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceOccasionalCreationDto;
 import pl.ticket.event.admin.event.dto.EventType;
 import pl.ticket.event.admin.event.model.AdminEvent;
@@ -52,9 +53,8 @@ public class AdminEventService {
      * ]
      * }
      */
-    public void createEventOccasional(AdminEventOccasionalCreationDto adminEventOccasionalCreationDto) {
-        //poki co na sztywno wszystko, trzeba będzie dodać tworzenie ticketow, odpowiednich occurances dodać sprawdzania testy itp
-
+    public void createEventOccasional(AdminEventOccasionalCreationDto adminEventOccasionalCreationDto)
+    {
         if (adminEventOccasionalCreationDto.getEventType().equals(EventType.OCCASIONAL)) {
 
             AdminEvent event = createEvent(adminEventOccasionalCreationDto);
@@ -112,8 +112,9 @@ public class AdminEventService {
         if (adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR)) {
             AdminEvent event = createEvent(adminEventRegularCreationDto);
             // pobieramy wszystkie daty z podanego przedziału z requestu
-            List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getFrom(),
-                    adminEventRegularCreationDto.getTo());
+            // czy zakres nie jest za duży? check
+            List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getStartDate(),
+                    adminEventRegularCreationDto.getEndDate());
 
             prepareOccurrencesForRequestedRangeOfDate(adminEventRegularCreationDto, datesFromRange, event.getId());
         } else {
@@ -126,12 +127,12 @@ public class AdminEventService {
         List<AdminEventOccurrence> occurrences = new ArrayList<>();
 
         // pobieramy liste naszych occurences
-        for (AdminEventOccurrenceRegularCreationDto regularEvent : adminEventRegularCreationDto.getEventOccurrencesRegular()) {
+        for (AdminEventOccurrenceRegularCreationDto regularEvent : adminEventRegularCreationDto.getOccurrences()) {
             for (LocalDate date : datesFromRange) {
                 // wyciągamy z daty dzień tygodnia w j. polskim np. wtorek, sobota ..
                 String namOfDayWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("pl-PL"));
                 // parametr po jakim dniu tygodnia mamy tworzyć wystąpienie - przyrownujemy z obiektem ktory otrzymalismy
-                if (namOfDayWeek.equals(regularEvent.getRequestedNameDayOfWeek())) {
+                if (namOfDayWeek.equals(regularEvent.getDay())) {
                     // tworzymy listę wystąpień dla konkretnego czasu, dnia tygodnia wraz z pozostałymi miejscami
                     occurrences.add(AdminEventOccurrence.builder()
                             .eventId(eventId)
@@ -143,6 +144,41 @@ public class AdminEventService {
             }
             adminEventOcurrenceService.addEventOccurrences(occurrences);
         }
+    }
+
+    public void createEventRegular2(AdminEventRegularCreationDto adminEventRegularCreationDto) {
+        if (!adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR))
+            throw new InvalidRequestedDataException("Zły typ eventu!");
+
+        List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getStartDate(),
+                adminEventRegularCreationDto.getEndDate());
+
+        //TODO: 365 z pliku ma sie zaczytywać
+        if(datesFromRange.size() > 365)
+        {
+            throw new InvalidRequestedDataException("Maksymalnie można stwożyć eventy na rok w przód.");
+        }
+
+        AdminEvent event = createEvent(adminEventRegularCreationDto);
+
+        List<AdminEventOccurrence> adminEventOccurrences = prepareOccurrencesForRequestedRangeOfDate2(adminEventRegularCreationDto, datesFromRange, event.getId());
+        adminEventOcurrenceService.addEventOccurrences(adminEventOccurrences);
+    }
+
+    private List<AdminEventOccurrence> prepareOccurrencesForRequestedRangeOfDate2(AdminEventRegularCreationDto adminEventRegularCreationDto,
+                                                                                  List<LocalDate> datesFromRange, Long eventId) {
+
+        return adminEventRegularCreationDto.getOccurrences().stream()
+                .flatMap(regularEvent -> datesFromRange.stream()
+                        .filter(date -> date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("pl-PL"))
+                                .equals(regularEvent.getDay()))
+                        .map(date -> AdminEventOccurrence.builder()
+                                .eventId(eventId)
+                                .date(date)
+                                .time(regularEvent.getTime())
+                                .spaceLeft(regularEvent.getSpaceLeft())
+                                .build()))
+                .toList();
     }
 
     private AdminEvent createEvent(AdminEventCreationDto eventCreationDto) {
