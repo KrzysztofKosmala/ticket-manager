@@ -13,6 +13,9 @@ import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceRegularCreationDto;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.admin.event_occurrence.service.AdminEventOcurrenceService;
+import pl.ticket.event.admin.ticket.model.AdminTicket;
+import pl.ticket.event.admin.ticket.service.AdminTicketService;
+import pl.ticket.event.common.dto.AdminTicketCreationDto;
 import pl.ticket.event.utils.SlugifyUtils;
 
 import java.time.LocalDate;
@@ -30,6 +33,7 @@ public class AdminEventService {
     private final AdminEventOcurrenceService adminEventOcurrenceService;
 
     private final SlugifyUtils slugifyUtils;
+    private final AdminTicketService adminTicketService;
 
     /**
      * {
@@ -61,7 +65,7 @@ public class AdminEventService {
             // lista wystąpień z requestu
             List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
 
-            adminEventOcurrenceService.addEventOccurrences(mapToAdminEventOccurrence(event, eventOccurrences));
+            adminEventOcurrenceService.createEventOccurrences(mapToAdminEventOccurrence(event, eventOccurrences));
         } else {
             throw new NoSuchElementException("Wrong event type!");
         }
@@ -73,7 +77,7 @@ public class AdminEventService {
                 .map(eventOccurrence -> AdminEventOccurrence.builder()
                         .date(eventOccurrence.getDate())
                         .time(eventOccurrence.getTime())
-                        .spaceLeft(eventOccurrence.getSpaceLeft())
+                        .spaceLeft(event.getCapacity())
                         .eventId(event.getId())
                         .build())
                 .toList();
@@ -138,11 +142,11 @@ public class AdminEventService {
                             .eventId(eventId)
                             .date(date)
                             .time(regularEvent.getTime())
-                            .spaceLeft(regularEvent.getSpaceLeft())
+                            .spaceLeft(adminEventRegularCreationDto.getCapacity())
                             .build());
                 }
             }
-            adminEventOcurrenceService.addEventOccurrences(occurrences);
+            adminEventOcurrenceService.createEventOccurrences(occurrences);
         }
     }
 
@@ -155,14 +159,18 @@ public class AdminEventService {
 
         //TODO: 365 z pliku ma sie zaczytywać
         if(datesFromRange.size() > 365)
-        {
             throw new InvalidRequestedDataException("Maksymalnie można stwożyć eventy na rok w przód.");
-        }
+
 
         AdminEvent event = createEvent(adminEventRegularCreationDto);
 
         List<AdminEventOccurrence> adminEventOccurrences = prepareOccurrencesForRequestedRangeOfDate2(adminEventRegularCreationDto, datesFromRange, event.getId());
-        adminEventOcurrenceService.addEventOccurrences(adminEventOccurrences);
+        List<AdminEventOccurrence> eventOccurrences = adminEventOcurrenceService.createEventOccurrences(adminEventOccurrences);
+
+        List<AdminTicket> tickets = prepareTicketsForEachOccurrence(event, eventOccurrences,  adminEventRegularCreationDto);
+
+        adminTicketService.createTickets(tickets);
+
     }
 
     private List<AdminEventOccurrence> prepareOccurrencesForRequestedRangeOfDate2(AdminEventRegularCreationDto adminEventRegularCreationDto,
@@ -176,7 +184,7 @@ public class AdminEventService {
                                 .eventId(eventId)
                                 .date(date)
                                 .time(regularEvent.getTime())
-                                .spaceLeft(regularEvent.getSpaceLeft())
+                                .spaceLeft(adminEventRegularCreationDto.getCapacity())
                                 .build()))
                 .toList();
     }
@@ -191,6 +199,34 @@ public class AdminEventService {
                 .build();
 
         return adminEventRepository.save(event);
+    }
+
+    private List<AdminTicket> prepareTicketsForEachOccurrence(AdminEvent event,  List<AdminEventOccurrence> eventOccurrences, AdminEventCreationDto adminEventCreationDto)
+    {
+       return eventOccurrences.stream()
+                .flatMap(occurrence -> adminEventCreationDto.getTickets().stream()
+                        .map(ticketDto ->
+                                {
+                                    if (adminEventCreationDto.getIsCommonTicketPool()) {
+                                        return AdminTicket.builder()
+                                                .event(event)
+                                                .eventOccurrence(occurrence)
+                                                .type(ticketDto.type())
+                                                .price(ticketDto.price())
+                                                .amount(adminEventCreationDto.getCapacity())
+                                                .build();
+                                    }else{
+                                        return AdminTicket.builder()
+                                                .event(event)
+                                                .eventOccurrence(occurrence)
+                                                .type(ticketDto.type())
+                                                .price(ticketDto.price())
+                                                .amount(ticketDto.amount())
+                                                .build();
+                                    }
+                                }
+                        )
+                ).toList();
     }
 
     private List<LocalDate> datesFromRange(

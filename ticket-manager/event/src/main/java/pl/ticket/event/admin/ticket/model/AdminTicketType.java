@@ -1,11 +1,12 @@
-package pl.ticket;
+package pl.ticket.event.admin.ticket.model;
 
-public enum TicketType {
+public enum AdminTicketType
+{
     FULL_PRICE("full_price"),
     HALF_PRICE("half_price");
     private final String type;
 
-    TicketType(String type) {
+    AdminTicketType(String type) {
         this.type = type;
     }
     public String getType() {

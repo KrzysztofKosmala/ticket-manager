@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.ticket.event.common.dto.AdminTicketCreationDto;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -27,4 +30,8 @@ public class AdminEventCreationDto {
 
     @NotNull
     private EventType eventType;
+
+    private Boolean isCommonTicketPool;
+
+    private List<AdminTicketCreationDto> tickets;
 }

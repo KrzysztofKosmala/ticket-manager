@@ -18,6 +18,4 @@ public class AdminEventOccurrenceOccasionalCreationDto {
 
     private LocalTime time;
 
-    private Integer spaceLeft;
-
 }

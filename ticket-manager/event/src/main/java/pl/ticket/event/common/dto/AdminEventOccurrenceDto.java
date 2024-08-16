@@ -7,11 +7,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 @Data
 @Builder
-public class EventOccurrenceDto
+public class AdminEventOccurrenceDto
 {
     private Long id;
     private Long eventId;
     private LocalDate date;
     private LocalTime time;
-    private Integer spaceLeft;
 }

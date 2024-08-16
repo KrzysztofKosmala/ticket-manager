@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class EventDto
+public class AdminEventDto
 {
     private Long id;
     private Integer capacity;
@@ -15,5 +15,5 @@ public class EventDto
     private String title;
     private String description;
     private String slug;
-    private List<EventOccurrenceDto> occurrences;
+    private List<AdminEventOccurrenceDto> occurrences;
 }

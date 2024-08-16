@@ -1,10 +1,12 @@
-package pl.ticket;
+package pl.ticket.event.admin.ticket.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.ticket.event.admin.event.model.AdminEvent;
+import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 
 import java.math.BigDecimal;
 
@@ -14,7 +16,7 @@ import java.math.BigDecimal;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ticket
+public class AdminTicket
 {
     @Id
     @SequenceGenerator
@@ -28,9 +30,17 @@ public class Ticket
                     generator = "ticket_id_sequence"
             )
     private Integer id;
-    private Integer eventId;
+    // Relacja ManyToOne z AdminEventOccurrence
+    @ManyToOne
+    @JoinColumn(name = "event_occurrence_id", nullable = false)
+    private AdminEventOccurrence eventOccurrence;
+
+    // Relacja ManyToOne z AdminEvent
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private AdminEvent event;
     @Enumerated(EnumType.STRING)
-    private TicketType type;
+    private AdminTicketType type;
     private BigDecimal price;
     private int amount;
 }

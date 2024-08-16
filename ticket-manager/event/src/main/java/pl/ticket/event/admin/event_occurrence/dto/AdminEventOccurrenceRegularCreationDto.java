@@ -15,7 +15,6 @@ import java.time.LocalTime;
 public class AdminEventOccurrenceRegularCreationDto {
 
     private LocalTime time;
-    private Integer spaceLeft;
     private String day;
 
 }

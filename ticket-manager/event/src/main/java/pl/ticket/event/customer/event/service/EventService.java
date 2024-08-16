@@ -1,11 +1,9 @@
 package pl.ticket.event.customer.event.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import pl.ticket.event.common.dto.EventDto;
-import pl.ticket.event.common.dto.EventOccurrenceDto;
+import pl.ticket.event.common.dto.AdminEventDto;
+import pl.ticket.event.common.dto.AdminEventOccurrenceDto;
 import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.repository.EventRepository;
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
@@ -20,10 +18,10 @@ public class EventService
     private final EventRepository eventRepository;
 
 
-    public EventDto getEventById(Long id) {
+    public AdminEventDto getEventById(Long id) {
         Event event = eventRepository.findByIdWithOccurrences(id).orElseThrow();
 
-        return EventDto.builder()
+        return AdminEventDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
                 .description(event.getDescription())
@@ -36,13 +34,12 @@ public class EventService
                 .build();
     }
 
-    private EventOccurrenceDto mapToEventOccurrenceDto(EventOccurrence occurrence) {
-        return EventOccurrenceDto.builder()
+    private AdminEventOccurrenceDto mapToEventOccurrenceDto(EventOccurrence occurrence) {
+        return AdminEventOccurrenceDto.builder()
                 .id(occurrence.getId())
                 .eventId(occurrence.getEventId())
                 .date(occurrence.getDate())
                 .time(occurrence.getTime())
-                .spaceLeft(occurrence.getSpaceLeft())
                 .build();
     }
 
