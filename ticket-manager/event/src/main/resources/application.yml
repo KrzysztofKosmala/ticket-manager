@@ -1,6 +1,8 @@
 server:
   port: 8081
 
+
+
 spring:
   application:
     name: event
@@ -8,6 +10,8 @@ spring:
     password: password
     url: jdbc:postgresql://localhost:51/event
     username: admin
+  profiles:
+    active: prod
   jpa:
     hibernate:
       ddl-auto: update

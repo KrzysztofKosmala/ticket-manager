@@ -15,8 +15,8 @@ public class AdminTicketService
 {
     private final AdminTicketRepository adminTicketRepository;
 
-    public List<AdminTicket> createTickets(List<AdminTicket> tickets)
+    public void createTickets(List<AdminTicket> tickets)
     {
-        return adminTicketRepository.saveAll(tickets);
+        adminTicketRepository.saveAll(tickets);
     }
 }

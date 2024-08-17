@@ -15,7 +15,7 @@ public class AdminEventController
 {
     private final AdminEventService eventService;
 
-    @PostMapping
+    @PostMapping("/occasional")
     public void createEvent(@RequestBody @Valid AdminEventOccasionalCreationDto adminEventOccasionalCreationDto)
     {
         log.info("Event created {}", adminEventOccasionalCreationDto);

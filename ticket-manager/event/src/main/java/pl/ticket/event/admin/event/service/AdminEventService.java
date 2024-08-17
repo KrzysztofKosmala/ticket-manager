@@ -1,6 +1,7 @@
 package pl.ticket.event.admin.event.service;
 
-import lombok.AllArgsConstructor;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventOccasionalCreationDto;
@@ -18,6 +19,7 @@ import pl.ticket.event.admin.ticket.service.AdminTicketService;
 import pl.ticket.event.common.dto.AdminTicketCreationDto;
 import pl.ticket.event.utils.SlugifyUtils;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
@@ -28,13 +30,14 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AdminEventService {
     private final AdminEventRepository adminEventRepository;
     private final AdminEventOcurrenceService adminEventOcurrenceService;
 
     private final SlugifyUtils slugifyUtils;
     private final AdminTicketService adminTicketService;
+    private final Clock clock;
 
     /**
      * {
@@ -62,7 +65,7 @@ public class AdminEventService {
     {
         if (adminEventOccasionalCreationDto.getEventType().equals(EventType.OCCASIONAL)) {
 
-            AdminEvent event = createEvent(adminEventOccasionalCreationDto);
+            AdminEvent event = prepareEvent(adminEventOccasionalCreationDto);
             // lista wystąpień z requestu
             List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
 
@@ -115,7 +118,7 @@ public class AdminEventService {
      */
     public void createEventRegular(AdminEventRegularCreationDto adminEventRegularCreationDto) {
         if (adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR)) {
-            AdminEvent event = createEvent(adminEventRegularCreationDto);
+            AdminEvent event = prepareEvent(adminEventRegularCreationDto);
             // pobieramy wszystkie daty z podanego przedziału z requestu
             // czy zakres nie jest za duży? check
             List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getStartDate(),
@@ -151,27 +154,47 @@ public class AdminEventService {
         }
     }
 
-    public void createEventRegular2(AdminEventRegularCreationDto adminEventRegularCreationDto) {
+    @Transactional
+    public void createEventRegular2(AdminEventRegularCreationDto adminEventRegularCreationDto)
+    {
+        validateAdminEventRegularCreationDto(adminEventRegularCreationDto);
+
+        List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getStartDate(), adminEventRegularCreationDto.getEndDate());
+
+        AdminEvent event = prepareEvent(adminEventRegularCreationDto);
+        adminEventRepository.save(event);
+
+        List<AdminEventOccurrence> adminEventOccurrences = prepareOccurrencesForRequestedRangeOfDate2(adminEventRegularCreationDto, datesFromRange, event.getId());
+        adminEventOcurrenceService.createEventOccurrences(adminEventOccurrences);
+
+        List<AdminTicket> tickets = prepareTicketsForEachOccurrence(event, adminEventOccurrences,  adminEventRegularCreationDto);
+        adminTicketService.createTickets(tickets);
+    }
+
+    private void validateAdminEventRegularCreationDto(AdminEventRegularCreationDto adminEventRegularCreationDto)
+    {
+        LocalDate now = LocalDate.now(clock);
+
         if (!adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR))
             throw new InvalidRequestedDataException("Zły typ eventu!");
 
-        List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getStartDate(),
-                adminEventRegularCreationDto.getEndDate());
+        if(adminEventRegularCreationDto.getStartDate().isBefore(now) || adminEventRegularCreationDto.getEndDate().isBefore(now))
+            throw new InvalidRequestedDataException("Nie można stworzyć eventu w podanym zakresie czasowym.");
 
-        //TODO: 365 z pliku ma sie zaczytywać
-        if(datesFromRange.size() > 365)
-            throw new InvalidRequestedDataException("Maksymalnie można stwożyć eventy na rok w przód.");
+        if(adminEventRegularCreationDto.getEndDate().isBefore(adminEventRegularCreationDto.getStartDate()))
+            throw new InvalidRequestedDataException("Podany został zły zakres czasowy.");
+    }
 
+    private AdminEvent prepareEvent(AdminEventCreationDto eventCreationDto) {
+        AdminEvent event = AdminEvent.builder()
+                .title(eventCreationDto.getTitle())
+                .description(eventCreationDto.getDescription())
+                .capacity(eventCreationDto.getCapacity())
+                .slug(slugifyUtils.slugifySlug(eventCreationDto.getSlug()))
+                .categoryId(eventCreationDto.getCategoryId())
+                .build();
 
-        AdminEvent event = createEvent(adminEventRegularCreationDto);
-
-        List<AdminEventOccurrence> adminEventOccurrences = prepareOccurrencesForRequestedRangeOfDate2(adminEventRegularCreationDto, datesFromRange, event.getId());
-        List<AdminEventOccurrence> eventOccurrences = adminEventOcurrenceService.createEventOccurrences(adminEventOccurrences);
-
-        List<AdminTicket> tickets = prepareTicketsForEachOccurrence(event, eventOccurrences,  adminEventRegularCreationDto);
-
-        adminTicketService.createTickets(tickets);
-
+        return event;
     }
 
     private List<AdminEventOccurrence> prepareOccurrencesForRequestedRangeOfDate2(AdminEventRegularCreationDto adminEventRegularCreationDto,
@@ -204,20 +227,6 @@ public class AdminEventService {
                 .time(time)
                 .spaceLeft(capacity)
                 .build();
-    }
-
-
-
-    private AdminEvent createEvent(AdminEventCreationDto eventCreationDto) {
-        AdminEvent event = AdminEvent.builder()
-                .title(eventCreationDto.getTitle())
-                .description(eventCreationDto.getDescription())
-                .capacity(eventCreationDto.getCapacity())
-                .slug(slugifyUtils.slugifySlug(eventCreationDto.getSlug()))
-                .categoryId(eventCreationDto.getCategoryId())
-                .build();
-
-        return adminEventRepository.save(event);
     }
 
     private List<AdminTicket> prepareTicketsForEachOccurrence(AdminEvent adminEvent,  List<AdminEventOccurrence> adminEventOccurrences, AdminEventCreationDto adminEventCreationDto)
@@ -254,7 +263,14 @@ public class AdminEventService {
     }
 
     private List<LocalDate> datesFromRange(LocalDate startDate, LocalDate endDate) {
-        return startDate.datesUntil(endDate)
+        List<LocalDate> datesFromRange = startDate.datesUntil(endDate)
                 .collect(Collectors.toList());
+
+        //TODO: 365 z pliku ma sie zaczytywać
+        if(datesFromRange.size() > 365) {
+            throw new InvalidRequestedDataException("Maksymalnie można stwożyć eventy na rok w przód.");
+        }
+
+        return datesFromRange;
     }
 }

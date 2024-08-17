@@ -19,8 +19,8 @@ public class AdminEventOcurrenceService
         return eventOccurrenceRepository.save(eventOccurrence);
     }
 
-    public List<AdminEventOccurrence> createEventOccurrences(List<AdminEventOccurrence> eventOccurrences)
+    public void createEventOccurrences(List<AdminEventOccurrence> eventOccurrences)
     {
-        return eventOccurrenceRepository.saveAll(eventOccurrences);
+        eventOccurrenceRepository.saveAll(eventOccurrences);
     }
 }
