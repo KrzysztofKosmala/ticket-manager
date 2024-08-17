@@ -19,6 +19,7 @@ import pl.ticket.event.common.dto.AdminTicketCreationDto;
 import pl.ticket.event.utils.SlugifyUtils;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,19 +176,37 @@ public class AdminEventService {
 
     private List<AdminEventOccurrence> prepareOccurrencesForRequestedRangeOfDate2(AdminEventRegularCreationDto adminEventRegularCreationDto,
                                                                                   List<LocalDate> datesFromRange, Long eventId) {
-
-        return adminEventRegularCreationDto.getOccurrences().stream()
-                .flatMap(regularEvent -> datesFromRange.stream()
-                        .filter(date -> date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("pl-PL"))
-                                .equals(regularEvent.getDay()))
-                        .map(date -> AdminEventOccurrence.builder()
-                                .eventId(eventId)
-                                .date(date)
-                                .time(regularEvent.getTime())
-                                .spaceLeft(adminEventRegularCreationDto.getCapacity())
-                                .build()))
+        return adminEventRegularCreationDto.getOccurrences()
+                .stream()
+                .flatMap(regularEvent -> createOccurrencesForRegularEvent(regularEvent, datesFromRange, eventId, adminEventRegularCreationDto.getCapacity()).stream())
                 .toList();
     }
+
+    private List<AdminEventOccurrence> createOccurrencesForRegularEvent(AdminEventOccurrenceRegularCreationDto regularEvent,
+                                                                        List<LocalDate> datesFromRange,
+                                                                        Long eventId,
+                                                                        Integer capacity) {
+        return datesFromRange.stream()
+                .filter(date -> isMatchingDayOfWeek(date, regularEvent.getDay()))
+                .map(date -> createOccurrence(eventId, date, regularEvent.getTime(), capacity))
+                .toList();
+    }
+
+    private boolean isMatchingDayOfWeek(LocalDate date, String expectedDay) {
+        String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("pl-PL"));
+        return dayOfWeek.equals(expectedDay);
+    }
+
+    private AdminEventOccurrence createOccurrence(Long eventId, LocalDate date, LocalTime time, Integer capacity) {
+        return AdminEventOccurrence.builder()
+                .eventId(eventId)
+                .date(date)
+                .time(time)
+                .spaceLeft(capacity)
+                .build();
+    }
+
+
 
     private AdminEvent createEvent(AdminEventCreationDto eventCreationDto) {
         AdminEvent event = AdminEvent.builder()
@@ -201,36 +220,40 @@ public class AdminEventService {
         return adminEventRepository.save(event);
     }
 
-    private List<AdminTicket> prepareTicketsForEachOccurrence(AdminEvent event,  List<AdminEventOccurrence> eventOccurrences, AdminEventCreationDto adminEventCreationDto)
+    private List<AdminTicket> prepareTicketsForEachOccurrence(AdminEvent adminEvent,  List<AdminEventOccurrence> adminEventOccurrences, AdminEventCreationDto adminEventCreationDto)
     {
-       return eventOccurrences.stream()
-                .flatMap(occurrence -> adminEventCreationDto.getTickets().stream()
-                        .map(ticketDto ->
-                                {
-                                    if (adminEventCreationDto.getIsCommonTicketPool()) {
-                                        return AdminTicket.builder()
-                                                .event(event)
-                                                .eventOccurrence(occurrence)
-                                                .type(ticketDto.type())
-                                                .price(ticketDto.price())
-                                                .amount(adminEventCreationDto.getCapacity())
-                                                .build();
-                                    }else{
-                                        return AdminTicket.builder()
-                                                .event(event)
-                                                .eventOccurrence(occurrence)
-                                                .type(ticketDto.type())
-                                                .price(ticketDto.price())
-                                                .amount(ticketDto.amount())
-                                                .build();
-                                    }
-                                }
-                        )
-                ).toList();
+
+       return adminEventOccurrences.stream()
+            .flatMap(occurrence -> createTicketsForOccurrence(occurrence, adminEvent, adminEventCreationDto).stream())
+            .toList();
     }
 
-    private List<LocalDate> datesFromRange(
-            LocalDate startDate, LocalDate endDate) {
+    private List<AdminTicket> createTicketsForOccurrence(AdminEventOccurrence adminEventOccurrence,
+                                                         AdminEvent adminEvent,
+                                                         AdminEventCreationDto adminEventCreationDto) {
+        return adminEventCreationDto.getTickets().stream()
+                .map(ticketDto -> createTicket(adminEvent, adminEventOccurrence, ticketDto, adminEventCreationDto.getIsCommonTicketPool(), adminEventCreationDto.getCapacity()))
+                .toList();
+    }
+
+    private AdminTicket createTicket(AdminEvent adminEvent,
+                                     AdminEventOccurrence occurrence,
+                                     AdminTicketCreationDto ticketDto,
+                                     boolean isCommonTicketPool,
+                                     int eventCapacity)
+    {
+        int ticketAmount = isCommonTicketPool ? eventCapacity : ticketDto.amount();
+
+        return AdminTicket.builder()
+                .event(adminEvent)
+                .eventOccurrence(occurrence)
+                .type(ticketDto.type())
+                .price(ticketDto.price())
+                .amount(ticketAmount)
+                .build();
+    }
+
+    private List<LocalDate> datesFromRange(LocalDate startDate, LocalDate endDate) {
         return startDate.datesUntil(endDate)
                 .collect(Collectors.toList());
     }
