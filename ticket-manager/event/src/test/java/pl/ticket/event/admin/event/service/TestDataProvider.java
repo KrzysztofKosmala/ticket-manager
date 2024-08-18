@@ -17,8 +17,6 @@ import java.util.List;
 
 public class TestDataProvider
 {
-
-
      public AdminEventRegularCreationDto createAdminEventRegularCreationDtoCorrect()
     {
         AdminEventRegularCreationDto dto1 = new AdminEventRegularCreationDto();

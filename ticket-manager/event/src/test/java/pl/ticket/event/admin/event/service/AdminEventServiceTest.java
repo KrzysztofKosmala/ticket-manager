@@ -27,8 +27,7 @@ import static org.mockito.Mockito.*;
 class AdminEventServiceTest
 {
 
-    private final Clock
-    = Clock.fixed(Instant.parse("2024-08-15T00:00:00Z"), ZoneId.of("UTC"));
+    private final Clock fixedClock = Clock.fixed(Instant.parse("2024-08-15T00:00:00Z"), ZoneId.of("UTC"));
     private static final TestDataProvider testDataProvider = new TestDataProvider();
 
     private static Stream<Arguments> provideAdminEventRegularCreationDtos()

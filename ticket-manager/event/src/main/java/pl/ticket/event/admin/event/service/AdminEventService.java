@@ -7,6 +7,8 @@ import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventOccasionalCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event.exception.InvalidRequestedDataException;
+import pl.ticket.event.admin.event.service.validation.AdminEventServiceValidator;
+import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceOccasionalCreationDto;
 import pl.ticket.event.admin.event.dto.EventType;
 import pl.ticket.event.admin.event.model.AdminEvent;
@@ -34,7 +36,8 @@ import java.util.stream.Collectors;
 public class AdminEventService {
     private final AdminEventRepository adminEventRepository;
     private final AdminEventOcurrenceService adminEventOcurrenceService;
-
+    private final AdminEventServiceValidator adminEventServiceValidator;
+    private final AdminEventUtils adminEventUtils;
     private final SlugifyUtils slugifyUtils;
     private final AdminTicketService adminTicketService;
     private final Clock clock;
@@ -121,7 +124,7 @@ public class AdminEventService {
             AdminEvent event = prepareEvent(adminEventRegularCreationDto);
             // pobieramy wszystkie daty z podanego przedziału z requestu
             // czy zakres nie jest za duży? check
-            List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getStartDate(),
+            List<LocalDate> datesFromRange = adminEventUtils.datesFromRange(adminEventRegularCreationDto.getStartDate(),
                     adminEventRegularCreationDto.getEndDate());
 
             prepareOccurrencesForRequestedRangeOfDate(adminEventRegularCreationDto, datesFromRange, event.getId());
@@ -157,9 +160,9 @@ public class AdminEventService {
     @Transactional
     public void createEventRegular2(AdminEventRegularCreationDto adminEventRegularCreationDto)
     {
-        validateAdminEventRegularCreationDto(adminEventRegularCreationDto);
+        adminEventServiceValidator.validateAdminEventRegularCreationDto(adminEventRegularCreationDto);
 
-        List<LocalDate> datesFromRange = datesFromRange(adminEventRegularCreationDto.getStartDate(), adminEventRegularCreationDto.getEndDate());
+        List<LocalDate> datesFromRange = adminEventUtils.datesFromRange(adminEventRegularCreationDto.getStartDate(), adminEventRegularCreationDto.getEndDate());
 
         AdminEvent event = prepareEvent(adminEventRegularCreationDto);
         adminEventRepository.save(event);
@@ -169,20 +172,6 @@ public class AdminEventService {
 
         List<AdminTicket> tickets = prepareTicketsForEachOccurrence(event, adminEventOccurrences,  adminEventRegularCreationDto);
         adminTicketService.createTickets(tickets);
-    }
-
-    private void validateAdminEventRegularCreationDto(AdminEventRegularCreationDto adminEventRegularCreationDto)
-    {
-        LocalDate now = LocalDate.now(clock);
-
-        if (!adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR))
-            throw new InvalidRequestedDataException("Zły typ eventu!");
-
-        if(adminEventRegularCreationDto.getStartDate().isBefore(now) || adminEventRegularCreationDto.getEndDate().isBefore(now))
-            throw new InvalidRequestedDataException("Nie można stworzyć eventu w podanym zakresie czasowym.");
-
-        if(adminEventRegularCreationDto.getEndDate().isBefore(adminEventRegularCreationDto.getStartDate()))
-            throw new InvalidRequestedDataException("Podany został zły zakres czasowy.");
     }
 
     private AdminEvent prepareEvent(AdminEventCreationDto eventCreationDto) {
@@ -210,15 +199,12 @@ public class AdminEventService {
                                                                         Long eventId,
                                                                         Integer capacity) {
         return datesFromRange.stream()
-                .filter(date -> isMatchingDayOfWeek(date, regularEvent.getDay()))
+                .filter(date -> adminEventUtils.isMatchingDayOfWeek(date, regularEvent.getDay()))
                 .map(date -> createOccurrence(eventId, date, regularEvent.getTime(), capacity))
                 .toList();
     }
 
-    private boolean isMatchingDayOfWeek(LocalDate date, String expectedDay) {
-        String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("pl-PL"));
-        return dayOfWeek.equals(expectedDay);
-    }
+
 
     private AdminEventOccurrence createOccurrence(Long eventId, LocalDate date, LocalTime time, Integer capacity) {
         return AdminEventOccurrence.builder()
@@ -262,15 +248,4 @@ public class AdminEventService {
                 .build();
     }
 
-    private List<LocalDate> datesFromRange(LocalDate startDate, LocalDate endDate) {
-        List<LocalDate> datesFromRange = startDate.datesUntil(endDate)
-                .collect(Collectors.toList());
-
-        //TODO: 365 z pliku ma sie zaczytywać
-        if(datesFromRange.size() > 365) {
-            throw new InvalidRequestedDataException("Maksymalnie można stwożyć eventy na rok w przód.");
-        }
-
-        return datesFromRange;
-    }
 }
