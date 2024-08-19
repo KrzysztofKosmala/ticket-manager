@@ -34,4 +34,8 @@ public class AdminEventController
         log.info("Event created {}", adminEventRegularCreationDto);
         eventService.createEventRegular2(adminEventRegularCreationDto);
     }
+
+    //get admin event
+    //update admin event
+    //delete admin event
 }

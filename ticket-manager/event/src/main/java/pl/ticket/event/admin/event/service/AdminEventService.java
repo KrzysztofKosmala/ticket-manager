@@ -38,37 +38,14 @@ public class AdminEventService {
     private final AdminEventOcurrenceService adminEventOcurrenceService;
     private final AdminEventServiceValidator adminEventServiceValidator;
     private final AdminEventUtils adminEventUtils;
-    private final SlugifyUtils slugifyUtils;
     private final AdminTicketService adminTicketService;
-    private final Clock clock;
+    private final AdminEventMapper adminEventMapper;
 
-    /**
-     * {
-     * "title": "Event 1",
-     * "description": "Desc Event 1",
-     * "capacity": 200,
-     * "slug": "ev1",
-     * "categoryId": 1,
-     * "eventType": "OCCASIONAL",
-     * "eventOccurrences": [
-     * {
-     * "date": "2024-08-13",
-     * "time": "11:55",
-     * "spaceLeft": 100
-     * },
-     * {
-     * "date": "2024-10-28",
-     * "time": "14:15",
-     * "spaceLeft": 50
-     * }
-     * ]
-     * }
-     */
     public void createEventOccasional(AdminEventOccasionalCreationDto adminEventOccasionalCreationDto)
     {
         if (adminEventOccasionalCreationDto.getEventType().equals(EventType.OCCASIONAL)) {
 
-            AdminEvent event = prepareEvent(adminEventOccasionalCreationDto);
+            AdminEvent event = adminEventMapper.mapToAdminEvent(adminEventOccasionalCreationDto);
             // lista wystąpień z requestu
             List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
 
@@ -90,38 +67,10 @@ public class AdminEventService {
                 .toList();
     }
 
-    /**
-     * {
-     *   "title": "Ev1",
-     *   "description": "Desv Ev1",
-     *   "capacity": 100,
-     *   "slug": "ev1",
-     *   "categoryId": 1,
-     *   "eventType": "REGULAR",
-     *   "from": "2024-08-14",
-     *   "to": "2024-08-31",
-     *   "eventOccurrencesRegular": [
-     *     {
-     *       "time": "12:55",
-     *       "spaceLeft": 50,
-     *       "requestedNameDayOfWeek": "sobota"
-     *     },
-     *     {
-     *       "time": "18:55",
-     *       "spaceLeft": 100,
-     *       "requestedNameDayOfWeek": "środa"
-     *     },
-     *     {
-     *       "time": "20:20",
-     *       "spaceLeft": 50,
-     *       "requestedNameDayOfWeek": "poniedziałek"
-     *     }
-     *   ]
-     * }
-     */
+
     public void createEventRegular(AdminEventRegularCreationDto adminEventRegularCreationDto) {
         if (adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR)) {
-            AdminEvent event = prepareEvent(adminEventRegularCreationDto);
+            AdminEvent event = adminEventMapper.mapToAdminEvent(adminEventRegularCreationDto);
             // pobieramy wszystkie daty z podanego przedziału z requestu
             // czy zakres nie jest za duży? check
             List<LocalDate> datesFromRange = adminEventUtils.datesFromRange(adminEventRegularCreationDto.getStartDate(),
@@ -164,88 +113,13 @@ public class AdminEventService {
 
         List<LocalDate> datesFromRange = adminEventUtils.datesFromRange(adminEventRegularCreationDto.getStartDate(), adminEventRegularCreationDto.getEndDate());
 
-        AdminEvent event = prepareEvent(adminEventRegularCreationDto);
+        AdminEvent event = adminEventMapper.mapToAdminEvent(adminEventRegularCreationDto);
         adminEventRepository.save(event);
 
-        List<AdminEventOccurrence> adminEventOccurrences = prepareOccurrencesForRequestedRangeOfDate2(adminEventRegularCreationDto, datesFromRange, event.getId());
+        List<AdminEventOccurrence> adminEventOccurrences = adminEventMapper.prepareOccurrencesForRequestedRangeOfDate(adminEventRegularCreationDto, datesFromRange, event.getId());
         adminEventOcurrenceService.createEventOccurrences(adminEventOccurrences);
 
-        List<AdminTicket> tickets = prepareTicketsForEachOccurrence(event, adminEventOccurrences,  adminEventRegularCreationDto);
+        List<AdminTicket> tickets = adminEventMapper.prepareTicketsForEachOccurrence(event, adminEventOccurrences,  adminEventRegularCreationDto);
         adminTicketService.createTickets(tickets);
     }
-
-    private AdminEvent prepareEvent(AdminEventCreationDto eventCreationDto) {
-        AdminEvent event = AdminEvent.builder()
-                .title(eventCreationDto.getTitle())
-                .description(eventCreationDto.getDescription())
-                .capacity(eventCreationDto.getCapacity())
-                .slug(slugifyUtils.slugifySlug(eventCreationDto.getSlug()))
-                .categoryId(eventCreationDto.getCategoryId())
-                .build();
-
-        return event;
-    }
-
-    private List<AdminEventOccurrence> prepareOccurrencesForRequestedRangeOfDate2(AdminEventRegularCreationDto adminEventRegularCreationDto,
-                                                                                  List<LocalDate> datesFromRange, Long eventId) {
-        return adminEventRegularCreationDto.getOccurrences()
-                .stream()
-                .flatMap(regularEvent -> createOccurrencesForRegularEvent(regularEvent, datesFromRange, eventId, adminEventRegularCreationDto.getCapacity()).stream())
-                .toList();
-    }
-
-    private List<AdminEventOccurrence> createOccurrencesForRegularEvent(AdminEventOccurrenceRegularCreationDto regularEvent,
-                                                                        List<LocalDate> datesFromRange,
-                                                                        Long eventId,
-                                                                        Integer capacity) {
-        return datesFromRange.stream()
-                .filter(date -> adminEventUtils.isMatchingDayOfWeek(date, regularEvent.getDay()))
-                .map(date -> createOccurrence(eventId, date, regularEvent.getTime(), capacity))
-                .toList();
-    }
-
-
-
-    private AdminEventOccurrence createOccurrence(Long eventId, LocalDate date, LocalTime time, Integer capacity) {
-        return AdminEventOccurrence.builder()
-                .eventId(eventId)
-                .date(date)
-                .time(time)
-                .spaceLeft(capacity)
-                .build();
-    }
-
-    private List<AdminTicket> prepareTicketsForEachOccurrence(AdminEvent adminEvent,  List<AdminEventOccurrence> adminEventOccurrences, AdminEventCreationDto adminEventCreationDto)
-    {
-
-       return adminEventOccurrences.stream()
-            .flatMap(occurrence -> createTicketsForOccurrence(occurrence, adminEvent, adminEventCreationDto).stream())
-            .toList();
-    }
-
-    private List<AdminTicket> createTicketsForOccurrence(AdminEventOccurrence adminEventOccurrence,
-                                                         AdminEvent adminEvent,
-                                                         AdminEventCreationDto adminEventCreationDto) {
-        return adminEventCreationDto.getTickets().stream()
-                .map(ticketDto -> createTicket(adminEvent, adminEventOccurrence, ticketDto, adminEventCreationDto.getIsCommonTicketPool(), adminEventCreationDto.getCapacity()))
-                .toList();
-    }
-
-    private AdminTicket createTicket(AdminEvent adminEvent,
-                                     AdminEventOccurrence occurrence,
-                                     AdminTicketCreationDto ticketDto,
-                                     boolean isCommonTicketPool,
-                                     int eventCapacity)
-    {
-        int ticketAmount = isCommonTicketPool ? eventCapacity : ticketDto.amount();
-
-        return AdminTicket.builder()
-                .event(adminEvent)
-                .eventOccurrence(occurrence)
-                .type(ticketDto.type())
-                .price(ticketDto.price())
-                .amount(ticketAmount)
-                .build();
-    }
-
 }

@@ -1,6 +1,8 @@
 package pl.ticket.event.admin.event.service.validation;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event.dto.EventType;
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminEventServiceValidator
 {
     private final Clock clock;
@@ -18,6 +21,8 @@ public class AdminEventServiceValidator
     public void validateAdminEventRegularCreationDto(AdminEventRegularCreationDto adminEventRegularCreationDto)
     {
         LocalDate now = LocalDate.now(clock);
+
+        log.info(now.toString());
 
         if (!adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR))
             throw new InvalidRequestedDataException("Zły typ eventu!");
