@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset kkosmala:4
+--changeset kkosmala:2
 -- Dodanie nowej kolumny category_id
 ALTER TABLE event ADD COLUMN category_id BIGINT;
 

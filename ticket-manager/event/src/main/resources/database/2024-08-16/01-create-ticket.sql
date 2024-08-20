@@ -1,7 +1,7 @@
 --liquibase formatted sql
---changeset kkosmala:6
--- Utworzenie tabeli admin_ticket
-CREATE TABLE admin_ticket (
+--changeset kkosmala:5
+-- Utworzenie tabeli ticket
+CREATE TABLE ticket (
                               id SERIAL PRIMARY KEY,
                               event_occurrence_id INTEGER NOT NULL,
                               event_id INTEGER NOT NULL,

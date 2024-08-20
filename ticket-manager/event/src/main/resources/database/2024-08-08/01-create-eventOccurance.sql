@@ -1,6 +1,5 @@
 --liquibase formatted sql
---changeset kkosmala:6
-drop table event_occurrence;
+--changeset kkosmala:4
 
 
 CREATE TABLE event_occurrence (

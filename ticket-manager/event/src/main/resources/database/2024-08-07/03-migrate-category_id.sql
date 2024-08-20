@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset kkosmala:5
+--changeset kkosmala:3
 -- Wstawienie nowego rekordu do tabeli category
 INSERT INTO category (id, name, description, slug) VALUES (1, 'unknown', '', 'unknown');
 
