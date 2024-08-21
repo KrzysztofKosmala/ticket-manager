@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.event.integrity;
+package pl.ticket.event.admin.integrity;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,6 @@ import pl.ticket.event.admin.event.repository.AdminEventRepository;
 @Sql(scripts={"classpath:test-data.sql"})
 public class PrePost
 {
-    @Autowired
-    protected AdminEventRepository adminEventRepository;
 
     @Container
     private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.4")
