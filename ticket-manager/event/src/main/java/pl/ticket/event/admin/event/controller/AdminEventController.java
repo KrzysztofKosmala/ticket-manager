@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventOccasionalCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
+import pl.ticket.event.admin.event.dto.AdminEventUpdateDto;
 import pl.ticket.event.admin.event.service.AdminEventService;
 @Slf4j
 @RestController
@@ -36,13 +38,17 @@ public class AdminEventController
     }
 
     @DeleteMapping
-    public void deleteEventById(@RequestParam Long id)
+    public void deleteEventById(@RequestParam("id") Long id)
     {
         eventService.deleteEventById(id);
     }
 
     //get admin event - skopiuje od kamila
 
-    //update admin event
-    //delete admin event
+    @PutMapping("{id}")
+    public void updateRegularEventById(@RequestBody @Valid AdminEventUpdateDto adminEventUpdateDto, @PathVariable("id") Long id)
+    {
+        log.info("Event updated {}", adminEventUpdateDto);
+        eventService.updateEvent(id, adminEventUpdateDto);
+    }
 }

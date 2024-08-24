@@ -1,16 +1,14 @@
 package pl.ticket.event.admin.event.service;
 
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
-import pl.ticket.event.admin.event.dto.AdminEventOccasionalCreationDto;
-import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
+import pl.ticket.event.admin.event.dto.*;
 import pl.ticket.event.admin.event.exception.InvalidRequestedDataException;
 import pl.ticket.event.admin.event.service.validation.AdminEventServiceValidator;
 import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceOccasionalCreationDto;
-import pl.ticket.event.admin.event.dto.EventType;
 import pl.ticket.event.admin.event.model.AdminEvent;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceRegularCreationDto;
@@ -133,5 +131,17 @@ public class AdminEventService {
         adminEventOcurrenceService.deleteOccurrences(eventOccurrences);
 
         adminEventRepository.deleteById(id);
+    }
+
+    public void updateEvent(Long id, AdminEventUpdateDto adminEventUpdateDto)
+    {
+        AdminEvent adminEvent = adminEventRepository.findById(id).orElseThrow(() -> new NotFoundException("Nie ma takiego Eventu"));
+
+        adminEvent.setTitle(adminEventUpdateDto.getTitle());
+        adminEvent.setDescription(adminEventUpdateDto.getDescription());
+        adminEvent.setCategoryId(adminEventUpdateDto.getCategoryId());
+        adminEvent.setSlug(adminEventUpdateDto.getSlug());
+
+        adminEventRepository.save(adminEvent);
     }
 }
