@@ -24,7 +24,11 @@ spring:
         - id: ticket
           uri: lb://TICKET
           predicates:
-            - Path=/api/v1/tickets/**
+            - Path=/api/v1/tickets/**, /api/v1/admin/tickets/**
+        - id: cart
+          uri: lb://CART
+          predicates:
+            - Path=/api/v1/carts/**, /api/v1/admin/carts/**
   main:
     web-application-type: reactive
   security:

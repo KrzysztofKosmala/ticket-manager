@@ -22,6 +22,7 @@
         <module>notification</module>
         <module>mainTicket</module>
         <module>image</module>
+        <module>cart</module>
     </modules>
     <!-- update versions -->
     <properties>
