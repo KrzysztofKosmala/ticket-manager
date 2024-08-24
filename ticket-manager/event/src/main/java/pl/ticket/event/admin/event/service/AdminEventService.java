@@ -5,7 +5,6 @@ import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.ticket.event.admin.event.dto.*;
-import pl.ticket.event.admin.event.exception.InvalidRequestedDataException;
 import pl.ticket.event.admin.event.service.validation.AdminEventServiceValidator;
 import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceOccasionalCreationDto;
@@ -13,27 +12,22 @@ import pl.ticket.event.admin.event.model.AdminEvent;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceRegularCreationDto;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
-import pl.ticket.event.admin.event_occurrence.service.AdminEventOcurrenceService;
+import pl.ticket.event.admin.event_occurrence.service.AdminEventOccurrenceService;
 import pl.ticket.event.admin.ticket.model.AdminTicket;
 import pl.ticket.event.admin.ticket.service.AdminTicketService;
-import pl.ticket.event.common.dto.AdminTicketCreationDto;
-import pl.ticket.event.utils.SlugifyUtils;
 
-import java.time.Clock;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AdminEventService {
     private final AdminEventRepository adminEventRepository;
-    private final AdminEventOcurrenceService adminEventOcurrenceService;
+    private final AdminEventOccurrenceService adminEventOccurrenceService;
     private final AdminEventServiceValidator adminEventServiceValidator;
     private final AdminEventUtils adminEventUtils;
     private final AdminTicketService adminTicketService;
@@ -47,7 +41,7 @@ public class AdminEventService {
             // lista wystąpień z requestu
             List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
 
-            adminEventOcurrenceService.createEventOccurrences(mapToAdminEventOccurrence(event, eventOccurrences));
+            adminEventOccurrenceService.createEventOccurrences(mapToAdminEventOccurrence(event, eventOccurrences));
         } else {
             throw new NoSuchElementException("Wrong event type!");
         }
@@ -100,7 +94,7 @@ public class AdminEventService {
                             .build());
                 }
             }
-            adminEventOcurrenceService.createEventOccurrences(occurrences);
+            adminEventOccurrenceService.createEventOccurrences(occurrences);
         }
     }
 
@@ -115,7 +109,7 @@ public class AdminEventService {
         adminEventRepository.save(event);
 
         List<AdminEventOccurrence> adminEventOccurrences = adminEventMapper.prepareOccurrencesForRequestedRangeOfDate(adminEventRegularCreationDto, datesFromRange, event.getId());
-        adminEventOcurrenceService.createEventOccurrences(adminEventOccurrences);
+        adminEventOccurrenceService.createEventOccurrences(adminEventOccurrences);
 
         List<AdminTicket> tickets = adminEventMapper.prepareTicketsForEachOccurrence(event, adminEventOccurrences,  adminEventRegularCreationDto);
         adminTicketService.createTickets(tickets);
@@ -124,11 +118,11 @@ public class AdminEventService {
     @Transactional
     public void deleteEventById(Long id)
     {
-        List<AdminEventOccurrence> eventOccurrences = adminEventOcurrenceService.findByEventId(id);
+        List<AdminEventOccurrence> eventOccurrences = adminEventOccurrenceService.findByEventId(id);
 
         eventOccurrences.forEach(occurrence -> adminTicketService.deleteTickets(occurrence.getTickets()));
 
-        adminEventOcurrenceService.deleteOccurrences(eventOccurrences);
+        adminEventOccurrenceService.deleteOccurrences(eventOccurrences);
 
         adminEventRepository.deleteById(id);
     }

@@ -12,13 +12,10 @@ import pl.ticket.event.admin.event.data_provider.AdminEventRegularCreationDtoPro
 import pl.ticket.event.admin.event.service.validation.AdminEventServiceValidator;
 import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
-import pl.ticket.event.admin.event_occurrence.service.AdminEventOcurrenceService;
+import pl.ticket.event.admin.event_occurrence.service.AdminEventOccurrenceService;
 import pl.ticket.event.admin.ticket.service.AdminTicketService;
 import pl.ticket.event.utils.SlugifyUtils;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -50,7 +47,7 @@ class AdminEventServiceTest
     void shouldPrepareEventRegular2Successfully(AdminEventRegularCreationDto dto, int expectedOccurrencesCount, int expectedTicketsCount) {
 
         AdminEventRepository adminEventRepository = Mockito.mock(AdminEventRepository.class);
-        AdminEventOcurrenceService adminEventOcurrenceService = Mockito.mock(AdminEventOcurrenceService.class);
+        AdminEventOccurrenceService adminEventOccurrenceService = Mockito.mock(AdminEventOccurrenceService.class);
         AdminEventServiceValidator adminEventServiceValidator = Mockito.mock(AdminEventServiceValidator.class);
         AdminEventUtils adminEventUtils = new AdminEventUtils();
         AdminEventMapper adminEventMapper = new AdminEventMapper(new SlugifyUtils(), adminEventUtils);
@@ -59,7 +56,7 @@ class AdminEventServiceTest
 
         AdminEventService adminEventService = new AdminEventService(
                 adminEventRepository,
-                adminEventOcurrenceService,
+                adminEventOccurrenceService,
                 adminEventServiceValidator,
                 adminEventUtils,
                 adminTicketService,
@@ -73,14 +70,14 @@ class AdminEventServiceTest
                     return event;
                 });
 
-        doNothing().when(adminEventOcurrenceService).createEventOccurrences(anyList());
+        doNothing().when(adminEventOccurrenceService).createEventOccurrences(anyList());
         doNothing().when(adminTicketService).createTickets(anyList());
 
         ArgumentCaptor<List<AdminEventOccurrence>> occurrenceCaptor = ArgumentCaptor.forClass(List.class);
 
         adminEventService.createEventRegular2(dto);
 
-        verify(adminEventOcurrenceService).createEventOccurrences(occurrenceCaptor.capture());
+        verify(adminEventOccurrenceService).createEventOccurrences(occurrenceCaptor.capture());
         List<AdminEventOccurrence> capturedOccurrences = occurrenceCaptor.getValue();
         assertEquals(expectedOccurrencesCount, capturedOccurrences.size(), "Liczba przechwyconych wystąpień powinna być równa 6.");
     }
