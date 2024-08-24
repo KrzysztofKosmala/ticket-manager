@@ -122,4 +122,16 @@ public class AdminEventService {
         List<AdminTicket> tickets = adminEventMapper.prepareTicketsForEachOccurrence(event, adminEventOccurrences,  adminEventRegularCreationDto);
         adminTicketService.createTickets(tickets);
     }
+
+    @Transactional
+    public void deleteEventById(Long id)
+    {
+        List<AdminEventOccurrence> eventOccurrences = adminEventOcurrenceService.findByEventId(id);
+
+        eventOccurrences.forEach(occurrence -> adminTicketService.deleteTickets(occurrence.getTickets()));
+
+        adminEventOcurrenceService.deleteOccurrences(eventOccurrences);
+
+        adminEventRepository.deleteById(id);
+    }
 }

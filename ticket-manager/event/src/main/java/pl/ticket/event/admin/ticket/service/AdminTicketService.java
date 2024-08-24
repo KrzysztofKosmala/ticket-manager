@@ -19,4 +19,10 @@ public class AdminTicketService
     {
         adminTicketRepository.saveAll(tickets);
     }
+
+    public void deleteTickets(List<AdminTicket> tickets)
+    {
+        //todo: jesli tickety są już w zamówieniach trzeba tutaj dodać jakąś logike
+        adminTicketRepository.deleteAll(tickets);
+    }
 }

@@ -23,4 +23,14 @@ public class AdminEventOcurrenceService
     {
         eventOccurrenceRepository.saveAll(eventOccurrences);
     }
+
+    public List<AdminEventOccurrence> findByEventId(Long eventId)
+    {
+        return eventOccurrenceRepository.findByEventId(eventId);
+    }
+
+    public void deleteOccurrences(List<AdminEventOccurrence> eventOccurrences)
+    {
+        eventOccurrenceRepository.deleteAll(eventOccurrences);
+    }
 }

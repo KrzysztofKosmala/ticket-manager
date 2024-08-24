@@ -35,7 +35,14 @@ public class AdminEventController
         eventService.createEventRegular2(adminEventRegularCreationDto);
     }
 
-    //get admin event
+    @DeleteMapping
+    public void deleteEventById(@RequestParam Long id)
+    {
+        eventService.deleteEventById(id);
+    }
+
+    //get admin event - skopiuje od kamila
+
     //update admin event
     //delete admin event
 }
