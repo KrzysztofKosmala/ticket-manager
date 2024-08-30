@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import pl.ticket.event.admin.event.data_provider.AdminEventRegularCreationDtoProvider;
 import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
+import pl.ticket.event.admin.event.mapper.AdminEventMapper;
 import pl.ticket.event.admin.event.model.AdminEvent;
 import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;

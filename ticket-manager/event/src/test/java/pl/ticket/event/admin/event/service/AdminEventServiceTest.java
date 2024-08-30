@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.*;
 import org.mockito.stubbing.Answer;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
+import pl.ticket.event.admin.event.mapper.AdminEventMapper;
 import pl.ticket.event.admin.event.model.AdminEvent;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event.data_provider.AdminEventRegularCreationDtoProvider;

@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.event.service;
+package pl.ticket.event.admin.event.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

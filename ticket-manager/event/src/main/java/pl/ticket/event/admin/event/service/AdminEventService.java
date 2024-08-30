@@ -5,6 +5,7 @@ import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.ticket.event.admin.event.dto.*;
+import pl.ticket.event.admin.event.mapper.AdminEventMapper;
 import pl.ticket.event.admin.event.service.validation.AdminEventServiceValidator;
 import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceOccasionalCreationDto;
