@@ -12,6 +12,10 @@ import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
 import pl.ticket.event.customer.event.repository.EventRepository;
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
+import pl.ticket.event.customer.event_occurrence.repository.EventOccurrenceRepository;
+import pl.ticket.event.customer.ticket.model.Ticket;
+import pl.ticket.event.customer.event.model.dto.EventTicketDto;
+import pl.ticket.event.customer.ticket.repository.TicketRepository;
 import pl.ticket.feign.event.CapacityCheckResponse;
 
 import java.time.LocalDate;
@@ -23,6 +27,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventService {
     private final EventRepository eventRepository;
+    private final EventOccurrenceRepository eventOccurrenceRepository;
+    private final TicketRepository ticketRepository;
+
+    private final EventMapper eventMapper;
 
     public AdminEventDto getEventById(Long id) {
         Event event = eventRepository.findByIdWithOccurrences(id).orElseThrow();
@@ -51,18 +59,13 @@ public class EventService {
 
         List<LocalTime> times = occurrences.stream()
                 .filter(occurrence -> occurrence.getDate().equals(date))
-                .map(occurrence -> occurrence.getTime()).toList();
+                .map(EventOccurrence::getTime).toList();
 
         if (times.isEmpty()){
             throw new EventDateException("W dniu " + date + " nie ma takiego wydarzenia");
         }
 
-        return EventDateTimeDto.builder()
-                .title(event.getTitle())
-                .description(event.getDescription())
-                .date(date)
-                .times(times)
-                .build();
+        return eventMapper.mapToEventDateTimeDto(event, date, times);
     }
 
     public Page<Event> getEvents(Pageable pageable) {
@@ -73,19 +76,7 @@ public class EventService {
     public Page<EventDateTimeDto> getEventsByDate(LocalDate date, Pageable pageable) {
         List<Event> events = eventRepository.findByDatePaged(date, pageable);
 
-        List<EventDateTimeDto> result = events.stream()
-                .map(event -> {
-                    EventDateTimeDto eventDateTimeDto = new EventDateTimeDto();
-                    eventDateTimeDto.setTitle(event.getTitle());
-                    eventDateTimeDto.setDescription(event.getDescription());
-                    eventDateTimeDto.setDate(date);
-
-                    eventDateTimeDto.setTimes(event.getOccurrences().stream()
-                            .map(EventOccurrence::getTime).toList());
-
-                    return eventDateTimeDto;
-                }).toList();
-
+        List<EventDateTimeDto> result = eventMapper.mapToListEventDateTimeDto(events, date);
 
         if (result.isEmpty()) {
             throw new EventDateException("W danym dniu nie ma żadnego wydarzenia!");
@@ -96,6 +87,17 @@ public class EventService {
     public CapacityCheckResponse checkCapacity(Integer eventId) {
         return new CapacityCheckResponse(eventRepository.hasAvailableCapacity(eventId));
     }
+
+    public List<EventTicketDto> getEventOccurrenceByDateAndTime(Long eventId, String time) {
+        LocalTime timeParsed = LocalTime.parse(time);
+
+        EventOccurrence eventOccurrence = eventOccurrenceRepository.findEventOccurrenceByEventIdAndTime(eventId, timeParsed);
+        List<Ticket> ticketsForOccurrence = ticketRepository.findTicketsOccurrenceId(eventOccurrence.getId());
+
+        return ticketsForOccurrence.stream()
+                .map(ticket -> eventMapper.mapToEventTicketDto(ticket)).toList();
+    }
+
     private AdminEventOccurrenceDto mapToEventOccurrenceDto(EventOccurrence occurrence) {
         return AdminEventOccurrenceDto.builder()
                 .id(occurrence.getId())
