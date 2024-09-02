@@ -1,4 +1,4 @@
--- Wstawienie przykładowych Eventów
+-- Wstawienie przykładowych Kategorii
 INSERT INTO category (id, name, description, slug)
 VALUES
     (111, 'Concert', 'Live concert event.', 'concert-a'),
