@@ -16,6 +16,7 @@ import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.admin.event_occurrence.service.AdminEventOccurrenceService;
 import pl.ticket.event.admin.ticket.model.AdminTicket;
 import pl.ticket.event.admin.ticket.service.AdminTicketService;
+import pl.ticket.event.common.dto.AdminTicketCreationDto;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -42,7 +43,12 @@ public class AdminEventService {
             // lista wystąpień z requestu
             List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
 
-            adminEventOccurrenceService.createEventOccurrences(mapToAdminEventOccurrence(event, eventOccurrences));
+            List<AdminEventOccurrence> adminEventOccurrences = mapToAdminEventOccurrence(event, eventOccurrences);
+            adminEventOccurrenceService.createEventOccurrences(adminEventOccurrences);
+
+            List<AdminTicket> tickets = adminEventMapper.prepareTicketsForEachOccurrence(event,
+                    adminEventOccurrences,  adminEventOccasionalCreationDto);
+            adminTicketService.createTickets(tickets);
         } else {
             throw new NoSuchElementException("Wrong event type!");
         }
