@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event_occurrence.repository.AdminEventOccurrenceRepository;
 import pl.ticket.event.admin.event_occurrence.service.AdminEventOccurrenceService;
-import pl.ticket.event.admin.integrity.PrePost;
+import pl.ticket.event.admin.integrity.event.PrePost;
 import pl.ticket.event.admin.ticket.repository.AdminTicketRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

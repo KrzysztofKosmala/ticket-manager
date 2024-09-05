@@ -49,9 +49,10 @@ public record EventController(EventService eventService)
     // kiedy jestśmy w konkretnym evencie, wybieramy godzine(nasz occurrence) i pokazujemy bilety
     @GetMapping("/{eventId}/{date}/{time}")
     public List<EventTicketDto> getEventOccurrenceByDateAndTime(@PathVariable Long eventId,
-                                                                @PathVariable String time) {
+                                                                @PathVariable String time,
+                                                                @PathVariable LocalDate date) {
         log.info("Getting event for Id: {] time: {}", eventId, time);
-        return eventService.getEventOccurrenceByDateAndTime(eventId, time);
+        return eventService.getEventOccurrenceByDateAndTime(eventId, time, date);
     }
 
     @GetMapping("/capacity-check/{eventId}")

@@ -88,10 +88,9 @@ public class EventService {
         return new CapacityCheckResponse(eventRepository.hasAvailableCapacity(eventId));
     }
 
-    public List<EventTicketDto> getEventOccurrenceByDateAndTime(Long eventId, String time) {
+    public List<EventTicketDto> getEventOccurrenceByDateAndTime(Long eventId, String time, LocalDate date) {
         LocalTime timeParsed = LocalTime.parse(time);
-
-        EventOccurrence eventOccurrence = eventOccurrenceRepository.findEventOccurrenceByEventIdAndTime(eventId, timeParsed);
+        EventOccurrence eventOccurrence = eventOccurrenceRepository.findEventOccurrenceByEventIdAndTime(eventId, timeParsed, date);
         List<Ticket> ticketsForOccurrence = ticketRepository.findTicketsOccurrenceId(eventOccurrence.getId());
 
         return ticketsForOccurrence.stream()

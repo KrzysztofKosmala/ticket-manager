@@ -38,7 +38,7 @@ public class EventMapper {
                 }).toList();
     }
 
-    static EventTicketDto mapToEventTicketDto(Ticket ticket) {
+    public EventTicketDto mapToEventTicketDto(Ticket ticket) {
         return EventTicketDto.builder()
                 .price(ticket.getPrice())
                 .type(ticket.getType())

@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.integrity;
+package pl.ticket.event.admin.integrity.event;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

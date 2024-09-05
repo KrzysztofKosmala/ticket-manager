@@ -10,7 +10,7 @@ import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event.service.AdminEventService;
 import pl.ticket.event.admin.event_occurrence.repository.AdminEventOccurrenceRepository;
-import pl.ticket.event.admin.integrity.PrePost;
+import pl.ticket.event.admin.integrity.event.PrePost;
 import pl.ticket.event.admin.ticket.repository.AdminTicketRepository;
 
 import java.util.stream.Stream;
