@@ -38,7 +38,7 @@ public class Cart
                 .filter(item -> cartItem.getTicketId().equals(item.getTicketId()))
                 .findFirst()
                 .ifPresentOrElse(
-                        item -> item.setQuantity(item.getQuantity() + 1),
+                        item -> item.setQuantity(item.getQuantity() + cartItem.getQuantity()),
                         () -> items.add(cartItem)
                 );
 
