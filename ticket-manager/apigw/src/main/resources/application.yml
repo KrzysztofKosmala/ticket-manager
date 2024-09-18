@@ -29,8 +29,7 @@ spring:
           uri: lb://CART
           predicates:
             - Path=/api/v1/carts/**, /api/v1/admin/carts/**
-  main:
-    web-application-type: reactive
+
   security:
     oauth2:
       resourceserver:

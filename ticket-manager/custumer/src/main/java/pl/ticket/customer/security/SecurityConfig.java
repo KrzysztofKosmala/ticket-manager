@@ -4,15 +4,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
-@EnableWebFluxSecurity
+@EnableWebSecurity
 public class SecurityConfig {
     private final String[] swaggerApis = {"/swagger-ui.html",
             "/swagger-resources/**",
@@ -24,21 +24,22 @@ public class SecurityConfig {
             "/webjars/**",
             "/swagger-resources/**"};
 
-
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    public SecurityFilterChain securityWebFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/api/v1/customers/login").permitAll()
-                        .pathMatchers("/api/v1/customers/register").permitAll()
-                        .pathMatchers(swaggerApis).permitAll()
-                        .anyExchange().authenticated()
+
+                .authorizeHttpRequests(authorize -> {
+                            authorize
+                                    .requestMatchers("/api/v1/customers/login").permitAll()
+                                    .requestMatchers("/api/v1/customers/register").permitAll()
+                                    .requestMatchers(swaggerApis).permitAll()
+                                    .anyRequest().authenticated();
+                        }
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

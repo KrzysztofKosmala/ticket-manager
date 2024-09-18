@@ -20,9 +20,9 @@
         <module>apigw</module>
         <module>ampq</module>
         <module>notification</module>
-        <module>mainTicket</module>
         <module>image</module>
         <module>cart</module>
+        <module>order</module>
     </modules>
     <!-- update versions -->
     <properties>

@@ -2,11 +2,10 @@ package pl.ticket;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import reactivefeign.spring.config.EnableReactiveFeignClients;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-//probowalem w ten sposob ale latwiej by bylo ze zwyklym
-@EnableReactiveFeignClients
+@EnableFeignClients
         (
                 basePackages = "pl.ticket.feign"
         )
