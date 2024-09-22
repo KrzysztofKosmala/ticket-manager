@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     private final String[] swaggerApis = {"/swagger-ui.html",
+            "/swagger-ui/**",
             "/swagger-resources/**",
             "/swagger-resources/configuration/ui/**",
             "/swagger-resources/configuration/security/**",
@@ -20,7 +21,7 @@ public class SecurityConfig {
             "/v2/api-docs/**",
             "/v3/api-docs/**",
             "/webjars/**",
-            "/swagger-resources/**"};
+            "/swagger-resources"};
 
     @Bean
     public SecurityFilterChain securityWebFilterChain(HttpSecurity http) throws Exception {

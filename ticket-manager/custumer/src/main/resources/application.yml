@@ -31,9 +31,11 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 openapi:
-  service:
-    title: customer doc
+  info:
+    title: Customer Doc
     version: 1.0.0
+  service:
+    description: Customer APIs
     url: http://localhost:8080
 
 realm: ticket-manager-realm
@@ -43,3 +45,4 @@ grand-type: password
 admin-client-secret: 6MnsH2FO7Tx6Iqcyu8vrDVB8HVIGtABX #Uf4JI5OVCqAJ3MmNx0e0MB3JrDsYrPwt
 password: password
 name: admin
+

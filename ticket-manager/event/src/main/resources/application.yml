@@ -1,8 +1,5 @@
 server:
   port: 8081
-
-
-
 spring:
   application:
     name: event
@@ -35,13 +32,10 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 openapi:
-  service:
-    title: event doc
+  info:
+    title: Event Doc
     version: 1.0.0
+  service:
+    description: Event APIs
     url: http://localhost:8081
-  springdoc:
-    api-docs:
-      path: /events/v3/api-docs
-    swagger-ui:
-      path: /events/swagger-ui.html
 

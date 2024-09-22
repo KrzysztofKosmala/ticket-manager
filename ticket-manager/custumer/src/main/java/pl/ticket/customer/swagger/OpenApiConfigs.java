@@ -1,11 +1,8 @@
 package pl.ticket.customer.swagger;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
@@ -15,27 +12,26 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-@OpenAPIDefinition
 @Configuration
 public class OpenApiConfigs {
 
     @Bean
     public OpenAPI customOpenAPI(
-            @Value("${openapi.service.title}") String serviceTitle,
-            @Value("${openapi.service.version}") String serviceVersion,
-            @Value("${openapi.service.url}") String url) {
+            @Value("${openapi.info.title}") String serviceTitle,
+            @Value("${openapi.info.version}") String serviceVersion,
+            @Value("${openapi.service.url}") String url ,
+            @Value("${openapi.service.description}") String desc)
+    {
         return new OpenAPI()
                 .servers(List.of(new Server().url(url)))
-                .info(new Info().title(serviceTitle).version(serviceVersion));
-    }
-
-    @Bean
-    public OpenAPI openAPI() {
-        return new OpenAPI().addSecurityItem(new SecurityRequirement().
+                .info(new Info()
+                        .title(serviceTitle)
+                        .version(serviceVersion)
+                        .description(desc))
+                .addSecurityItem(new SecurityRequirement().
                         addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes
                         ("Bearer Authentication", createAPIKeyScheme()));
-
     }
 
     private SecurityScheme createAPIKeyScheme() {

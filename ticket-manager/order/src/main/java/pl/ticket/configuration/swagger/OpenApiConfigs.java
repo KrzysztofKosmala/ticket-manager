@@ -1,7 +1,6 @@
 package pl.ticket.configuration.swagger;
 
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -14,27 +13,26 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-@OpenAPIDefinition
 @Configuration
 public class OpenApiConfigs
 {
-
     @Bean
     public OpenAPI customOpenAPI(
-            @Value("${openapi.service.title}") String serviceTitle,
-            @Value("${openapi.service.version}") String serviceVersion,
-            @Value("${openapi.service.url") String url) {
+            @Value("${openapi.info.title}") String serviceTitle,
+            @Value("${openapi.info.version}") String serviceVersion,
+            @Value("${openapi.service.url}") String url ,
+            @Value("${openapi.service.description}") String desc)
+    {
         return new OpenAPI()
                 .servers(List.of(new Server().url(url)))
-                .info(new Info().title(serviceTitle).version(serviceVersion));
-    }
-    @Bean
-    public OpenAPI openAPI() {
-        return new OpenAPI().addSecurityItem(new SecurityRequirement().
+                .info(new Info()
+                        .title(serviceTitle)
+                        .version(serviceVersion)
+                        .description(desc))
+                .addSecurityItem(new SecurityRequirement().
                         addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes
                         ("Bearer Authentication", createAPIKeyScheme()));
-
     }
 
     private SecurityScheme createAPIKeyScheme() {

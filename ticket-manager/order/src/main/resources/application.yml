@@ -1,8 +1,5 @@
 server:
   port: 8088
-
-
-
 spring:
   application:
     name: order
@@ -10,7 +7,6 @@ spring:
     password: password
     url: jdbc:postgresql://localhost:51/order
     username: admin
-
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -34,12 +30,10 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 openapi:
-  service:
-    title: order doc
+  info:
+    title: Order Doc
     version: 1.0.0
+  service:
+    description: Order APIs
     url: http://localhost:8088
-  springdoc:
-    api-docs:
-      path: /order/v3/api-docs
-    swagger-ui:
-      path: /order/swagger-ui.html
+

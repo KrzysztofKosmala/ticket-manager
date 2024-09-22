@@ -1,8 +1,5 @@
 server:
   port: 8086
-
-
-
 spring:
   application:
     name: cart
@@ -35,13 +32,9 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 openapi:
-  service:
-    title: cart doc
+  info:
+    title: Cart Doc
     version: 1.0.0
+  service:
+    description: Cart APIs
     url: http://localhost:8086
-  springdoc:
-    api-docs:
-      path: /carts/v3/api-docs
-    swagger-ui:
-      path: /carts/swagger-ui.html
-

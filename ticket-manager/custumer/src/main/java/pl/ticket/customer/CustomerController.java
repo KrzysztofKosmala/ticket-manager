@@ -31,8 +31,6 @@ public record CustomerController(CustomerService customerService, KeycloackSecur
         return customerService.loginCustomer(loginRequest);
     }
 
-
-
     @GetMapping("/email")
     public String getUserEmail(@AuthenticationPrincipal Jwt jwt) {
         return jwt.getClaimAsString("email");
