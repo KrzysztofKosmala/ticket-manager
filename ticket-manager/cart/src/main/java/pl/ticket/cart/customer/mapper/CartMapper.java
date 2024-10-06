@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.ticket.cart.customer.model.Cart;
 import pl.ticket.cart.customer.model.CartItem;
-import pl.ticket.cart.customer.model.dto.CartSummaryDto;
-import pl.ticket.cart.customer.model.dto.CartSummaryItemDto;
-import pl.ticket.cart.customer.model.dto.SummaryDto;
+import pl.ticket.feign.cart.CartSummaryDto;
+import pl.ticket.feign.cart.CartSummaryItemDto;
+import pl.ticket.feign.cart.SummaryDto;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -3,10 +3,9 @@ package pl.ticket.cart.customer.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import pl.ticket.cart.customer.mapper.CartMapper;
-import pl.ticket.cart.customer.model.Cart;
-import pl.ticket.cart.customer.model.dto.CartSummaryDto;
 import pl.ticket.cart.customer.model.dto.CartTicketDto;
 import pl.ticket.cart.customer.service.CartService;
+import pl.ticket.feign.cart.CartSummaryDto;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class CartController
     }
 
     @PutMapping("/{id}")
-    public CartSummaryDto addTicketToCart(@PathVariable Long id, @RequestBody CartTicketDto cartTicketDto)
+    public CartSummaryDto addTicketToCart(@PathVariable(value = "id", required = false) Long id, @RequestBody CartTicketDto cartTicketDto)
     {
         return cartMapper.mapToCartSummary(cartService.addTicketToCart(id, cartTicketDto));
     }

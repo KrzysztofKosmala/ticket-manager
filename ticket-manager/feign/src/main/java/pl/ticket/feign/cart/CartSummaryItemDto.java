@@ -1,12 +1,16 @@
-package pl.ticket.cart.customer.model.dto;
+package pl.ticket.feign.cart;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class CartSummaryItemDto
 {
     private Long id;
