@@ -42,7 +42,7 @@ public class AdminEventMapper
 
         return adminEventRegularCreationDto.getOccurrences()
                 .stream()
-                .flatMap(regularEvent -> createOccurrencesForRegularEvent(regularEvent, datesFromRange, eventId, adminEventRegularCreationDto.getCapacity()).stream())
+                .flatMap(regularEvent -> createOccurrencesForRegularEvent(regularEvent, datesFromRange, eventId, adminEventRegularCreationDto.getIsCommonTicketPool()).stream())
                 .toList();
     }
 
@@ -81,21 +81,21 @@ public class AdminEventMapper
     private List<AdminEventOccurrence> createOccurrencesForRegularEvent(AdminEventOccurrenceRegularCreationDto regularEvent,
                                                                         List<LocalDate> datesFromRange,
                                                                         Long eventId,
-                                                                        Integer capacity) {
+                                                                        Boolean isCommonTicketPool) {
         return datesFromRange.stream()
                 .filter(date -> adminEventUtils.isMatchingDayOfWeek(date, regularEvent.getDay()))
-                .map(date -> createOccurrence(eventId, date, regularEvent.getTime(), capacity))
+                .map(date -> createOccurrence(eventId, date, regularEvent.getTime(), isCommonTicketPool))
                 .toList();
     }
 
 
 
-    private AdminEventOccurrence createOccurrence(Long eventId, LocalDate date, LocalTime time, Integer capacity) {
+    private AdminEventOccurrence createOccurrence(Long eventId, LocalDate date, LocalTime time, Boolean isCommonTicketPool) {
         return AdminEventOccurrence.builder()
                 .eventId(eventId)
                 .date(date)
                 .time(time)
-                .spaceLeft(capacity)
+                .isCommonPool(isCommonTicketPool)
                 .build();
     }
 }

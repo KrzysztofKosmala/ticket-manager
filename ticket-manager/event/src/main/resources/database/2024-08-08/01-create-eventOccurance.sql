@@ -7,5 +7,5 @@ CREATE TABLE event_occurrence (
                                   event_id INTEGER NOT NULL,
                                   date DATE NOT NULL,
                                   time TIME NOT NULL,
-                                  space_left INTEGER NOT NULL
+                                  is_common_pool BOOLEAN NOT NULL
 );

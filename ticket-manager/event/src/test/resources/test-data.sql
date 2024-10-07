@@ -11,11 +11,11 @@ VALUES
     (222, 50, 'Workshop B', 'Interactive workshop.', 'workshop-b', 222);
 
 -- Wstawienie przykładowych Event Occurrences
-INSERT INTO event_occurrence (id, event_id, date, time, space_left)
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool)
 VALUES
-    (111, 111, '2024-08-19', '18:00:00', 100),
-    (222, 111, '2024-08-26', '18:00:00', 100),
-    (333, 222, '2024-09-02', '14:00:00', 50);
+    (111, 111, '2024-08-19', '18:00:00', true),
+    (222, 111, '2024-08-26', '18:00:00', true),
+    (333, 222, '2024-09-02', '14:00:00', true);
 
 -- Wstawienie przykładowych Ticketów
 INSERT INTO ticket (id,event_occurrence_id, event_id, type, price, amount)

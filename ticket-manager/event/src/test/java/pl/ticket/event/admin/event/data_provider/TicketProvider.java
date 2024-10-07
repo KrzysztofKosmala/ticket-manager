@@ -21,7 +21,7 @@ public class TicketProvider {
                 .eventId(111L)
                 .date(date)
                 .time(timeParsed)
-                .spaceLeft(100)
+                .isCommonPool(true)
                 .build();
 
         Ticket ticket1 = Ticket.builder()

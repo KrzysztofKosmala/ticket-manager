@@ -16,7 +16,6 @@ import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.admin.event_occurrence.service.AdminEventOccurrenceService;
 import pl.ticket.event.admin.ticket.model.AdminTicket;
 import pl.ticket.event.admin.ticket.service.AdminTicketService;
-import pl.ticket.event.common.dto.AdminTicketCreationDto;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -43,7 +42,7 @@ public class AdminEventService {
             // lista wystąpień z requestu
             List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
 
-            List<AdminEventOccurrence> adminEventOccurrences = mapToAdminEventOccurrence(event, eventOccurrences);
+            List<AdminEventOccurrence> adminEventOccurrences = mapToAdminEventOccurrence(event, eventOccurrences, adminEventOccasionalCreationDto.getIsCommonTicketPool());
             adminEventOccurrenceService.createEventOccurrences(adminEventOccurrences);
 
             List<AdminTicket> tickets = adminEventMapper.prepareTicketsForEachOccurrence(event,
@@ -55,12 +54,12 @@ public class AdminEventService {
     }
 
     private static List<AdminEventOccurrence> mapToAdminEventOccurrence(AdminEvent event,
-                                                                        List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences) {
+                                                                        List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences, Boolean isCommonTicketPool) {
         return eventOccurrences.stream()
                 .map(eventOccurrence -> AdminEventOccurrence.builder()
                         .date(eventOccurrence.getDate())
                         .time(eventOccurrence.getTime())
-                        .spaceLeft(event.getCapacity())
+                        .isCommonPool(isCommonTicketPool)
                         .eventId(event.getId())
                         .build())
                 .toList();
@@ -97,7 +96,7 @@ public class AdminEventService {
                             .eventId(eventId)
                             .date(date)
                             .time(regularEvent.getTime())
-                            .spaceLeft(adminEventRegularCreationDto.getCapacity())
+                            .isCommonPool(adminEventRegularCreationDto.getIsCommonTicketPool())
                             .build());
                 }
             }

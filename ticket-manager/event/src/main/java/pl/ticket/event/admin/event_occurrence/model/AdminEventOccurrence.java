@@ -28,8 +28,8 @@ public class AdminEventOccurrence
     @Column(nullable = false)
     private LocalTime time;
 
-    @Column(name = "space_left", nullable = false)
-    private Integer spaceLeft;
+    @Column(name = "is_common_pool", nullable = false)
+    private Boolean isCommonPool;
 
     @OneToMany(mappedBy = "eventOccurrence", fetch = FetchType.EAGER)
     private List<AdminTicket> tickets;

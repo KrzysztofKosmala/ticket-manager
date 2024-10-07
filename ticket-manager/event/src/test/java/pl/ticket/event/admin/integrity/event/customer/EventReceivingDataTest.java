@@ -96,7 +96,7 @@ public class EventReceivingDataTest extends PrePost {
         assertEquals(111L, eventOccurrence.getEventId());
         assertEquals(date, eventOccurrence.getDate());
         assertEquals(timeParsed, eventOccurrence.getTime());
-        assertEquals(100, eventOccurrence.getSpaceLeft());
+        assertEquals(true, eventOccurrence.getIsCommonPool());
 
         List<Ticket> ticketsForOccurrence = ticketRepository.findTicketsOccurrenceId(eventOccurrence.getId());
 
@@ -151,7 +151,7 @@ public class EventReceivingDataTest extends PrePost {
         assertEquals(expectedOccurrence.getEventId(), recievedOccurrence.getEventId());
         assertEquals(expectedOccurrence.getDate(), recievedOccurrence.getDate());
         assertEquals(expectedOccurrence.getTime(), recievedOccurrence.getTime());
-        assertEquals(expectedOccurrence.getSpaceLeft(), recievedOccurrence.getSpaceLeft());
+        assertEquals(expectedOccurrence.getIsCommonPool(), recievedOccurrence.getIsCommonPool());
     }
 
 }
