@@ -43,6 +43,7 @@ public record EventController(EventService eventService)
     @GetMapping("/{eventId}/{date}")
     public EventDateTimeDto getEvent(@PathVariable Long eventId, @PathVariable LocalDate date) {
         log.info("Getting event for Id: {] date: {}", eventId, date);
+        //TODO: może to zwróćmy tylko jak jest jakikolwiek bilet
         return eventService.getEventByIdAndDate(eventId, date);
     }
 
@@ -52,6 +53,7 @@ public record EventController(EventService eventService)
                                                                 @PathVariable String time,
                                                                 @PathVariable LocalDate date) {
         log.info("Getting event for Id: {] time: {}", eventId, time);
+        //TODO: może to zwróćmy tylko jak jest jakikolwiek bilet
         return eventService.getEventOccurrenceByDateAndTime(eventId, time, date);
     }
 

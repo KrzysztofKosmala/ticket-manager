@@ -22,11 +22,11 @@ public class OrderController
     private final OrderService orderService;
 
     @PostMapping
-    public OrderSummary placeOrder(@RequestBody OrderDto orderDto, @AuthenticationPrincipal Jwt userId)
+    public OrderSummary placeOrder(@RequestBody OrderDto orderDto, @AuthenticationPrincipal Jwt jwt)
     {
-        String id = userId.getSubject();
-        Map<String, Object> claims = userId.getClaims();
-        return orderService.placeOrder(orderDto);
+        String userId = jwt.getSubject();
+
+        return orderService.placeOrder(orderDto, userId);
     }
 
 }

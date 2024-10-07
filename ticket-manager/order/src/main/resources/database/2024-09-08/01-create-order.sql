@@ -4,7 +4,11 @@ CREATE TABLE "order" (
                          id BIGSERIAL PRIMARY KEY,
                          place_date TIMESTAMP NOT NULL,
                          order_status VARCHAR(32) NOT NULL,
-                         gross_value DECIMAL(6,2) NOT NULL
+                         gross_value DECIMAL(6,2) NOT NULL,
+                         firstname VARCHAR(32) NOT NULL,
+                         lastname VARCHAR(32) NOT NULL,
+                         email VARCHAR(32) NOT NULL,
+                         phone VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE order_row (

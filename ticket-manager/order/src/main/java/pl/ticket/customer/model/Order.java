@@ -26,5 +26,12 @@ public class Order
     @JoinColumn(name = "orderId")
     private List<OrderRow> orderRows;
     private BigDecimal grossValue;
-
+    private String firstname;
+    private String lastname;
+    private String email;
+    private String phone;
+    @OneToOne
+    private Payment payment;
+    private Long userId;
+    private String orderHash;
 }
