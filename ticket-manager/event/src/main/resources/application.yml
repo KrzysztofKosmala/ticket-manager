@@ -17,6 +17,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
+    defer-datasource-initialization: false
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:initData.sql
   liquibase:
     change-log: classpath:liquibase-changelog.xml
     drop-first: true
