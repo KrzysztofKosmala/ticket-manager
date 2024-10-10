@@ -23,6 +23,7 @@
         <module>image</module>
         <module>cart</module>
         <module>order</module>
+        <module>common</module>
     </modules>
     <!-- update versions -->
     <properties>

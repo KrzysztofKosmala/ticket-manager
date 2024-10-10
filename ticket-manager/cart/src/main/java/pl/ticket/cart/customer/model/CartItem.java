@@ -22,6 +22,6 @@ public class CartItem
     private Long id;
     private int quantity;
     private Long cartId;
-    private Long ticketId;
-    private BigDecimal ticketPrice;
+    private Long productId;
+    private BigDecimal productPrice;
 }

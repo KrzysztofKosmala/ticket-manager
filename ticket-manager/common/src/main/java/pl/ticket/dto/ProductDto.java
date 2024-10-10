@@ -1,4 +1,4 @@
-package pl.ticket.feign.cart;
+package pl.ticket.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +11,8 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class CartSummaryItemDto
+public class ProductDto
 {
     private Long id;
-    private int quantity;
-    private Long ticketId;
-    private BigDecimal lineValue;
+    private BigDecimal price;
 }

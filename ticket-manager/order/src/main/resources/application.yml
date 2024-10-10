@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: order
+  rabbitmq:
+    addresses: localhost:5672
   datasource:
     password: password
     url: jdbc:postgresql://localhost:51/order
@@ -37,3 +39,14 @@ openapi:
     description: Order APIs
     url: http://localhost:8088
 
+rabbitmq:
+  order-exchanges:
+    internal: internal.exchange
+  order-queue:
+    orderCreated: orderCreated.queue
+    orderReserved: orderReserved.queue
+    orderChangeStatus: orderChangeStatus.queue
+  order-routing-keys:
+    internal-orderCreated: internal.orderCreated.routing-key
+    internal-orderReserved: internal.orderReserved.routing-key
+    internal-orderChangeStatus: internal.orderChangeStatus.routing-key

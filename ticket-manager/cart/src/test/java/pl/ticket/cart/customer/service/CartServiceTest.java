@@ -5,7 +5,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.ticket.cart.customer.model.Cart;
-import pl.ticket.cart.customer.model.dto.CartTicketDto;
+import pl.ticket.cart.customer.model.dto.CartProductDto;
 import pl.ticket.cart.customer.repository.CartItemRepository;
 import pl.ticket.cart.customer.repository.CartRepository;
 
@@ -32,7 +32,7 @@ class CartServiceTest extends PrePost
         return Stream.of(
                 Arguments.of(
                         0L,
-                        CART_TICKET_DTO_DATA_PROVIDER.getCartTicketDto(),
+                        CART_TICKET_DTO_DATA_PROVIDER.getCartProductDto(),
                         1,
                         1
                 )
@@ -42,12 +42,12 @@ class CartServiceTest extends PrePost
 
     @ParameterizedTest
     @MethodSource("provideInputDataForAddingTicketToCart")
-    public void shouldAddTicketToCart(Long cartId, CartTicketDto cartTicketDto, int expectedCartNumberIncrease, int expectedCartItemNumberIncrease)
+    public void shouldAddProductToCart(Long cartId, CartProductDto cartProductDto, int expectedCartNumberIncrease, int expectedCartItemNumberIncrease)
     {
         long countedCartsBefore = cartRepository.count();
         long countedCartItemsBefore = cartItemRepository.count();
 
-        Cart cart = cartService.addTicketToCart(cartId, cartTicketDto);
+        Cart cart = cartService.addProductToCart(cartId, cartProductDto);
 
         long countedCartsAfter = cartRepository.count();
         long countedCartItemsAfter = cartItemRepository.count();
@@ -63,7 +63,7 @@ class CartServiceTest extends PrePost
         return Stream.of(
                 Arguments.of(
                         333L,
-                        CART_TICKET_DTO_DATA_PROVIDER.getCartTicketDtoWhenSameTicketIsAlreadyInCart(),
+                        CART_TICKET_DTO_DATA_PROVIDER.getCartProductDtoWhenSameProductIsAlreadyInCart(),
                         0,
                         0,
                         2
@@ -75,7 +75,7 @@ class CartServiceTest extends PrePost
     public void shouldIncreaseAmountOfTicketInExistingCart
             (
                     Long cartId,
-                    CartTicketDto cartTicketDto,
+                    CartProductDto cartProductDto,
                     int expectedCartNumberIncrease,
                     int expectedCartItemNumberIncrease,
                     int expectedQuantityIncrease
@@ -87,7 +87,7 @@ class CartServiceTest extends PrePost
         Optional<Cart> byId = cartRepository.findById(cartId);
         int quantityBefore = byId.get().getItems().stream().findFirst().get().getQuantity();
 
-        Cart cart = cartService.addTicketToCart(cartId, cartTicketDto);
+        Cart cart = cartService.addProductToCart(cartId, cartProductDto);
 
         Optional<Cart> byIdAfter = cartRepository.findById(cartId);
         int quantityAfter = byIdAfter.get().getItems().stream().findFirst().get().getQuantity();

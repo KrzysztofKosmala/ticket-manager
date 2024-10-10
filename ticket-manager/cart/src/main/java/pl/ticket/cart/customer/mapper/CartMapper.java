@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.ticket.cart.customer.model.Cart;
 import pl.ticket.cart.customer.model.CartItem;
-import pl.ticket.feign.cart.CartSummaryDto;
-import pl.ticket.feign.cart.CartSummaryItemDto;
-import pl.ticket.feign.cart.SummaryDto;
+import pl.ticket.dto.CartSummaryDto;
+import pl.ticket.dto.CartSummaryItemDto;
+import pl.ticket.dto.ProductDto;
+import pl.ticket.dto.SummaryDto;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -47,13 +48,16 @@ public class CartMapper
                 .id(cartItem.getId())
                 .quantity(cartItem.getQuantity())
                 //todo: można tu zwracac caly ticket pozuskujac go z ticket controllera
-                .ticketId(cartItem.getTicketId())
+                .product(ProductDto.builder()
+                        .id(cartItem.getProductId())
+                        .price(cartItem.getProductPrice())
+                        .build())
                 .lineValue(calculateLineValue(cartItem))
                 .build();
     }
 
     private BigDecimal calculateLineValue(CartItem cartItem)
     {
-        return cartItem.getTicketPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+        return cartItem.getProductPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
     }
 }

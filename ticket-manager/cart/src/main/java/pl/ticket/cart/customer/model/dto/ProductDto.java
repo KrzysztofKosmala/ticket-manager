@@ -2,12 +2,14 @@ package pl.ticket.cart.customer.model.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartTicketDto
+public class ProductDto
 {
-    private int quantity;
-    private TicketDto ticket;
+    private Long id;
+    private BigDecimal price;
 }

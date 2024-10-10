@@ -6,11 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -35,7 +33,7 @@ public class Cart
             items = new ArrayList<>();
         }
         new ArrayList<>(items).stream()
-                .filter(item -> cartItem.getTicketId().equals(item.getTicketId()))
+                .filter(item -> cartItem.getProductId().equals(item.getProductId()))
                 .findFirst()
                 .ifPresentOrElse(
                         item -> item.setQuantity(item.getQuantity() + cartItem.getQuantity()),

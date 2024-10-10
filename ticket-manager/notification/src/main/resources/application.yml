@@ -20,11 +20,9 @@ rabbitmq:
   exchanges:
     internal: internal.exchange
   queue:
-    orderConfirmation: orderConfirmation.queue
     accountConfirmation: accountConfirmation.queue
     resetPassword: resetPassword.queue
   routing-keys:
-    internal-orderConfirmation: internal.orderConfirmation.routing-key
     internal-accountConfirmation: internal.accountConfirmation.routing-key
     internal-resetPassword: internal.resetPassword.routing-key
 

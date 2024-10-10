@@ -1,4 +1,4 @@
-package pl.ticket.feign.cart;
+package pl.ticket.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

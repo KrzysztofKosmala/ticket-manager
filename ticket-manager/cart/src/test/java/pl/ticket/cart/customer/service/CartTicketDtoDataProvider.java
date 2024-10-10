@@ -1,17 +1,17 @@
 package pl.ticket.cart.customer.service;
 
-import pl.ticket.cart.customer.model.dto.CartTicketDto;
-import pl.ticket.cart.customer.model.dto.TicketDto;
+import pl.ticket.cart.customer.model.dto.CartProductDto;
+import pl.ticket.cart.customer.model.dto.ProductDto;
 
 import java.math.BigDecimal;
 
 public class CartTicketDtoDataProvider
 
 {
-    public CartTicketDto getCartTicketDto()
+    public CartProductDto getCartProductDto()
     {
-       return CartTicketDto.builder()
-                .ticket(TicketDto.builder()
+       return CartProductDto.builder()
+                .productDto(ProductDto.builder()
                         .id(1L)
                         .price(new BigDecimal(20))
                         .build())
@@ -19,10 +19,10 @@ public class CartTicketDtoDataProvider
                 .build();
     }
 
-    public CartTicketDto getCartTicketDtoWhenSameTicketIsAlreadyInCart()
+    public CartProductDto getCartProductDtoWhenSameProductIsAlreadyInCart()
     {
-        return CartTicketDto.builder()
-                .ticket(TicketDto.builder()
+        return CartProductDto.builder()
+                .productDto(ProductDto.builder()
                         .id(2L)
                         .price(new BigDecimal(20))
                         .build())

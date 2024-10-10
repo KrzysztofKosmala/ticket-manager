@@ -2,9 +2,10 @@ package pl.ticket.customer.model;
 
 public enum OrderStatus
 {
-    NEW("Nowe"),
+    CREATED("Stworzone"),
     PAID("Opłacone"),
-    PROCESSING("Przetwarzane"),
+    CANCELLING("Przetwarzane"),
+    RESERVED("Zarezeerwowane"),
     WAITING_FOR_DELIVERY("Czeka na dostawę"),
     COMPLETED("Zrealizowane"),
     CANCELED("Anulowane"),
