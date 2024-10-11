@@ -38,15 +38,13 @@ public class OrderService
     {
 
         Long cartId = orderDto.getCartId();
-        //wyciagnac koszyk
+
         CartSummaryDto cart = cartClient.getCart(cartId);
         //sprawdź dostępność
 
-        //wyciagnac payment
-        Payment payment = paymentRepository.findById(orderDto.getPaymentId()).orElseThrow();
-        //poprawić payment w changelogu
-
-        Order order = OrderMapper.createNewOrder(orderDto, cart, payment, userId);
+        //pobrac payment z payment service
+        //Payment payment = paymentRepository.findById(orderDto.getPaymentId()).orElseThrow();
+        Order order = OrderMapper.createNewOrder(orderDto, cart, new Payment(), userId);
 
         orderRepository.save(order);
 
@@ -58,12 +56,10 @@ public class OrderService
         OrderCreatedEvent orderCreatedEvent = OrderMapper.toOrderCreatedEvent(order);
         //odjąć z puli dostpenych(SAGA paattern) - prawdopodobnie trzeba usunac space left z occurance i zastąpić to isCommonPool
             //leci request przez feighn do ticket controllera i tam jest updatowany amount w zależoności czy occurance do ktorego przypisanny jest ticket ma wspólny pool czy nie updatuje amount tylko w jednym tickecie lub we wszysich przypisanych do tego occurance
-        //zapisać nowy order
         sagaOrderProcessService.orderCreated(orderCreatedEvent);
         //mail z potwierdzeniem
-        //wyczyścić koszyk
-        //save order rows
-        return null;
+        clearOrderCart(orderDto);
+        return OrderMapper.createOrderSummary(new Payment(), order, "to be implemented");
     }
 
 
@@ -73,6 +69,11 @@ public class OrderService
                 )
                 .peek(orderRowRepository::save)
                 .toList();
+    }
+
+    private void clearOrderCart(OrderDto orderDto) {
+        cartClient.deleteItemsByCartId(orderDto.getCartId());
+        cartClient.deleteCart(orderDto.getCartId());
     }
 
 

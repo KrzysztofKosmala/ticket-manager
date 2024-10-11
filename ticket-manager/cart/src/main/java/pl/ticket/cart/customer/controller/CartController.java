@@ -34,4 +34,10 @@ public class CartController
     {
         return cartMapper.mapToCartSummary(cartService.updateCart(id, cartProductDtos));
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteCart(@PathVariable Long id)
+    {
+        cartService.deleteCartById(id);
+    }
 }

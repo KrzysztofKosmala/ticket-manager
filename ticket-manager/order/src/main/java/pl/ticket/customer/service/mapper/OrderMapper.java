@@ -6,6 +6,7 @@ import pl.ticket.customer.model.OrderRow;
 import pl.ticket.customer.model.OrderStatus;
 import pl.ticket.customer.model.Payment;
 import pl.ticket.customer.model.dto.OrderDto;
+import pl.ticket.customer.model.dto.OrderSummary;
 import pl.ticket.dto.OrderCreatedEvent;
 import pl.ticket.dto.OrderRowDto;
 import pl.ticket.dto.CartSummaryDto;
@@ -24,7 +25,7 @@ public class OrderMapper
                 .placeDate(LocalDateTime.now())
                 .orderStatus(OrderStatus.CREATED)
                 .grossValue(cart.getSummary().getGrossValue())
-                .payment(payment)
+                //.payment(payment)
                 .userId(userId)
                 .orderHash(RandomStringUtils.randomAlphanumeric(12))
                 .build();
@@ -63,6 +64,17 @@ public class OrderMapper
                 .productId(cartItem.getProduct().getId())
                 .price(cartItem.getProduct().getPrice())
                 .orderId(orderId)
+                .build();
+    }
+
+    public static OrderSummary createOrderSummary(Payment payment, Order newOrder, String redirectUrl) {
+        return OrderSummary.builder()
+                .id(newOrder.getId())
+                .placeDate(newOrder.getPlaceDate())
+                .status(newOrder.getOrderStatus())
+                .grossValue(newOrder.getGrossValue())
+                //.payment(payment)
+                .redirectUrl(redirectUrl)
                 .build();
     }
 }

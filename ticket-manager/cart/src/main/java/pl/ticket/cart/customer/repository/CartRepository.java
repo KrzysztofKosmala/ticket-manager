@@ -3,6 +3,7 @@ package pl.ticket.cart.customer.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.ticket.cart.customer.model.Cart;
 
@@ -16,7 +17,7 @@ public interface CartRepository extends JpaRepository<Cart, Long>
 
     @Query("delete from Cart c where c.id=:id")
     @Modifying
-    void deleteCartById(Long id);
+    void deleteCartById(@Param("id") Long id);
 
     @Query("delete from Cart c where c.id in (:ids)")
     @Modifying

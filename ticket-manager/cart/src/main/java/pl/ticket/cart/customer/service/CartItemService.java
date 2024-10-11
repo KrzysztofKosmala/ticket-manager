@@ -1,5 +1,6 @@
 package pl.ticket.cart.customer.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.ticket.cart.customer.repository.CartItemRepository;
@@ -18,5 +19,11 @@ public class CartItemService
     public Long countItemInCart(Long cartId)
     {
         return cartItemRepository.countByCartId(cartId);
+    }
+
+    @Transactional
+    public void deleteItemsByCartId(Long cartId)
+    {
+        cartItemRepository.deleteByCartId(cartId);
     }
 }

@@ -89,4 +89,10 @@ public class CartService
         });
         return cart;
     }
+
+    @Transactional
+    public void deleteCartById(Long id)
+    {
+        cartRepository.deleteCartById(id);
+    }
 }

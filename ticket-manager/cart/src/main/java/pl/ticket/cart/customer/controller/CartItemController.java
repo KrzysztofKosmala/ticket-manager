@@ -22,4 +22,10 @@ public class CartItemController
         return cartItemService.countItemInCart(cartId);
     }
 
+    @DeleteMapping("/byCartId/{cartId}")
+    public void deleteItemsByCartId(@PathVariable Long cartId)
+    {
+        cartItemService.deleteItemsByCartId(cartId);
+    }
+
 }
