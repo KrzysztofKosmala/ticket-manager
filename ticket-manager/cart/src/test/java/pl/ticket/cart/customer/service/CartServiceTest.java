@@ -4,8 +4,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.ticket.cart.customer.model.Cart;
-import pl.ticket.cart.customer.model.dto.CartProductDto;
+import pl.ticket.cart.common.model.Cart;
+import pl.ticket.cart.common.dto.CartProductDto;
 import pl.ticket.cart.customer.repository.CartItemRepository;
 import pl.ticket.cart.customer.repository.CartRepository;
 

@@ -2,8 +2,8 @@ package pl.ticket.cart.customer.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import pl.ticket.cart.customer.mapper.CartMapper;
-import pl.ticket.cart.customer.model.dto.CartProductDto;
+import pl.ticket.cart.common.mapper.CartMapper;
+import pl.ticket.cart.common.dto.CartProductDto;
 import pl.ticket.cart.customer.service.CartService;
 import pl.ticket.dto.CartSummaryDto;
 
@@ -35,9 +35,4 @@ public class CartController
         return cartMapper.mapToCartSummary(cartService.updateCart(id, cartProductDtos));
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCart(@PathVariable Long id)
-    {
-        cartService.deleteCartById(id);
-    }
 }

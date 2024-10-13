@@ -1,9 +1,9 @@
-package pl.ticket.cart.customer.mapper;
+package pl.ticket.cart.common.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pl.ticket.cart.customer.model.Cart;
-import pl.ticket.cart.customer.model.CartItem;
+import pl.ticket.cart.common.model.Cart;
+import pl.ticket.cart.common.model.CartItem;
 import pl.ticket.dto.CartSummaryDto;
 import pl.ticket.dto.CartSummaryItemDto;
 import pl.ticket.dto.ProductDto;

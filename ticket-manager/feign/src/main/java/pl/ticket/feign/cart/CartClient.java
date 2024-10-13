@@ -12,8 +12,8 @@ public interface CartClient
 {
     @GetMapping("api/v1/carts/{id}")
     CartSummaryDto getCart(@PathVariable("id") Long id);
-    @DeleteMapping("api/v1/carts/{id}")
+    @DeleteMapping("api/v1/internal/carts/{id}")
     void deleteCart(@PathVariable("id") Long id);
-    @DeleteMapping("api/v1/cartItems/byCartId/{cartId}")
+    @DeleteMapping("api/v1/internal/cartItems/byCartId/{cartId}")
     void deleteItemsByCartId(@PathVariable("cartId") Long cartId);
 }

@@ -1,4 +1,4 @@
-package pl.ticket.cart.customer.model;
+package pl.ticket.cart.common.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

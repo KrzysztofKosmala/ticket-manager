@@ -3,9 +3,9 @@ package pl.ticket.cart.customer.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.ticket.cart.customer.model.Cart;
-import pl.ticket.cart.customer.model.CartItem;
-import pl.ticket.cart.customer.model.dto.CartProductDto;
+import pl.ticket.cart.common.model.Cart;
+import pl.ticket.cart.common.model.CartItem;
+import pl.ticket.cart.common.dto.CartProductDto;
 import pl.ticket.cart.customer.repository.CartRepository;
 
 import java.time.LocalDateTime;
@@ -90,9 +90,4 @@ public class CartService
         return cart;
     }
 
-    @Transactional
-    public void deleteCartById(Long id)
-    {
-        cartRepository.deleteCartById(id);
-    }
 }

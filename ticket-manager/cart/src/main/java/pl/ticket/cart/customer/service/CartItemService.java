@@ -21,9 +21,5 @@ public class CartItemService
         return cartItemRepository.countByCartId(cartId);
     }
 
-    @Transactional
-    public void deleteItemsByCartId(Long cartId)
-    {
-        cartItemRepository.deleteByCartId(cartId);
-    }
+
 }

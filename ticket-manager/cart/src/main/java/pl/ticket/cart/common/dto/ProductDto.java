@@ -1,4 +1,4 @@
-package pl.ticket.cart.customer.model.dto;
+package pl.ticket.cart.common.dto;
 
 import lombok.*;
 
