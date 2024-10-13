@@ -2,11 +2,12 @@ package pl.ticket.dto;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class OrderCreatedEvent
 {
     private Long orderId;

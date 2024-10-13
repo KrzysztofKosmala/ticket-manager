@@ -44,3 +44,9 @@ openapi:
     description: Event APIs
     url: http://localhost:8081
 
+
+rabbitmq:
+  order-exchanges:
+    internal: internal.exchange
+  order-queue:
+    orderCreated: orderCreated.queue
