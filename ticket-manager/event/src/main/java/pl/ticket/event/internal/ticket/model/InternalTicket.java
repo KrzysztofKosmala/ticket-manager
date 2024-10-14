@@ -39,6 +39,6 @@ public class InternalTicket
     @ManyToOne
     @JoinColumn(name = "event_occurrence_id", nullable = false)
     private EventOccurrence eventOccurrence;
-/*    @Version
-    private Long version;*/
+    @Version
+    private Long version;
 }
