@@ -14,7 +14,7 @@ import pl.ticket.customer.repository.OrderRepository;
 import pl.ticket.customer.repository.OrderRowRepository;
 import pl.ticket.customer.repository.PaymentRepository;
 import pl.ticket.customer.service.mapper.OrderMapper;
-import pl.ticket.dto.OrderCreatedEvent;
+import pl.ticket.dto.OrderEvent;
 import pl.ticket.feign.cart.CartClient;
 import pl.ticket.dto.CartSummaryDto;
 import pl.ticket.feign.event.EventClient;
@@ -53,10 +53,10 @@ public class OrderService
         order.setOrderRows(orderRows);
 
 
-        OrderCreatedEvent orderCreatedEvent = OrderMapper.toOrderCreatedEvent(order);
+        OrderEvent orderEvent = OrderMapper.toOrderCreatedEvent(order);
         //odjąć z puli dostpenych(SAGA paattern) - prawdopodobnie trzeba usunac space left z occurance i zastąpić to isCommonPool
             //leci request przez feighn do ticket controllera i tam jest updatowany amount w zależoności czy occurance do ktorego przypisanny jest ticket ma wspólny pool czy nie updatuje amount tylko w jednym tickecie lub we wszysich przypisanych do tego occurance
-        sagaOrderProcessService.orderCreated(orderCreatedEvent);
+        sagaOrderProcessService.orderCreated(orderEvent);
         //mail z potwierdzeniem
         clearOrderCart(orderDto);
         return OrderMapper.createOrderSummary(new Payment(), order, "to be implemented");

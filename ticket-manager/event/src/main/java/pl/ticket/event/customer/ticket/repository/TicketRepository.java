@@ -7,7 +7,7 @@ import pl.ticket.event.customer.ticket.model.Ticket;
 
 import java.util.List;
 
-public interface TicketRepository extends JpaRepository<Ticket, Integer> {
+public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT t FROM Ticket t JOIN FETCH t.eventOccurrence o WHERE o.eventId = :id")
     List<Ticket> findTicketsByEventId(@Param("id") Long id);
 

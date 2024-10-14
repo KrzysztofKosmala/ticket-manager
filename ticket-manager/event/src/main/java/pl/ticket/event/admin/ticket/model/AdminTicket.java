@@ -30,7 +30,7 @@ public class AdminTicket
                     strategy = GenerationType.SEQUENCE,
                     generator = "ticket_id_sequence"
             )
-    private Integer id;
+    private Long id;
     // Relacja ManyToOne z AdminEventOccurrence
     @ManyToOne
     @JoinColumn(name = "event_occurrence_id", nullable = false)

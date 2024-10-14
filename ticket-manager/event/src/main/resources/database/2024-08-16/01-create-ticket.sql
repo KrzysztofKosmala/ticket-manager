@@ -8,6 +8,7 @@ CREATE TABLE ticket (
                               type VARCHAR(255) NOT NULL,
                               price NUMERIC(19, 2) NOT NULL,
                               amount INTEGER NOT NULL,
+                              version BIGINT,
                               FOREIGN KEY (event_occurrence_id) REFERENCES event_occurrence(id) ON DELETE CASCADE,
                               FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE
 );

@@ -1,24 +1,25 @@
 package pl.ticket.event.internal.ticket.listener;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import pl.ticket.amqp.RabbitMQConfig;
-import pl.ticket.amqp.RabbitMqMessageProducer;
-import pl.ticket.dto.OrderCreatedEvent;
+import pl.ticket.dto.OrderEvent;
+import pl.ticket.event.internal.ticket.service.InternalTicketService;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class TicketListener
 {
 
-        RabbitMqMessageProducer rabbitMqMessageProducer;
-        RabbitMQConfig rabbitMQConfig;
+        private final InternalTicketService internalTicketService;
 
         @RabbitListener(queues = "${rabbitmq.order-queue.orderCreated}")
-        public void handleTicketReservation(OrderCreatedEvent orderCreatedEvent)
+        public void handleTicketReservation(OrderEvent orderEvent)
         {
-                log.info("Received event to update ticket amount, event: {}", orderCreatedEvent.toString());
+                log.info("Received event to update ticket amount, event: {}", orderEvent.toString());
+                internalTicketService.reserveTickets(orderEvent);
 
         }
 }

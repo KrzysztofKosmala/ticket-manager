@@ -8,7 +8,7 @@ import java.util.List;
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class OrderCreatedEvent
+public class OrderEvent
 {
     private Long orderId;
     private List<OrderRowDto> orderRows;

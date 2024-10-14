@@ -50,3 +50,8 @@ rabbitmq:
     internal: internal.exchange
   order-queue:
     orderCreated: orderCreated.queue
+    reservationCompleted: reservationCompleted.queue
+    reservationRejected: reservationRejected.queue
+  order-routing-keys:
+    internal-reservationCompleted: internal.reservationCompleted.routing-key
+    internal-reservationRejected: internal.reservationRejected.routing-key

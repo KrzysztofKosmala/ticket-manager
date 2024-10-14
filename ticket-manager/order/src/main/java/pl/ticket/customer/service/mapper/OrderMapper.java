@@ -7,7 +7,7 @@ import pl.ticket.customer.model.OrderStatus;
 import pl.ticket.customer.model.Payment;
 import pl.ticket.customer.model.dto.OrderDto;
 import pl.ticket.customer.model.dto.OrderSummary;
-import pl.ticket.dto.OrderCreatedEvent;
+import pl.ticket.dto.OrderEvent;
 import pl.ticket.dto.OrderRowDto;
 import pl.ticket.dto.CartSummaryDto;
 import pl.ticket.dto.CartSummaryItemDto;
@@ -31,9 +31,9 @@ public class OrderMapper
                 .build();
     }
 
-    public static OrderCreatedEvent toOrderCreatedEvent(Order order)
+    public static OrderEvent toOrderCreatedEvent(Order order)
     {
-        return OrderCreatedEvent.builder()
+        return OrderEvent.builder()
                 .orderId(order.getId())
                 .orderRows(order.getOrderRows().stream().map(OrderMapper::toOrderRowDto).toList())
                 .build();

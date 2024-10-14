@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Table(name = "ticket")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ticket
+public class InternalTicket
 {
     @Id
     @SequenceGenerator
