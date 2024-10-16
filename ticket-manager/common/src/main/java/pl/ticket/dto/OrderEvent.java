@@ -11,5 +11,6 @@ import java.util.List;
 public class OrderEvent
 {
     private Long orderId;
+    private String message;
     private List<OrderRowDto> orderRows;
 }

@@ -15,7 +15,7 @@ public class TicketListener
 
         private final InternalTicketService internalTicketService;
 
-        @RabbitListener(queues = "${rabbitmq.order-queue.orderCreated}")
+        @RabbitListener(queues = "${rabbitmq.order-queue.orderCreated}", errorHandler = "reservationProcessExceptionHandler")
         public void handleTicketReservation(OrderEvent orderEvent)
         {
                 log.info("Received event to update ticket amount, event: {}", orderEvent.toString());

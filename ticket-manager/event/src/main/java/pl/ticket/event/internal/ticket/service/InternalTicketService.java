@@ -20,23 +20,20 @@ public class InternalTicketService
 {
     private final InternalTicketRepository internalTicketRepository;
     private final SagaReservationProcessService sagaReservationProcessService;
-    private final TicketRepository ticketRepository;
 
     @Transactional
     public void reserveTickets(OrderEvent order)
     {
         for (OrderRowDto orderRow : order.getOrderRows()) {
             InternalTicket ticket = internalTicketRepository.findById(orderRow.getProductId())
-                    .orElseThrow(() -> new ReservationProcessException("Ticket not found for order ID: " + order.getOrderId()));
+                    .orElseThrow(() -> new ReservationProcessException("Ticket not found for order ID: " + order.getOrderId(), order));
 
             if (ticket.getAmount() < orderRow.getQuantity()) {
-                throw new ReservationProcessException("Not enough tickets for order ID: " + order.getOrderId());
+                throw new ReservationProcessException("Not enough tickets for order ID: " + order.getOrderId(), order);
             }
-
             // Rezerwacja biletów
             ticket.setAmount(ticket.getAmount() - orderRow.getQuantity());
             internalTicketRepository.save(ticket);
-
         }
         //publish to queue reservation complete
         sagaReservationProcessService.publishReservationCompleted(order);

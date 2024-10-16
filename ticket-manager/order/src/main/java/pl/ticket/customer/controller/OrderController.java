@@ -24,6 +24,8 @@ public class OrderController
     @PostMapping
     public OrderSummary placeOrder(@RequestBody OrderDto orderDto, @AuthenticationPrincipal Jwt jwt)
     {
+
+        //sprawdzić dostępność
         String userId = jwt.getSubject();
 
         return orderService.placeOrder(orderDto, userId);

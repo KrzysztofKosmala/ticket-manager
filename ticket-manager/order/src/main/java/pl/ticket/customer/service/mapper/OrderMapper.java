@@ -53,7 +53,6 @@ public class OrderMapper
         return OrderRowDto.builder()
                 .id(orderRow.getId())
                 .quantity(orderRow.getQuantity())
-                .orderId(orderRow.getOrderId())
                 .productId(orderRow.getProductId())
                 .price(orderRow.getPrice())
                 .build();

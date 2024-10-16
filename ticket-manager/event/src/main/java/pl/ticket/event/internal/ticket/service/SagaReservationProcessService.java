@@ -1,5 +1,6 @@
 package pl.ticket.event.internal.ticket.service;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.ticket.amqp.RabbitMqMessageProducer;

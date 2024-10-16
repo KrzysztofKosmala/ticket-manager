@@ -40,7 +40,6 @@ public class OrderService
         Long cartId = orderDto.getCartId();
 
         CartSummaryDto cart = cartClient.getCart(cartId);
-        //sprawdź dostępność
 
         //pobrac payment z payment service
         //Payment payment = paymentRepository.findById(orderDto.getPaymentId()).orElseThrow();
@@ -54,8 +53,6 @@ public class OrderService
 
 
         OrderEvent orderEvent = OrderMapper.toOrderCreatedEvent(order);
-        //odjąć z puli dostpenych(SAGA paattern) - prawdopodobnie trzeba usunac space left z occurance i zastąpić to isCommonPool
-            //leci request przez feighn do ticket controllera i tam jest updatowany amount w zależoności czy occurance do ktorego przypisanny jest ticket ma wspólny pool czy nie updatuje amount tylko w jednym tickecie lub we wszysich przypisanych do tego occurance
         sagaOrderProcessService.orderCreated(orderEvent);
         //mail z potwierdzeniem
         clearOrderCart(orderDto);
