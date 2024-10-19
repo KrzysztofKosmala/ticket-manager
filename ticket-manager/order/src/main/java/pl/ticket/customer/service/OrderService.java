@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.customer.model.Order;
 import pl.ticket.customer.model.OrderRow;
+import pl.ticket.customer.model.OrderStatus;
 import pl.ticket.customer.model.Payment;
 import pl.ticket.customer.model.dto.OrderDto;
 import pl.ticket.customer.model.dto.OrderSummary;
@@ -53,12 +54,11 @@ public class OrderService
 
 
         OrderEvent orderEvent = OrderMapper.toOrderCreatedEvent(order);
-        sagaOrderProcessService.orderCreated(orderEvent);
+        sagaOrderProcessService.publishOrderCreated(orderEvent);
         //mail z potwierdzeniem
         clearOrderCart(orderDto);
         return OrderMapper.createOrderSummary(new Payment(), order, "to be implemented");
     }
-
 
     private List<OrderRow> saveProductRows(CartSummaryDto cart, Long orderId) {
         return cart.getItems().stream()
@@ -74,4 +74,16 @@ public class OrderService
     }
 
 
+    @Transactional
+    public void changeStatusToReserved(OrderEvent orderEvent)
+    {
+        //jak tu gdzieś będzie problem to trzeba wszystko wycofać znowu
+        Order order = orderRepository.findById(orderEvent.getOrderId()).orElseThrow();
+
+        order.setOrderStatus(OrderStatus.RESERVED);
+
+        //do notification
+
+        sagaOrderProcessService.publishOrderReserved(orderEvent);
+    }
 }

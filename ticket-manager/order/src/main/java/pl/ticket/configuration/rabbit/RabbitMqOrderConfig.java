@@ -23,6 +23,10 @@ public class RabbitMqOrderConfig
     private String orderReservedQueue;
     @Value("${rabbitmq.order-queue.orderChangeStatus}")
     private String orderChangeStatusQueue;
+    @Value("${rabbitmq.order-queue.reservationCompleted}")
+    private String reservationCompletedQueue;
+    @Value("${rabbitmq.order-queue.reservationRejected}")
+    private String reservationRejectedQueue;
 
     /*Routing keys*/
     @Value("${rabbitmq.order-routing-keys.internal-orderCreated}")
@@ -31,6 +35,10 @@ public class RabbitMqOrderConfig
     private String internalOrderReservedRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-orderChangeStatus}")
     private String internalOrderChangeStatusRoutingKey;
+    @Value("${rabbitmq.order-routing-keys.internal-reservationCompleted}")
+    private String reservationCompletedRoutingKey;
+    @Value("${rabbitmq.order-routing-keys.internal-reservationRejected}")
+    private String reservationRejectedRoutingKey;
 
 
     @Bean
@@ -61,7 +69,32 @@ public class RabbitMqOrderConfig
     }
 
 
+    @Bean
+    public Queue reservationCompletedQueue()
+    {
+        return new Queue(this.reservationCompletedQueue);
+    }
+
+    @Bean
+    public Queue reservationRejectedQueue()
+    {
+        return new Queue(this.reservationRejectedQueue);
+    }
+
     /*Binding beans*/
+
+
+    /*Binding beans*/
+    @Bean
+    public Binding reservationRejectedRoutingKeyBinding()
+    {
+        return BindingBuilder.bind(reservationRejectedQueue()).to(internalTopicExchange()).with(this.reservationRejectedRoutingKey);
+    }
+    @Bean
+    public Binding reservationCompletedRoutingKeyBinding()
+    {
+        return BindingBuilder.bind(reservationCompletedQueue()).to(internalTopicExchange()).with(this.reservationCompletedRoutingKey);
+    }
     @Bean
     public Binding internalOrderCreatedBinding()
     {
@@ -76,7 +109,7 @@ public class RabbitMqOrderConfig
     @Bean
     public Binding internalOrderReservedBinding()
     {
-        return BindingBuilder.bind(orderCreatedQueue()).to(internalTopicExchange()).with(this.internalOrderReservedRoutingKey);
+        return BindingBuilder.bind(orderReservedQueue()).to(internalTopicExchange()).with(this.internalOrderReservedRoutingKey);
     }
 
 }

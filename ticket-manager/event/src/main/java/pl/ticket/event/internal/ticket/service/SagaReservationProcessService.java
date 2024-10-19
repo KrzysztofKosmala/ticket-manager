@@ -2,6 +2,7 @@ package pl.ticket.event.internal.ticket.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.amqp.RabbitMqMessageProducer;
 import pl.ticket.dto.OrderEvent;
@@ -10,6 +11,7 @@ import pl.ticket.event.configuration.rabbit.RabbitMqOrderConfig;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SagaReservationProcessService
 {
     private final RabbitMqMessageProducer rabbitMqMessageProducer;
@@ -17,16 +19,19 @@ public class SagaReservationProcessService
 
     public void publishReservationCompleted(OrderEvent orderEvent)
     {
+        log.info("publishing event to reservation completed, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,
                         rabbitMqOrderConfig.getInternalExchange(),
                         rabbitMqOrderConfig.getReservationCompletedRoutingKey()
                 );
+        log.info("published event to reservation completed, event: {}", orderEvent.toString());
     }
 
     public void publishReservationRejected(OrderEvent orderEvent)
     {
+        log.info("publishing event to reservation rejected, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,

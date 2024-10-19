@@ -30,40 +30,9 @@ public class RabbitMqOrderConfig
     private String reservationRejectedRoutingKey;
 
 
-    @Bean
-    public TopicExchange internalTopicExchange()
-    {
-        return new TopicExchange(this.internalExchange);
-    }
+
 
     /*Queues beans*/
-
-
-    @Bean
-    public Queue reservationCompletedQueue()
-    {
-        return new Queue(this.reservationCompletedQueue);
-    }
-
-    @Bean
-    public Queue reservationRejectedQueue()
-    {
-        return new Queue(this.reservationRejectedQueue);
-    }
-
-
-    /*Binding beans*/
-    @Bean
-    public Binding internalOrderReservedBinding()
-    {
-        return BindingBuilder.bind(reservationCompletedQueue()).to(internalTopicExchange()).with(this.reservationCompletedRoutingKey);
-    }
-    @Bean
-    public Binding reservationRejectedRoutingKeyBinding()
-    {
-        return BindingBuilder.bind(reservationRejectedQueue()).to(internalTopicExchange()).with(this.reservationRejectedRoutingKey);
-    }
-
 
 
 }
