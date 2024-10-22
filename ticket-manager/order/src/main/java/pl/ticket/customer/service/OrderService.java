@@ -8,12 +8,10 @@ import org.springframework.stereotype.Service;
 import pl.ticket.customer.model.Order;
 import pl.ticket.customer.model.OrderRow;
 import pl.ticket.customer.model.OrderStatus;
-import pl.ticket.customer.model.Payment;
 import pl.ticket.customer.model.dto.OrderDto;
 import pl.ticket.customer.model.dto.OrderSummary;
 import pl.ticket.customer.repository.OrderRepository;
 import pl.ticket.customer.repository.OrderRowRepository;
-import pl.ticket.customer.repository.PaymentRepository;
 import pl.ticket.customer.service.mapper.OrderMapper;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.feign.cart.CartClient;
@@ -27,7 +25,7 @@ import java.util.List;
 @Slf4j
 public class OrderService
 {
-    private final PaymentRepository paymentRepository;
+    //TODO: dodac tu payment
     private final CartClient cartClient;
     private final EventClient eventClient;
     private final OrderRepository orderRepository;
@@ -42,9 +40,9 @@ public class OrderService
 
         CartSummaryDto cart = cartClient.getCart(cartId);
 
-        //pobrac payment z payment service
+        //TODO:pobrac payment z payment service
         //Payment payment = paymentRepository.findById(orderDto.getPaymentId()).orElseThrow();
-        Order order = OrderMapper.createNewOrder(orderDto, cart, new Payment(), userId);
+        Order order = OrderMapper.createNewOrder(orderDto, cart, userId);
 
         orderRepository.save(order);
 
@@ -55,9 +53,9 @@ public class OrderService
 
         OrderEvent orderEvent = OrderMapper.toOrderCreatedEvent(order);
         sagaOrderProcessService.publishOrderCreated(orderEvent);
-        //mail z potwierdzeniem
+        //TODO:do notification
         clearOrderCart(orderDto);
-        return OrderMapper.createOrderSummary(new Payment(), order, "to be implemented");
+        return OrderMapper.createOrderSummary(order, "to be implemented");
     }
 
     private List<OrderRow> saveProductRows(CartSummaryDto cart, Long orderId) {
@@ -78,12 +76,20 @@ public class OrderService
     public void changeStatusToReserved(OrderEvent orderEvent)
     {
         //jak tu gdzieś będzie problem to trzeba wszystko wycofać znowu
-        Order order = orderRepository.findById(orderEvent.getOrderId()).orElseThrow();
+        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
 
         order.setOrderStatus(OrderStatus.RESERVED);
 
-        //do notification
+        //TODO:do notification
 
         sagaOrderProcessService.publishOrderReserved(orderEvent);
+    }
+
+    @Transactional
+    public void changeStatusToCanceled(OrderEvent orderEvent)
+    {
+        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
+        //TODO:do notification
+        order.setOrderStatus(OrderStatus.CANCELED);
     }
 }

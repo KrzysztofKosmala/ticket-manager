@@ -21,4 +21,12 @@ public class OrderListener
         orderService.changeStatusToReserved(orderEvent);
 
     }
+
+    @RabbitListener(queues = "${rabbitmq.order-queue.reservationRejected}")
+    public void changeStatusToCanceled(OrderEvent orderEvent)
+    {
+        log.info("Received event to update order status, event: {}", orderEvent.toString());
+        orderService.changeStatusToCanceled(orderEvent);
+
+    }
 }

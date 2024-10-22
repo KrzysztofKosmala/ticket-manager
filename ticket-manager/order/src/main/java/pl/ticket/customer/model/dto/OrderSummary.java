@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.ticket.customer.model.OrderStatus;
-import pl.ticket.customer.model.Payment;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +19,6 @@ public class OrderSummary
     private LocalDateTime placeDate;
     private OrderStatus status;
     private BigDecimal grossValue;
-    private Payment payment;
+    //private Payment payment;
     private String redirectUrl;
 }

@@ -4,7 +4,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import pl.ticket.customer.model.Order;
 import pl.ticket.customer.model.OrderRow;
 import pl.ticket.customer.model.OrderStatus;
-import pl.ticket.customer.model.Payment;
 import pl.ticket.customer.model.dto.OrderDto;
 import pl.ticket.customer.model.dto.OrderSummary;
 import pl.ticket.dto.OrderEvent;
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 
 public class OrderMapper
 {
-    public static Order createNewOrder(OrderDto orderDto, CartSummaryDto cart, Payment payment, String userId) {
+    public static Order createNewOrder(OrderDto orderDto, CartSummaryDto cart, /*Payment payment,*/ String userId) {
         return Order.builder()
                 .firstname(orderDto.getFirstname())
                 .lastname(orderDto.getLastname())
@@ -66,7 +65,7 @@ public class OrderMapper
                 .build();
     }
 
-    public static OrderSummary createOrderSummary(Payment payment, Order newOrder, String redirectUrl) {
+    public static OrderSummary createOrderSummary(/*Payment payment, */Order newOrder, String redirectUrl) {
         return OrderSummary.builder()
                 .id(newOrder.getId())
                 .placeDate(newOrder.getPlaceDate())

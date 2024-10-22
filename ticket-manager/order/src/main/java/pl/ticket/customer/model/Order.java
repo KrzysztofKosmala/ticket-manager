@@ -30,8 +30,8 @@ public class Order
     private String lastname;
     private String email;
     private String phone;
-    @OneToOne
-    private Payment payment;
+/*    @OneToOne
+    private Payment payment;*/
     private String userId;
     private String orderHash;
 }
