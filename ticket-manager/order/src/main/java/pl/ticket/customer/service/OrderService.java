@@ -92,4 +92,12 @@ public class OrderService
         //TODO:do notification
         order.setOrderStatus(OrderStatus.CANCELED);
     }
+
+    @Transactional
+    public void changeStatusToCompleted(OrderEvent orderEvent)
+    {
+        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
+        //TODO:do notification with tickets hash (QR code?)
+        order.setOrderStatus(OrderStatus.COMPLETED);
+    }
 }

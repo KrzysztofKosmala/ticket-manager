@@ -48,10 +48,12 @@ rabbitmq:
     orderChangeStatus: orderChangeStatus.queue
     reservationCompleted: reservationCompleted.queue
     reservationRejected: reservationRejected.queue
+    paymentCompleted: paymentCompleted.queue
   order-routing-keys:
     internal-orderCreated: internal.orderCreated.routing-key
     internal-orderReserved: internal.orderReserved.routing-key
     internal-orderChangeStatus: internal.orderChangeStatus.routing-key
     internal-reservationCompleted: internal.reservationCompleted.routing-key
     internal-reservationRejected: internal.reservationRejected.routing-key
+    internal-paymentCompleted: internal.PaymentCompleted.routing-key
 

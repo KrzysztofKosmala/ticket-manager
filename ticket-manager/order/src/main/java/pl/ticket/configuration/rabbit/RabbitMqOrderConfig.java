@@ -27,6 +27,8 @@ public class RabbitMqOrderConfig
     private String reservationCompletedQueue;
     @Value("${rabbitmq.order-queue.reservationRejected}")
     private String reservationRejectedQueue;
+    @Value("${rabbitmq.order-queue.paymentCompleted}")
+    private String paymentCompletedQueue;
 
     /*Routing keys*/
     @Value("${rabbitmq.order-routing-keys.internal-orderCreated}")
@@ -39,6 +41,8 @@ public class RabbitMqOrderConfig
     private String reservationCompletedRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-reservationRejected}")
     private String reservationRejectedRoutingKey;
+    @Value("${rabbitmq.order-routing-keys.internal-paymentCompleted}")
+    private String paymentCompletedRoutingKey;
 
 
     @Bean
@@ -80,6 +84,11 @@ public class RabbitMqOrderConfig
     {
         return new Queue(this.reservationRejectedQueue);
     }
+    @Bean
+    public Queue paymentCompletedQueue()
+    {
+        return new Queue(this.paymentCompletedQueue);
+    }
 
     /*Binding beans*/
 
@@ -110,6 +119,11 @@ public class RabbitMqOrderConfig
     public Binding internalOrderReservedBinding()
     {
         return BindingBuilder.bind(orderReservedQueue()).to(internalTopicExchange()).with(this.internalOrderReservedRoutingKey);
+    }
+    @Bean
+    public Binding paymentCompletedBinding()
+    {
+        return BindingBuilder.bind(paymentCompletedQueue()).to(internalTopicExchange()).with(this.paymentCompletedRoutingKey);
     }
 
 }
