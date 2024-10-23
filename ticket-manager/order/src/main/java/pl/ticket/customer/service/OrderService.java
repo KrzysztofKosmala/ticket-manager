@@ -26,6 +26,7 @@ import java.util.List;
 public class OrderService
 {
     //TODO: dodac tu payment
+    //TODO: refactor reserve to book
     private final CartClient cartClient;
     private final EventClient eventClient;
     private final OrderRepository orderRepository;
@@ -97,7 +98,25 @@ public class OrderService
     public void changeStatusToCompleted(OrderEvent orderEvent)
     {
         Order order = orderRepository.findOrderById(orderEvent.getOrderId());
-        //TODO:do notification with tickets hash (QR code?)
+        //TODO:do notification with tickets/products hash (QR code?)
         order.setOrderStatus(OrderStatus.COMPLETED);
+    }
+
+    @Transactional
+    public void unbookOrder(OrderEvent orderEvent)
+    {
+        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
+        //TODO:do notification with tickets/products hash (QR code?)
+        order.setOrderStatus(OrderStatus.CANCELLING);
+
+        sagaOrderProcessService.publishToUnbookOrder(orderEvent);
+    }
+
+    @Transactional
+    public void cancelOrder(OrderEvent orderEvent)
+    {
+        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
+        //TODO:do notification
+        order.setOrderStatus(OrderStatus.CANCELED);
     }
 }

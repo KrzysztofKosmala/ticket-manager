@@ -36,4 +36,15 @@ public class SagaOrderProcessService
                         rabbitMqOrderConfig.getInternalOrderReservedRoutingKey()
                 );
     }
+
+    public void publishToUnbookOrder(OrderEvent orderEvent)
+    {
+        log.info("publishing event to unbook order, event: {}", orderEvent.toString());
+        rabbitMqMessageProducer.publish
+                (
+                        orderEvent,
+                        rabbitMqOrderConfig.getInternalExchange(),
+                        rabbitMqOrderConfig.getUnbookOrderRoutingKey()
+                );
+    }
 }

@@ -15,7 +15,7 @@ public class OrderListener
     private final OrderService orderService;
 
     @RabbitListener(queues = "${rabbitmq.order-queue.reservationCompleted}")
-    public void changeStatusToReserved(OrderEvent orderEvent)
+    public void consumeReservationCompleted(OrderEvent orderEvent)
     {
         log.info("Received event to update order status to reserved, event: {}", orderEvent.toString());
         orderService.changeStatusToReserved(orderEvent);
@@ -23,7 +23,7 @@ public class OrderListener
     }
 
     @RabbitListener(queues = "${rabbitmq.order-queue.reservationRejected}")
-    public void changeStatusToCanceled(OrderEvent orderEvent)
+    public void consumeReservationRejected(OrderEvent orderEvent)
     {
         log.info("Received event to update order status to rejected, event: {}", orderEvent.toString());
         orderService.changeStatusToCanceled(orderEvent);
@@ -31,9 +31,24 @@ public class OrderListener
     }
 
     @RabbitListener(queues = "${rabbitmq.order-queue.paymentCompleted}")
-    public void changeStatusToCompleted(OrderEvent orderEvent)
+    public void consumePaymentCompleted(OrderEvent orderEvent)
     {
         log.info("Received event to update order status to completed, event: {}", orderEvent.toString());
         orderService.changeStatusToCompleted(orderEvent);
+    }
+
+    @RabbitListener(queues = "${rabbitmq.order-queue.paymentRejected}")
+    public void consumePaymentRejected(OrderEvent orderEvent)
+    {
+        log.info("Received event to update order status to processing, event: {}", orderEvent.toString());
+        orderService.unbookOrder(orderEvent);
+    }
+
+
+    @RabbitListener(queues = "${rabbitmq.order-queue.orderUnbooked}")
+    public void consumeOrderUnbooked(OrderEvent orderEvent)
+    {
+        log.info("Received event to update order status to canceled, event: {}", orderEvent.toString());
+        orderService.cancelOrder(orderEvent);
     }
 }

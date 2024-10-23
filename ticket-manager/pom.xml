@@ -24,6 +24,7 @@
         <module>cart</module>
         <module>order</module>
         <module>common</module>
+        <module>payment</module>
     </modules>
     <!-- update versions -->
     <properties>

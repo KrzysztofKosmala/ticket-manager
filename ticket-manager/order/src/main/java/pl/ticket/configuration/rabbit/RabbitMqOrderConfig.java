@@ -29,6 +29,12 @@ public class RabbitMqOrderConfig
     private String reservationRejectedQueue;
     @Value("${rabbitmq.order-queue.paymentCompleted}")
     private String paymentCompletedQueue;
+    @Value("${rabbitmq.order-queue.paymentRejected}")
+    private String paymentRejectedQueue;
+    @Value("${rabbitmq.order-queue.unbookOrder}")
+    private String unbookOrderQueue;
+    @Value("${rabbitmq.order-queue.orderUnbooked}")
+    private String orderUnbookedQueue;
 
     /*Routing keys*/
     @Value("${rabbitmq.order-routing-keys.internal-orderCreated}")
@@ -43,7 +49,12 @@ public class RabbitMqOrderConfig
     private String reservationRejectedRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-paymentCompleted}")
     private String paymentCompletedRoutingKey;
-
+    @Value("${rabbitmq.order-routing-keys.internal-paymentRejected}")
+    private String paymentRejectedRoutingKey;
+    @Value("${rabbitmq.order-routing-keys.internal-unbookOrder}")
+    private String unbookOrderRoutingKey;
+    @Value("${rabbitmq.order-routing-keys.internal-orderUnbooked}")
+    private String orderUnbookedRoutingKey;
 
     @Bean
     public TopicExchange internalTopicExchange()
@@ -89,7 +100,21 @@ public class RabbitMqOrderConfig
     {
         return new Queue(this.paymentCompletedQueue);
     }
-
+    @Bean
+    public Queue paymentRejectedQueue()
+    {
+        return new Queue(this.paymentRejectedQueue);
+    }
+    @Bean
+    public Queue unbookOrderQueue()
+    {
+        return new Queue(this.unbookOrderQueue);
+    }
+    @Bean
+    public Queue orderUnbookedQueue()
+    {
+        return new Queue(this.orderUnbookedQueue);
+    }
     /*Binding beans*/
 
 
@@ -124,6 +149,22 @@ public class RabbitMqOrderConfig
     public Binding paymentCompletedBinding()
     {
         return BindingBuilder.bind(paymentCompletedQueue()).to(internalTopicExchange()).with(this.paymentCompletedRoutingKey);
+    }
+    @Bean
+    public Binding paymentRejectedBinding()
+    {
+        return BindingBuilder.bind(paymentRejectedQueue()).to(internalTopicExchange()).with(this.paymentRejectedRoutingKey);
+    }
+    @Bean
+    public Binding unbookOrderBinding()
+    {
+        return BindingBuilder.bind(unbookOrderQueue()).to(internalTopicExchange()).with(this.unbookOrderRoutingKey);
+    }
+
+    @Bean
+    public Binding orderUnbookedBinding()
+    {
+        return BindingBuilder.bind(orderUnbookedQueue()).to(internalTopicExchange()).with(this.orderUnbookedRoutingKey);
     }
 
 }
