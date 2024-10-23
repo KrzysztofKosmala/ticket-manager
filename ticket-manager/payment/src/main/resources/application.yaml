@@ -1,0 +1,59 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: payment
+  datasource:
+    password: password
+    url: jdbc:postgresql://localhost:51/payment
+    username: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  liquibase:
+    change-log: classpath:liquibase-changelog.xml
+    drop-first: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8085/realms/ticket-manager-realm
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+openapi:
+  info:
+    title: payment Doc
+    version: 1.0.0
+  service:
+    description: payment APIs
+    url: http://localhost:8082
+
+# P24 payments config
+app:
+  payments:
+    initializer: fakePayment24Service #paymentMethodP24
+    p24:
+      testMode: true
+      apiUrl: https://secure.przelewy24.pl/api/v1
+      merchantId: 318777
+      posId: 318777
+      urlReturn: https://kurs-aplikacji-frontend-ex.herokuapp.com
+      crc: 0687304de6ec28d2
+      secretKey: e45b661452bb59b49d297484cb6f06fb
+      url: https://secure.przelewy24.pl
+
+      testApiUrl: https://sandbox.przelewy24.pl/api/v1
+      testUrlReturn: https://kurs-aplikacji-frontend-ex.herokuapp.com
+      testCrc: 0687304de6ec28d2
+      testSecretKey: e45b661452bb59b49d297484cb6f06fb
+      testUrl: https://sandbox.przelewy24.pl
+
