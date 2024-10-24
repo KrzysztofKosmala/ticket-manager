@@ -39,4 +39,15 @@ public class SagaReservationProcessService
                         rabbitMqOrderConfig.getReservationRejectedRoutingKey()
                 );
     }
+
+    public void publishOrderUnbooked(OrderEvent order)
+    {
+        log.info("publishing event to order unbooked, event: {}", order.toString());
+        rabbitMqMessageProducer.publish
+                (
+                        order,
+                        rabbitMqOrderConfig.getInternalExchange(),
+                        rabbitMqOrderConfig.getOrderUnbookedRoutingKey()
+                );
+    }
 }

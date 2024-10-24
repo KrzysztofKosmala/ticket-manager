@@ -10,6 +10,7 @@ import pl.ticket.event.customer.ticket.model.Ticket;
 import pl.ticket.event.customer.ticket.repository.TicketRepository;
 import pl.ticket.event.customer.ticket.service.TicketService;
 import pl.ticket.event.internal.ticket.exception.ReservationProcessException;
+import pl.ticket.event.internal.ticket.exception.UnbookProcessException;
 import pl.ticket.event.internal.ticket.repository.InternalTicketRepository;
 
 import java.util.List;
@@ -37,5 +38,20 @@ public class InternalTicketService
         }
         //publish to queue reservation complete
         sagaReservationProcessService.publishReservationCompleted(order);
+    }
+
+    @Transactional
+    public void unbookTickets(OrderEvent order)
+    {
+        for (OrderRowDto orderRow : order.getOrderRows())
+        {
+            InternalTicket ticket = internalTicketRepository.findById(orderRow.getProductId())
+                    .orElseThrow(() -> new UnbookProcessException("Ticket not found for order ID: " + order.getOrderId(), order));
+
+            ticket.setAmount(ticket.getAmount() + orderRow.getQuantity());
+            internalTicketRepository.save(ticket);
+        }
+        //publish to queue reservation complete
+        sagaReservationProcessService.publishOrderUnbooked(order);
     }
 }

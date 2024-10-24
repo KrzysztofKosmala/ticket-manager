@@ -22,4 +22,12 @@ public class TicketListener
                 internalTicketService.reserveTickets(orderEvent);
 
         }
+
+        @RabbitListener(queues = "${rabbitmq.order-queue.unbookOrder}", errorHandler = "unbookProcessExceptionHandler")
+        public void handleUnbookOrder(OrderEvent orderEvent)
+        {
+                log.info("Received event to unbook ticket, event: {}", orderEvent.toString());
+                internalTicketService.unbookTickets(orderEvent);
+
+        }
 }

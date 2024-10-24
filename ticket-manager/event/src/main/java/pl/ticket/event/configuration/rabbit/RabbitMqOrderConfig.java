@@ -17,22 +17,19 @@ public class RabbitMqOrderConfig
     private String internalExchange;
 
     /*Queues*/
-
     @Value("${rabbitmq.order-queue.reservationCompleted}")
     private String reservationCompletedQueue;
     @Value("${rabbitmq.order-queue.reservationRejected}")
     private String reservationRejectedQueue;
+    @Value("${rabbitmq.order-queue.orderUnbooked}")
+    private String orderUnbookedQueue;
 
     /*Routing keys*/
     @Value("${rabbitmq.order-routing-keys.internal-reservationCompleted}")
     private String reservationCompletedRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-reservationRejected}")
     private String reservationRejectedRoutingKey;
-
-
-
-
-    /*Queues beans*/
-
+    @Value("${rabbitmq.order-routing-keys.internal-orderUnbooked}")
+    private String orderUnbookedRoutingKey;
 
 }

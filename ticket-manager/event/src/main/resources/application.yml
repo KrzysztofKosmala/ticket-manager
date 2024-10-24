@@ -52,6 +52,10 @@ rabbitmq:
     orderCreated: orderCreated.queue
     reservationCompleted: reservationCompleted.queue
     reservationRejected: reservationRejected.queue
+    unbookOrder: unbookOrder.queue
+    orderUnbooked: orderUnbooked.queue
   order-routing-keys:
     internal-reservationCompleted: internal.reservationCompleted.routing-key
     internal-reservationRejected: internal.reservationRejected.routing-key
+    internal-unbookOrder: internal.unbookOrder.routing-key
+    internal-orderUnbooked: internal.orderUnbooked.routing-key
