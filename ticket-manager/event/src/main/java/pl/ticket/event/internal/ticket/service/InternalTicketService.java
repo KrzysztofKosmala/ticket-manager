@@ -6,9 +6,6 @@ import org.springframework.stereotype.Service;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.dto.OrderRowDto;
 import pl.ticket.event.customer.ticket.model.InternalTicket;
-import pl.ticket.event.customer.ticket.model.Ticket;
-import pl.ticket.event.customer.ticket.repository.TicketRepository;
-import pl.ticket.event.customer.ticket.service.TicketService;
 import pl.ticket.event.internal.ticket.exception.ReservationProcessException;
 import pl.ticket.event.internal.ticket.exception.UnbookProcessException;
 import pl.ticket.event.internal.ticket.repository.InternalTicketRepository;
@@ -34,7 +31,6 @@ public class InternalTicketService
             }
             // Rezerwacja biletów
             ticket.setAmount(ticket.getAmount() - orderRow.getQuantity());
-            internalTicketRepository.save(ticket);
         }
         //publish to queue reservation complete
         sagaReservationProcessService.publishReservationCompleted(order);

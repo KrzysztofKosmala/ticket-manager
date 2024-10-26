@@ -9,7 +9,7 @@ import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event.mapper.AdminEventMapper;
 import pl.ticket.event.admin.event.model.AdminEvent;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
-import pl.ticket.event.admin.event.data_provider.AdminEventRegularCreationDtoProvider;
+import pl.ticket.event.data_provider.AdminEventRegularCreationDtoProvider;
 import pl.ticket.event.admin.event.service.validation.AdminEventServiceValidator;
 import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;

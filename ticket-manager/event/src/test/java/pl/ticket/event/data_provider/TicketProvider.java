@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.event.data_provider;
+package pl.ticket.event.data_provider;
 
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
 import pl.ticket.event.customer.ticket.model.Ticket;
@@ -25,7 +25,7 @@ public class TicketProvider {
                 .build();
 
         Ticket ticket1 = Ticket.builder()
-                .id(333)
+                .id(333L)
                 .price(BigDecimal.valueOf(99.99))
                 .type(TicketType.FULL_PRICE)
                 .amount(50)
@@ -33,7 +33,7 @@ public class TicketProvider {
                 .build();
 
         Ticket ticket2 = Ticket.builder()
-                .id(444)
+                .id(444L)
                 .price(BigDecimal.valueOf(49.99))
                 .type(TicketType.HALF_PRICE)
                 .amount(30)

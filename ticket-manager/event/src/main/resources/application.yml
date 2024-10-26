@@ -8,7 +8,7 @@ spring:
     url: jdbc:postgresql://localhost:51/event
     username: admin
   profiles:
-    active: prod
+    active: test
   jpa:
     hibernate:
       ddl-auto: update

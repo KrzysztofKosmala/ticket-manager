@@ -3,7 +3,7 @@ package pl.ticket.event.admin.event.service;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import pl.ticket.event.admin.event.data_provider.AdminEventRegularCreationDtoProvider;
+import pl.ticket.event.data_provider.AdminEventRegularCreationDtoProvider;
 import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event.mapper.AdminEventMapper;

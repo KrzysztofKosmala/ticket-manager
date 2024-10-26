@@ -16,7 +16,7 @@ import pl.ticket.customer.service.mapper.OrderMapper;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.feign.cart.CartClient;
 import pl.ticket.dto.CartSummaryDto;
-import pl.ticket.feign.event.EventClient;
+
 
 import java.util.List;
 
@@ -28,7 +28,6 @@ public class OrderService
     //TODO: dodac tu payment
     //TODO: refactor reserve to book
     private final CartClient cartClient;
-    private final EventClient eventClient;
     private final OrderRepository orderRepository;
     private final SagaOrderProcessService sagaOrderProcessService;
     private final OrderRowRepository orderRowRepository;
@@ -106,7 +105,6 @@ public class OrderService
     public void unbookOrder(OrderEvent orderEvent)
     {
         Order order = orderRepository.findOrderById(orderEvent.getOrderId());
-        //TODO:do notification with tickets/products hash (QR code?)
         order.setOrderStatus(OrderStatus.CANCELLING);
 
         sagaOrderProcessService.publishToUnbookOrder(orderEvent);

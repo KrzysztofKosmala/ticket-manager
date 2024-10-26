@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.event.data_provider;
+package pl.ticket.event.data_provider;
 
 
 import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;

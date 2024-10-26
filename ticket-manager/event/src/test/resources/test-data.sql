@@ -18,11 +18,11 @@ VALUES
     (333, 222, '2024-09-02', '14:00:00', true);
 
 -- Wstawienie przykładowych Ticketów
-INSERT INTO ticket (id,event_occurrence_id, event_id, type, price, amount)
+INSERT INTO ticket (id,event_occurrence_id, event_id, type, price, amount, version)
 VALUES
-    (111, 111, 111, 'FULL_PRICE', 49.99, 50),
-    (222, 111, 111, 'HALF_PRICE', 99.99, 30),
-    (333, 222, 111, 'FULL_PRICE', 49.99, 50),
-    (444, 222, 111, 'HALF_PRICE', 99.99, 30),
-    (555, 333, 222, 'FULL_PRICE', 49.99, 50),
-    (666, 333, 222, 'HALF_PRICE', 99.99, 30)
+    (111, 111, 111, 'FULL_PRICE', 49.99, 50, 0),
+    (222, 111, 111, 'HALF_PRICE', 99.99, 30, 0),
+    (333, 222, 111, 'FULL_PRICE', 49.99, 50, 0),
+    (444, 222, 111, 'HALF_PRICE', 99.99, 30, 0),
+    (555, 333, 222, 'FULL_PRICE', 49.99, 50, 0),
+    (666, 333, 222, 'HALF_PRICE', 99.99, 30, 0)

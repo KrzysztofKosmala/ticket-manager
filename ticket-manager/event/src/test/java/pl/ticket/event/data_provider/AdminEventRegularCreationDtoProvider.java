@@ -1,4 +1,4 @@
-package pl.ticket.event.admin.event.data_provider;
+package pl.ticket.event.data_provider;
 
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event.dto.EventType;

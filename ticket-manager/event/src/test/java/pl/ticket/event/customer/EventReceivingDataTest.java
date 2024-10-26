@@ -1,18 +1,15 @@
-package pl.ticket.event.admin.integrity.event.customer;
+package pl.ticket.event.customer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-import pl.ticket.event.admin.event.data_provider.EventProvider;
-import pl.ticket.event.admin.event.data_provider.TicketProvider;
-import pl.ticket.event.admin.integrity.event.PrePost;
+import pl.ticket.event.data_provider.EventProvider;
+import pl.ticket.event.data_provider.TicketProvider;
+import pl.ticket.event.PrePost;
 import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
 import pl.ticket.event.customer.event.repository.EventRepository;
@@ -40,7 +37,7 @@ public class EventReceivingDataTest extends PrePost {
     private TicketRepository ticketRepository;
     @Autowired
     private EventMapper eventMapper;
-    @Autowired
+
     private EventProvider eventProvider = new EventProvider();
     private TicketProvider ticketProvider = new TicketProvider();
 
