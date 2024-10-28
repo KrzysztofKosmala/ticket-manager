@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.ticket.customer.model.dto.OrderDto;
-import pl.ticket.customer.model.dto.OrderSummary;
+import pl.ticket.common.model.dto.OrderDto;
+import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.customer.service.OrderService;
-
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController

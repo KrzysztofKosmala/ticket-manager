@@ -1,10 +1,10 @@
-package pl.ticket.customer.model.dto;
+package pl.ticket.common.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import pl.ticket.customer.model.OrderStatus;
+import pl.ticket.common.model.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

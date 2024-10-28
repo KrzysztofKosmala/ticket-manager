@@ -1,4 +1,4 @@
-package pl.ticket.event;
+package pl.ticket.event.IT;
 
 
 import org.springframework.boot.test.context.SpringBootTest;

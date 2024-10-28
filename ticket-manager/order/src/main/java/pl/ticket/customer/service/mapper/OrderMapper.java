@@ -1,11 +1,11 @@
 package pl.ticket.customer.service.mapper;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import pl.ticket.customer.model.Order;
-import pl.ticket.customer.model.OrderRow;
-import pl.ticket.customer.model.OrderStatus;
-import pl.ticket.customer.model.dto.OrderDto;
-import pl.ticket.customer.model.dto.OrderSummary;
+import pl.ticket.common.model.Order;
+import pl.ticket.common.model.OrderRow;
+import pl.ticket.common.model.OrderStatus;
+import pl.ticket.common.model.dto.OrderDto;
+import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.dto.OrderRowDto;
 import pl.ticket.dto.CartSummaryDto;

@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: order
+  zipkin:
+    base-url: http://localhost:9411
   rabbitmq:
     addresses: localhost:5672
   datasource:
@@ -38,6 +40,14 @@ openapi:
   service:
     description: Order APIs
     url: http://localhost:8088
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    exporter:
+      zipkin:
+        enabled: true
 
 rabbitmq:
   order-exchanges:

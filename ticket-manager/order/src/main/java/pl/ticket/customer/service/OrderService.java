@@ -5,11 +5,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.ticket.customer.model.Order;
-import pl.ticket.customer.model.OrderRow;
-import pl.ticket.customer.model.OrderStatus;
-import pl.ticket.customer.model.dto.OrderDto;
-import pl.ticket.customer.model.dto.OrderSummary;
+import pl.ticket.common.SagaOrderProcessService;
+import pl.ticket.common.model.Order;
+import pl.ticket.common.model.OrderRow;
+import pl.ticket.common.model.dto.OrderDto;
+import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.customer.repository.OrderRepository;
 import pl.ticket.customer.repository.OrderRowRepository;
 import pl.ticket.customer.service.mapper.OrderMapper;
@@ -72,49 +72,4 @@ public class OrderService
     }
 
 
-    @Transactional
-    public void changeStatusToReserved(OrderEvent orderEvent)
-    {
-        //jak tu gdzieś będzie problem to trzeba wszystko wycofać znowu
-        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
-
-        order.setOrderStatus(OrderStatus.RESERVED);
-
-        //TODO:do notification
-
-        sagaOrderProcessService.publishOrderReserved(orderEvent);
-    }
-
-    @Transactional
-    public void changeStatusToCanceled(OrderEvent orderEvent)
-    {
-        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
-        //TODO:do notification
-        order.setOrderStatus(OrderStatus.CANCELED);
-    }
-
-    @Transactional
-    public void changeStatusToCompleted(OrderEvent orderEvent)
-    {
-        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
-        //TODO:do notification with tickets/products hash (QR code?)
-        order.setOrderStatus(OrderStatus.COMPLETED);
-    }
-
-    @Transactional
-    public void unbookOrder(OrderEvent orderEvent)
-    {
-        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
-        order.setOrderStatus(OrderStatus.CANCELLING);
-
-        sagaOrderProcessService.publishToUnbookOrder(orderEvent);
-    }
-
-    @Transactional
-    public void cancelOrder(OrderEvent orderEvent)
-    {
-        Order order = orderRepository.findOrderById(orderEvent.getOrderId());
-        //TODO:do notification
-        order.setOrderStatus(OrderStatus.CANCELED);
-    }
 }

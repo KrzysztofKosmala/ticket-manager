@@ -7,7 +7,10 @@ spring:
 server:
   port: 8761
 
-
+management:
+  tracing:
+    sampling:
+      probability: 1.0
 
 eureka:
   client:

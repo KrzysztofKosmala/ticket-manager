@@ -1,13 +1,11 @@
-package pl.ticket.event.internal;
+package pl.ticket.event.data_provider;
 
 import com.github.javafaker.Faker;
 import lombok.experimental.UtilityClass;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.dto.OrderRowDto;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @UtilityClass
 public class OrderEventDataProvider

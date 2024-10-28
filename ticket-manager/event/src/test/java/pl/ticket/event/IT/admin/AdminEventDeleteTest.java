@@ -1,11 +1,11 @@
-package pl.ticket.event.admin.integrity.event.admin;
+package pl.ticket.event.IT.admin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event.service.AdminEventService;
 import pl.ticket.event.admin.event_occurrence.repository.AdminEventOccurrenceRepository;
-import pl.ticket.event.PrePost;
+import pl.ticket.event.IT.PrePost;
 import pl.ticket.event.admin.ticket.repository.AdminTicketRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

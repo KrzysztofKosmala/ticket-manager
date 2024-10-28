@@ -1,4 +1,4 @@
-package pl.ticket.customer.model;
+package pl.ticket.common.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

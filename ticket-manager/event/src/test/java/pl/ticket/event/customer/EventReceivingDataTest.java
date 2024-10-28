@@ -9,7 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import pl.ticket.event.data_provider.EventProvider;
 import pl.ticket.event.data_provider.TicketProvider;
-import pl.ticket.event.PrePost;
+import pl.ticket.event.IT.PrePost;
 import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
 import pl.ticket.event.customer.event.repository.EventRepository;

@@ -1,4 +1,4 @@
-package pl.ticket.customer.model.dto;
+package pl.ticket.common.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

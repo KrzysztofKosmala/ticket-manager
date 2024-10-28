@@ -1,28 +1,22 @@
-package pl.ticket.event.internal.service;
+package pl.ticket.event.IT.internal;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.dto.OrderRowDto;
-import pl.ticket.event.PrePost;
-import pl.ticket.event.admin.event.exception.InvalidRequestedDataException;
+import pl.ticket.event.IT.PrePost;
 import pl.ticket.event.customer.ticket.model.InternalTicket;
-import pl.ticket.event.internal.OrderEventDataProvider;
-import pl.ticket.event.internal.ticket.exception.ReservationProcessException;
+import pl.ticket.event.data_provider.OrderEventDataProvider;
 import pl.ticket.event.internal.ticket.repository.InternalTicketRepository;
 import pl.ticket.event.internal.ticket.service.InternalTicketService;
 import pl.ticket.event.internal.ticket.service.SagaReservationProcessService;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

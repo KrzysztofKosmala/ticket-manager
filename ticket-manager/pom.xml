@@ -33,7 +33,7 @@
         <maven.compiler.target>19</maven.compiler.target>
         <spring.boot.maven.plugin.version>3.0.6</spring.boot.maven.plugin.version>
         <spring.boot.dependencies.version>3.0.6</spring.boot.dependencies.version>
-        <spring.cloud-version>2023.0.2</spring.cloud-version>
+        <spring.cloud-version>2022.0.3</spring.cloud-version>
     </properties>
 
     <dependencyManagement>
@@ -48,7 +48,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2022.0.3</version>
+                <version>${spring.cloud-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -67,6 +67,26 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-micrometer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave-instrumentation-spring-rabbit</artifactId>
         </dependency>
     </dependencies>
     <build>
