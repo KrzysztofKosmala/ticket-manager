@@ -10,7 +10,7 @@ import pl.ticket.dto.CartSummaryDto;
 @FeignClient("cart")
 public interface CartClient
 {
-    @GetMapping("api/v1/carts/{id}")
+    @GetMapping("api/v1/internal/carts/{id}")
     CartSummaryDto getCart(@PathVariable("id") Long id);
     @DeleteMapping("api/v1/internal/carts/{id}")
     void deleteCart(@PathVariable("id") Long id);

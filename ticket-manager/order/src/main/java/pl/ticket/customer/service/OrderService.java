@@ -25,7 +25,6 @@ import java.util.List;
 @Slf4j
 public class OrderService
 {
-    //TODO: dodac tu payment
     //TODO: refactor reserve to book
     private final CartClient cartClient;
     private final OrderRepository orderRepository;
@@ -40,8 +39,6 @@ public class OrderService
 
         CartSummaryDto cart = cartClient.getCart(cartId);
 
-        //TODO:pobrac payment z payment service
-        //Payment payment = paymentRepository.findById(orderDto.getPaymentId()).orElseThrow();
         Order order = OrderMapper.createNewOrder(orderDto, cart, userId);
 
         orderRepository.save(order);
@@ -50,8 +47,7 @@ public class OrderService
 
         order.setOrderRows(orderRows);
 
-
-        OrderEvent orderEvent = OrderMapper.toOrderCreatedEvent(order);
+        OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
         sagaOrderProcessService.publishOrderCreated(orderEvent);
         //TODO:do notification
         clearOrderCart(orderDto);

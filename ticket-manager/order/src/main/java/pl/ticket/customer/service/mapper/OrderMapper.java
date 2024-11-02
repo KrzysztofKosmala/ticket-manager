@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 public class OrderMapper
 {
-    public static Order createNewOrder(OrderDto orderDto, CartSummaryDto cart, /*Payment payment,*/ String userId) {
+    public static Order createNewOrder(OrderDto orderDto, CartSummaryDto cart, String userId) {
         return Order.builder()
                 .firstname(orderDto.getFirstname())
                 .lastname(orderDto.getLastname())
@@ -24,13 +24,13 @@ public class OrderMapper
                 .placeDate(LocalDateTime.now())
                 .orderStatus(OrderStatus.CREATED)
                 .grossValue(cart.getSummary().getGrossValue())
-                //.payment(payment)
+                .paymentId(orderDto.getPaymentId())
                 .userId(userId)
                 .orderHash(RandomStringUtils.randomAlphanumeric(12))
                 .build();
     }
 
-    public static OrderEvent toOrderCreatedEvent(Order order)
+    public static OrderEvent toOrderEvent(Order order)
     {
         return OrderEvent.builder()
                 .orderId(order.getId())
@@ -65,13 +65,13 @@ public class OrderMapper
                 .build();
     }
 
-    public static OrderSummary createOrderSummary(/*Payment payment, */Order newOrder, String redirectUrl) {
+    public static OrderSummary createOrderSummary(Order newOrder, String redirectUrl) {
         return OrderSummary.builder()
                 .id(newOrder.getId())
                 .placeDate(newOrder.getPlaceDate())
                 .status(newOrder.getOrderStatus())
                 .grossValue(newOrder.getGrossValue())
-                //.payment(payment)
+                .paymentId(newOrder.getPaymentId())
                 .redirectUrl(redirectUrl)
                 .build();
     }
