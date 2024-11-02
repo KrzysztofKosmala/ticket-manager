@@ -1,8 +1,12 @@
 package pl.ticket.amqp;
 
 
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,14 +20,15 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig
 {
     private final ConnectionFactory connectionFactory;
-
+    private final Tracer tracer;
+    private final Propagator propagator;
     @Bean
     public AmqpTemplate amqpTemplate()
     {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 
         rabbitTemplate.setMessageConverter(jacksonConverter());
-
+        rabbitTemplate.setObservationEnabled(true);
         return rabbitTemplate;
     }
 

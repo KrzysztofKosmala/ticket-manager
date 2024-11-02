@@ -45,9 +45,10 @@ management:
   tracing:
     sampling:
       probability: 1.0
-    exporter:
-      zipkin:
-        enabled: true
+    enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://localhost/:9411/api/v2/spans
 
 rabbitmq:
   order-exchanges:

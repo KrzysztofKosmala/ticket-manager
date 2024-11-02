@@ -1,0 +1,40 @@
+<configuration>
+    <!-- Definiowanie identyfikatora mikroserwisu -->
+    <property name="appName" value="cart"/>
+
+
+    <!-- Console Appender (do wyświetlania pełnych logów w konsoli) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logstash TCP Appender (do wysyłania logów do Logstash) -->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Minimalny zestaw pól do wysyłania -->
+            <fieldNames>
+                <timestamp>time</timestamp>
+                <message>message</message>
+            </fieldNames>
+            <customFields>{"service":"${appName}"}</customFields>
+            <includeContext>false</includeContext>
+            <includeMdc>false</includeMdc>
+            <includeCallerData>false</includeCallerData>
+            <includeStructuredArguments>false</includeStructuredArguments>
+            <includeNonStructuredArguments>false</includeNonStructuredArguments>
+        </encoder>
+    </appender>
+
+    <!-- Logger aplikacji do Logstash (tylko logi z Twojego pakietu) -->
+    <logger name="pl.ticket" level="INFO" additivity="false">
+        <appender-ref ref="LOGSTASH"/>
+    </logger>
+
+    <!-- Root logger do wyświetlania wszystkich logów w konsoli -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
