@@ -24,7 +24,6 @@ public class RabbitMqOrderConfig {
 
     @Value("${rabbitmq.order-queue.paymentRejected}")
     private String paymentRejected;
-
     /*Routing keys*/
     @Value("${rabbitmq.order-routing-keys.internal-paymentInitialized}")
     private String internalPaymentInitializedRoutingKey;

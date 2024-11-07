@@ -61,12 +61,15 @@ rabbitmq:
   order-exchanges:
     internal: internal.exchange
   order-queue:
+    orderCreated: orderCreated.queue
     orderReserved: orderReserved.queue
     paymentCompleted: paymentCompleted.queue
     paymentRejected: paymentRejected.queue
     paymentInitialized: paymentInitialized.queue
   order-routing-keys:
+    internal-orderCreated: internal.orderCreated.routing-key
     internal-orderReserved: internal.orderReserved.routing-key
     internal-paymentCompleted: internal.paymentCompleted.routing-key
     internal-paymentRejected: internal.paymentRejected.routing-key
     internal-paymentInitialized: internal.paymentInitialized.routing-key
+

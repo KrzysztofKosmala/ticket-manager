@@ -13,8 +13,8 @@ import pl.ticket.payment.service.PaymentService;
 public class PaymentListener {
     private final PaymentService paymentService;
 
-    @RabbitListener(queues = "${rabbitmq.order-queue.orderReserved}")
-    public void consumeOrderReserved(OrderEvent orderEvent) {
+    @RabbitListener(queues = "${rabbitmq.order-queue.orderCreated}")
+    public void consumeOrderCreated(OrderEvent orderEvent) {
         log.info("Received event to init the order payment, event: {}", orderEvent.toString());
         paymentService.initPayment(orderEvent);
     }
