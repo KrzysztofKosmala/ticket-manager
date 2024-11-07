@@ -1,7 +1,7 @@
 package pl.ticket.payment.controller;
 
 import org.springframework.web.bind.annotation.*;
-import pl.ticket.payment.model.OrderCreated;
+import pl.ticket.dto.OrderEvent;
 import pl.ticket.payment.service.PaymentService;
 
 @RestController
@@ -15,7 +15,7 @@ public class PaymentController {
     }
 
     @PostMapping
-    public String initPayment(@RequestBody OrderCreated orderCreated){
+    public String initPayment(@RequestBody OrderEvent orderCreated){
         return paymentService.initPayment(orderCreated);
     }
 }

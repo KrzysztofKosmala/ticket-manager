@@ -1,8 +1,8 @@
 package pl.ticket.payment.service;
 
 import org.springframework.stereotype.Service;
+import pl.ticket.dto.OrderEvent;
 import pl.ticket.payment.service.p24.fakePayment.PaymentInitializer;
-import pl.ticket.payment.model.OrderCreated;
 
 @Service
 public class PaymentService {
@@ -12,8 +12,12 @@ public class PaymentService {
         this.paymentClientService = paymentClientService;
     }
 
-    public String initPayment(OrderCreated orderCreated) {
+    public String initPayment(OrderEvent orderCreated) {
         PaymentInitializer payment = paymentClientService.getInstance();
         return payment.initPayment(orderCreated);
+    }
+
+    public boolean verifyPayment(OrderEvent orderCreated) {
+        return false;
     }
 }
