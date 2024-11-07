@@ -13,6 +13,7 @@ public class FakePayment24Service implements PaymentInitializer {
 
     @Override
     public boolean verifyPayment(OrderEvent orderEvent) {
+        // todo zrobic logike do fake statusu dla płatnosci
         return false;
     }
 }
