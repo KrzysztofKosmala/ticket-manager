@@ -57,19 +57,22 @@ app:
       testSecretKey: e45b661452bb59b49d297484cb6f06fb
       testUrl: https://sandbox.przelewy24.pl
 
+
 rabbitmq:
-  order-exchanges:
+  exchanges:
     internal: internal.exchange
   order-queue:
-    orderCreated: orderCreated.queue
     orderReserved: orderReserved.queue
     paymentCompleted: paymentCompleted.queue
     paymentRejected: paymentRejected.queue
     paymentInitialized: paymentInitialized.queue
   order-routing-keys:
-    internal-orderCreated: internal.orderCreated.routing-key
     internal-orderReserved: internal.orderReserved.routing-key
     internal-paymentCompleted: internal.paymentCompleted.routing-key
     internal-paymentRejected: internal.paymentRejected.routing-key
     internal-paymentInitialized: internal.paymentInitialized.routing-key
+  email-queue:
+    email: email.queue
+  email-routing-keys:
+    internal-email: internal.email.routing-key
 
