@@ -56,7 +56,7 @@ management:
       endpoint: http://localhost:9411/api/v2/spans
 
 rabbitmq:
-  order-exchanges:
+  exchanges:
     internal: internal.exchange
   order-queue:
     orderCreated: orderCreated.queue
@@ -69,3 +69,6 @@ rabbitmq:
     internal-reservationRejected: internal.reservationRejected.routing-key
     internal-unbookOrder: internal.unbookOrder.routing-key
     internal-orderUnbooked: internal.orderUnbooked.routing-key
+
+
+

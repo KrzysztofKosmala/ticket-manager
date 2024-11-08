@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import pl.ticket.common.SagaOrderProcessService;
 import pl.ticket.common.model.Order;
 import pl.ticket.common.model.OrderStatus;
+import pl.ticket.dto.EmailMessage;
 import pl.ticket.dto.OrderEvent;
+import pl.ticket.email.EmailClient;
 import pl.ticket.internal.repository.InternalOrderRepository;
 
 @Service
@@ -19,15 +21,14 @@ public class InternalOrderService
 
     private final SagaOrderProcessService sagaOrderProcessService;
     private final InternalOrderRepository internalOrderRepository;
+    private final EmailClient emailClient;
     @Transactional
     public void changeStatusToReserved(OrderEvent orderEvent)
     {
-        //jak tu gdzieś będzie problem to trzeba wszystko wycofać znowu
+        //TODO: jak tu gdzieś będzie problem to trzeba wszystko wycofać znowu
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
 
         order.setOrderStatus(OrderStatus.RESERVED);
-
-        //TODO:do notification
 
         sagaOrderProcessService.publishOrderReserved(orderEvent);
     }
@@ -37,6 +38,7 @@ public class InternalOrderService
     {
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
         //TODO:do notification
+
         order.setOrderStatus(OrderStatus.CANCELED);
     }
 

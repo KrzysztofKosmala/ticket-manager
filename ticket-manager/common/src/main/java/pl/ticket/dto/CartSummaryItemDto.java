@@ -1,9 +1,6 @@
 package pl.ticket.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -11,6 +8,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
+@ToString(exclude = "id")
 public class CartSummaryItemDto
 {
     private Long id;

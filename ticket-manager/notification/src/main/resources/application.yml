@@ -19,12 +19,10 @@ eureka:
 rabbitmq:
   exchanges:
     internal: internal.exchange
-  queue:
-    accountConfirmation: accountConfirmation.queue
-    resetPassword: resetPassword.queue
-  routing-keys:
-    internal-accountConfirmation: internal.accountConfirmation.routing-key
-    internal-resetPassword: internal.resetPassword.routing-key
+  email-queue:
+    email: email.queue
+  email-routing-keys:
+    internal-email: internal.email.routing-key
 
 
 email:

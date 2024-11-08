@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import pl.ticket.customer.security.KeycloackSecurityUtils;
-import pl.ticket.feign.notification.EmailMessage;
+import pl.ticket.dto.EmailMessage;
 import pl.ticket.amqp.RabbitMqMessageProducer;
 
 import java.util.Collections;

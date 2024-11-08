@@ -2,7 +2,7 @@ package pl.ticket.notification.rabbit.email;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.ticket.feign.notification.EmailMessage;
+import pl.ticket.dto.EmailMessage;
 
 
 @Service

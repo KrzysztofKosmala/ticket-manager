@@ -6,14 +6,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.common.SagaOrderProcessService;
+import pl.ticket.common.mapper.EmailMessageGenerator;
 import pl.ticket.common.model.Order;
 import pl.ticket.common.model.OrderRow;
 import pl.ticket.common.model.dto.OrderDto;
 import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.customer.repository.OrderRepository;
 import pl.ticket.customer.repository.OrderRowRepository;
-import pl.ticket.customer.service.mapper.OrderMapper;
+import pl.ticket.common.mapper.OrderMapper;
 import pl.ticket.dto.OrderEvent;
+import pl.ticket.email.EmailClient;
 import pl.ticket.feign.cart.CartClient;
 import pl.ticket.dto.CartSummaryDto;
 
@@ -30,6 +32,7 @@ public class OrderService
     private final OrderRepository orderRepository;
     private final SagaOrderProcessService sagaOrderProcessService;
     private final OrderRowRepository orderRowRepository;
+    private final EmailClient emailClient;
 
     @Transactional
     public OrderSummary placeOrder(OrderDto orderDto, String userId)
@@ -41,6 +44,7 @@ public class OrderService
 
         Order order = OrderMapper.createNewOrder(orderDto, cart, userId);
 
+        /*TODO: pozyskać tickety i wrzucić bardziej szeglowe infomacje do zamowienia oraz do maila*/
         orderRepository.save(order);
 
         List<OrderRow> orderRows = saveProductRows(cart, order.getId());
@@ -49,7 +53,8 @@ public class OrderService
 
         OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
         sagaOrderProcessService.publishOrderCreated(orderEvent);
-        //TODO:do notification
+
+        emailClient.publishEmail(EmailMessageGenerator.orderCreatedMessage(orderDto, cart));
         clearOrderCart(orderDto);
         return OrderMapper.createOrderSummary(order, "to be implemented");
     }

@@ -25,6 +25,7 @@
         <module>order</module>
         <module>common</module>
         <module>payment</module>
+        <module>notification-client</module>
     </modules>
     <!-- update versions -->
     <properties>

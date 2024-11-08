@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class RabbitMqOrderConfig
 {
-    @Value("${rabbitmq.order-exchanges.internal}")
+    @Value("${rabbitmq.exchanges.internal}")
     private String internalExchange;
 
     /*Queues*/

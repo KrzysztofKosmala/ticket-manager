@@ -1,14 +1,18 @@
-dodać opcje zarządzania orderem dla admina plus testy
+
+/*TODO: poprawić to generowanie ładnych maili*/
+/*TODO: pozyskać tickety i wrzucić bardziej szeglowe infomacje do zamowienia oraz do maila*/
 dodać wysyłanie maili we wszyskich miejscach
-dodać nie fake implementacje wysyłania maili
 dodać budowanie qr codów na podstawie zamówienia
 image service
 dodać wybieranie obrazków do potrzebnych mijesc
 dodać zwracanie obrazków w potrzebnych miejscach
+rozne strategie wyswietlania strony glownej bazując na poprzednich zakupach lub ogladanych eventach
+
+Kamil:
 role użytkoników
 zmiana hasła (kolejki i keycloack)
 więcej atrybutów uzywkonika
-rozne strategie wyswietlania strony glownej bazując na poprzednich zakupach lub ogladanych eventach
-
-
+dodać opcje zarządzania orderem dla admina plus testy
+dodać nie fake implementacje wysyłania maili
+sprwadzić proces koszyka i zamówienia pod kątem ceny(cena powinna być jakoś weryfikowana po wysłaniu z front endu)
 

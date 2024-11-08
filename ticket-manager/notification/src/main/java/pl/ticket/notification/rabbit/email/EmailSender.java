@@ -1,7 +1,7 @@
 package pl.ticket.notification.rabbit.email;
 
 
-import pl.ticket.feign.notification.EmailMessage;
+import pl.ticket.dto.EmailMessage;
 
 public interface EmailSender
 {

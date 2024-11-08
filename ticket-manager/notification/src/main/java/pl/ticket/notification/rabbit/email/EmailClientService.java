@@ -10,6 +10,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmailClientService
 {
+    /*TODO: przerobić na nowy switch*/
     @Value("${email.sender.strategy}")
     private String isFakeProp;
     private final Map<String, EmailSender> senderMap;

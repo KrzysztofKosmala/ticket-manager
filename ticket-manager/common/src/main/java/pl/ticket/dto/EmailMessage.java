@@ -1,14 +1,14 @@
-package pl.ticket.feign.notification;
+package pl.ticket.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class EmailMessage implements Serializable
 {
     private String to;
