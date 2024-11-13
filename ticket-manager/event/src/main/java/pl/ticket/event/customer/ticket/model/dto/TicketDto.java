@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketDto {
-    private String eventName;
+    private String eventName; //
+    /*TODO: ticketlist sugeruje że w środku jest lista chyba powinno być coś w stylu List<ticketDto>*/
     private List<TicketListDto> tickets;
 }

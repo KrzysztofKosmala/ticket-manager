@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-import pl.ticket.event.common.dto.AdminEventDto;
+import pl.ticket.dto.EventDto;
 import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
 import pl.ticket.event.customer.event.service.EventService;
@@ -27,7 +27,7 @@ public record EventController(EventService eventService)
     }
 
     @GetMapping("/{eventId}")
-    public AdminEventDto getEventById(@PathVariable("eventId") Long eventId)
+    public EventDto getEventById(@PathVariable("eventId") Long eventId)
     {
         return eventService.getEventById(eventId);
     }
@@ -48,6 +48,7 @@ public record EventController(EventService eventService)
     }
 
     // kiedy jestśmy w konkretnym evencie, wybieramy godzine(nasz occurrence) i pokazujemy bilety
+    /*TODO: skoro metoda to getEventOccurrence to dlaczego zwracamy EventTicket (ta nazwa mało mówi) ? */
     @GetMapping("/{eventId}/{date}/{time}")
     public List<EventTicketDto> getEventOccurrenceByDateAndTime(@PathVariable Long eventId,
                                                                 @PathVariable String time,

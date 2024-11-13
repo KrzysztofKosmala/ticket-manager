@@ -23,7 +23,7 @@ public class TicketService
 
     public TicketDto getTicketsForEvent(Long id) {
         Optional<Event> optionalEvent = eventRepository.findByIdWithOccurrences(id);
-
+        /*TODO: skoro jesteśmy w paczce ticketu to powinniśmy korzystać z warstwy servisu kiedy chcemy coś zrobić w evencie a nie bezpośrednio przez repo*/
         if(!optionalEvent.isPresent()){
             throw new EventDateException("Nie znaleziono wydarzenia o id: + " + id);
         }

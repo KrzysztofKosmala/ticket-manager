@@ -14,10 +14,13 @@ import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.customer.repository.OrderRepository;
 import pl.ticket.customer.repository.OrderRowRepository;
 import pl.ticket.common.mapper.OrderMapper;
+import pl.ticket.dto.CartSummaryItemDto;
 import pl.ticket.dto.OrderEvent;
+import pl.ticket.dto.TicketWithDetailsDto;
 import pl.ticket.email.EmailClient;
 import pl.ticket.feign.cart.CartClient;
 import pl.ticket.dto.CartSummaryDto;
+import pl.ticket.feign.event.EventClient;
 
 
 import java.util.List;
@@ -29,6 +32,7 @@ public class OrderService
 {
     //TODO: refactor reserve to book
     private final CartClient cartClient;
+    private final EventClient eventClient;
     private final OrderRepository orderRepository;
     private final SagaOrderProcessService sagaOrderProcessService;
     private final OrderRowRepository orderRowRepository;
@@ -44,7 +48,6 @@ public class OrderService
 
         Order order = OrderMapper.createNewOrder(orderDto, cart, userId);
 
-        /*TODO: pozyskać tickety i wrzucić bardziej szeglowe infomacje do zamowienia oraz do maila*/
         orderRepository.save(order);
 
         List<OrderRow> orderRows = saveProductRows(cart, order.getId());
@@ -52,9 +55,12 @@ public class OrderService
         order.setOrderRows(orderRows);
 
         OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
-        sagaOrderProcessService.publishOrderCreated(orderEvent);
 
-        emailClient.publishEmail(EmailMessageGenerator.orderCreatedMessage(orderDto, cart));
+        List<Long> itemIds = cart.getItems().stream().map(CartSummaryItemDto::getId).toList();
+        List<TicketWithDetailsDto> orderedTickets = eventClient.getTicketsWithDetailsByTicketIds(itemIds);
+
+        sagaOrderProcessService.publishOrderCreated(orderEvent);
+        emailClient.publishEmail(EmailMessageGenerator.orderCreatedMessage(orderDto, orderedTickets));
         clearOrderCart(orderDto);
         return OrderMapper.createOrderSummary(order, "to be implemented");
     }

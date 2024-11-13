@@ -9,7 +9,7 @@ import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceRegularCreationDto;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.admin.ticket.model.AdminTicket;
-import pl.ticket.event.common.dto.AdminTicketCreationDto;
+import pl.ticket.event.admin.ticket.dto.AdminTicketCreationDto;
 import pl.ticket.event.utils.SlugifyUtils;
 
 import java.time.LocalDate;

@@ -1,23 +1,22 @@
-package pl.ticket.event.customer.event.model;
+package pl.ticket.event.internal.event.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
 
 import java.util.List;
 
-
 @Data
 @Builder
 @Entity
-@NoArgsConstructor
 @Table(name = "event")
+@NoArgsConstructor
 @AllArgsConstructor
-public class Event
+public class InternalEvent
 {
     @Id
     @SequenceGenerator
@@ -36,8 +35,5 @@ public class Event
     private String title;
     private String description;
     private String slug;
-    @OneToMany
-    @JoinColumn(name = "eventId")
-    private List<EventOccurrence> occurrences;
 
 }

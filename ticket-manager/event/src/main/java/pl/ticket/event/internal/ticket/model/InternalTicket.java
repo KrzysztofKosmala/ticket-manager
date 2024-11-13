@@ -1,5 +1,6 @@
-package pl.ticket.event.customer.ticket.model;
+package pl.ticket.event.internal.ticket.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
+import pl.ticket.event.customer.ticket.model.TicketType;
+import pl.ticket.event.internal.event.model.InternalEvent;
 
 import java.math.BigDecimal;
-
 
 @Data
 @Builder
@@ -38,7 +40,11 @@ public class InternalTicket
 
     @ManyToOne
     @JoinColumn(name = "event_occurrence_id", nullable = false)
+
     private EventOccurrence eventOccurrence;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
+    private InternalEvent event;
     @Version
     private Long version;
 }

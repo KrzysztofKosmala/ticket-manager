@@ -5,8 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pl.ticket.event.common.dto.AdminEventDto;
-import pl.ticket.event.common.dto.AdminEventOccurrenceDto;
+import pl.ticket.dto.EventDto;
+import pl.ticket.dto.EventOccurrenceDto;
 import pl.ticket.event.customer.event.exception.EventDateException;
 import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
@@ -32,10 +32,10 @@ public class EventService {
 
     private final EventMapper eventMapper;
 
-    public AdminEventDto getEventById(Long id) {
+    public EventDto getEventById(Long id) {
         Event event = eventRepository.findByIdWithOccurrences(id).orElseThrow();
 
-        return AdminEventDto.builder()
+        return EventDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
                 .description(event.getDescription())
@@ -57,6 +57,7 @@ public class EventService {
         Event event = eventById.get();
         List<EventOccurrence> occurrences = event.getOccurrences();
 
+        /*TODO: zamiast filtrowania powinno być z repo zwrócone tylko te o requestowanym czasie*/
         List<LocalTime> times = occurrences.stream()
                 .filter(occurrence -> occurrence.getDate().equals(date))
                 .map(EventOccurrence::getTime).toList();
@@ -74,8 +75,8 @@ public class EventService {
     }
 
     public Page<EventDateTimeDto> getEventsByDate(LocalDate date, Pageable pageable) {
+        /*TODO: zwraca liste eventów które występują w wybrany dzien ale wraz z całą listą occurances a tych occurances może być z 1000*/
         List<Event> events = eventRepository.findByDatePaged(date, pageable);
-
         List<EventDateTimeDto> result = eventMapper.mapToListEventDateTimeDto(events, date);
 
         if (result.isEmpty()) {
@@ -88,8 +89,12 @@ public class EventService {
         return new CapacityCheckResponse(eventRepository.hasAvailableCapacity(eventId));
     }
 
+    /*TODO: skoro chcemy zwrócić event occurance to chyba powinno być w paczce event occurance a nie event*/
     public List<EventTicketDto> getEventOccurrenceByDateAndTime(Long eventId, String time, LocalDate date) {
         LocalTime timeParsed = LocalTime.parse(time);
+        /*TODO:
+           - te dwa requesty da sie pewnie zrobić za jednym zamachem wyciągając przez ticket repository z joinem na event occurance i odpoweidnimi warunkami na czas i id eventu
+           - nie powinno sie korzystać z repo z innej paczki bezpośrednio tylko korzystać z servisu z innej paczki także jak coś to nie ticketRepository tylko korzystamy z ticketService*/
         EventOccurrence eventOccurrence = eventOccurrenceRepository.findEventOccurrenceByEventIdAndTime(eventId, timeParsed, date);
         List<Ticket> ticketsForOccurrence = ticketRepository.findTicketsOccurrenceId(eventOccurrence.getId());
 
@@ -97,8 +102,8 @@ public class EventService {
                 .map(ticket -> eventMapper.mapToEventTicketDto(ticket)).toList();
     }
 
-    private AdminEventOccurrenceDto mapToEventOccurrenceDto(EventOccurrence occurrence) {
-        return AdminEventOccurrenceDto.builder()
+    private EventOccurrenceDto mapToEventOccurrenceDto(EventOccurrence occurrence) {
+        return EventOccurrenceDto.builder()
                 .id(occurrence.getId())
                 .eventId(occurrence.getEventId())
                 .date(occurrence.getDate())

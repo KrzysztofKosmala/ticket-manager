@@ -1,4 +1,4 @@
-package pl.ticket.event.common.dto;
+package pl.ticket.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class AdminEventDto
+public class EventDto
 {
     private Long id;
     private Integer capacity;
@@ -15,5 +15,5 @@ public class AdminEventDto
     private String title;
     private String description;
     private String slug;
-    private List<AdminEventOccurrenceDto> occurrences;
+    private List<EventOccurrenceDto> occurrences;
 }
