@@ -56,11 +56,7 @@ public class OrderService
 
         OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
 
-        List<Long> itemIds = cart.getItems().stream().map(CartSummaryItemDto::getId).toList();
-        List<TicketWithDetailsDto> orderedTickets = eventClient.getTicketsWithDetailsByTicketIds(itemIds);
-
         sagaOrderProcessService.publishOrderCreated(orderEvent);
-        emailClient.publishEmail(EmailMessageGenerator.orderCreatedMessage(orderDto, orderedTickets));
         clearOrderCart(orderDto);
         return OrderMapper.createOrderSummary(order, "to be implemented");
     }

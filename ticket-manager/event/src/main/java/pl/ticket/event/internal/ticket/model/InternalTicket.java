@@ -40,7 +40,6 @@ public class InternalTicket
 
     @ManyToOne
     @JoinColumn(name = "event_occurrence_id", nullable = false)
-
     private EventOccurrence eventOccurrence;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)

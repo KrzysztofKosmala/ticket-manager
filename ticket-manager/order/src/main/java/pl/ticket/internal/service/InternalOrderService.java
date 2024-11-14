@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import pl.ticket.common.SagaOrderProcessService;
 import pl.ticket.common.model.Order;
 import pl.ticket.common.model.OrderStatus;
-import pl.ticket.dto.EmailMessage;
-import pl.ticket.dto.OrderEvent;
+import pl.ticket.dto.*;
 import pl.ticket.email.EmailClient;
+import pl.ticket.feign.cart.CartClient;
+import pl.ticket.feign.event.EventClient;
 import pl.ticket.internal.repository.InternalOrderRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,8 @@ public class InternalOrderService
     private final SagaOrderProcessService sagaOrderProcessService;
     private final InternalOrderRepository internalOrderRepository;
     private final EmailClient emailClient;
+    private final CartClient cartClient;
+    private final EventClient eventClient;
     @Transactional
     public void changeStatusToReserved(OrderEvent orderEvent)
     {
@@ -47,6 +52,11 @@ public class InternalOrderService
     {
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
         //TODO:do notification with tickets/products hash (QR code?) może endpoint w tickecie do generowania biletów wysyłanych na maila
+
+        //request do eventu żeby stworzył concrete tickets
+        List<ConcreteTicketDto> concreteTicketsThatWereBought = eventClient.createConcreteTicketsThatWereBought(orderEvent.getOrderRows());
+/*        CartSummaryDto cart = cartClient.getCart(cartId);
+        List<TicketWithDetailsDto> orderedTickets = eventClient.getTicketsWithDetailsByTicketIds(itemIds);*/
         order.setOrderStatus(OrderStatus.COMPLETED);
     }
 

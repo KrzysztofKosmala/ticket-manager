@@ -10,7 +10,6 @@ import java.util.List;
 
 public class EmailMessageGenerator
 {
-    /*TODO: poprawić to generowanie ładnych maili*/
     public static EmailMessage orderCreatedMessage(OrderDto order, List<TicketWithDetailsDto> orderedTickets)
     {
         /*TODO dodać ładne maile*/
