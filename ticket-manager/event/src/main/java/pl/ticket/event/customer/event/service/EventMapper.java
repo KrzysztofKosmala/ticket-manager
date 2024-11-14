@@ -30,7 +30,7 @@ public class EventMapper {
                     eventDateTimeDto.setTitle(event.getTitle());
                     eventDateTimeDto.setDescription(event.getDescription());
                     eventDateTimeDto.setDate(date);
-
+/*TODO: czy to znaczy że jak mamy 300 eventOccurance tego eventu o godzinie 10 to ta lista będzie miała 300 elementów "10:00"?*/
                     eventDateTimeDto.setTimes(event.getOccurrences().stream()
                             .map(EventOccurrence::getTime).toList());
 

@@ -1,4 +1,4 @@
-package pl.ticket.event.common.dto;
+package pl.ticket.event.admin.ticket.dto;
 
 import pl.ticket.event.admin.ticket.model.AdminTicketType;
 

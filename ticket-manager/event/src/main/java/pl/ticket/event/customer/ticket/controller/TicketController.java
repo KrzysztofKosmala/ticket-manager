@@ -13,6 +13,7 @@ import pl.ticket.event.customer.ticket.service.TicketService;
 @RequestMapping("api/v1/tickets")
 public record TicketController(TicketService ticketService) {
 
+    /*TODO: zwracamy ticketdto w którym jest lista ticketów ? ticketDto sugeruje że zwracamy pojedynczy ticket*/
     @GetMapping({"/{eventId}"})
     public TicketDto getTicketsForEvent(@PathVariable Long eventId){
         log.info("Getting tickets for eventId: {} with occurrences", eventId);

@@ -1,4 +1,4 @@
-package pl.ticket.event.common.dto;
+package pl.ticket.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 @Data
 @Builder
-public class AdminEventOccurrenceDto
+public class EventOccurrenceDto
 {
     private Long id;
     private Long eventId;

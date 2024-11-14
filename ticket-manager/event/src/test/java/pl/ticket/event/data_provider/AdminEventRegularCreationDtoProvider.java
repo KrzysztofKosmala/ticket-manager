@@ -4,7 +4,7 @@ import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event.dto.EventType;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceRegularCreationDto;
 import pl.ticket.event.admin.ticket.model.AdminTicketType;
-import pl.ticket.event.common.dto.AdminTicketCreationDto;
+import pl.ticket.event.admin.ticket.dto.AdminTicketCreationDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

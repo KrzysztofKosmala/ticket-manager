@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.dto.OrderRowDto;
-import pl.ticket.event.customer.ticket.model.InternalTicket;
+
+import pl.ticket.dto.TicketWithDetailsDto;
 import pl.ticket.event.internal.ticket.exception.ReservationProcessException;
 import pl.ticket.event.internal.ticket.exception.UnbookProcessException;
+import pl.ticket.event.internal.ticket.model.InternalTicket;
 import pl.ticket.event.internal.ticket.repository.InternalTicketRepository;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public class InternalTicketService
 {
     private final InternalTicketRepository internalTicketRepository;
     private final SagaReservationProcessService sagaReservationProcessService;
+    private final InternalTicketMapper internalTicketMapper;
 
     @Transactional
     public void reserveTickets(OrderEvent order)
@@ -49,5 +52,13 @@ public class InternalTicketService
         }
         //publish to queue reservation complete
         sagaReservationProcessService.publishOrderUnbooked(order);
+    }
+
+    public List<TicketWithDetailsDto> getTicketsForIds(List<Long> ticketIds)
+    {
+        List<InternalTicket> tickets = internalTicketRepository.findByIdInWithEventDetails(ticketIds);
+        List<TicketWithDetailsDto> list = tickets.stream()
+                .map(internalTicketMapper::toTicketWithDetailsDto).toList();
+        return list;
     }
 }
