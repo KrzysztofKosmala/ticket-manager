@@ -19,7 +19,4 @@ public interface EventClient
     @GetMapping("api/v1/internal/tickets")
     List<TicketWithDetailsDto> getTicketsWithDetailsByTicketIds(@RequestParam("ticketIds") List<Long> ticketIds);
 
-    @PostMapping("api/v1/internal/concretetickets")
-    List<ConcreteTicketDto> createConcreteTicketsThatWereBought(@RequestBody List<OrderRowDto> orderRows);
-
 }

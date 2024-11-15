@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.amqp.RabbitMqMessageProducer;
+import pl.ticket.dto.CompleteOrderEvent;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.event.configuration.rabbit.RabbitMqOrderConfig;
 
@@ -48,6 +49,16 @@ public class SagaReservationProcessService
                         order,
                         rabbitMqOrderConfig.getInternalExchange(),
                         rabbitMqOrderConfig.getOrderUnbookedRoutingKey()
+                );
+    }
+    public void publishPreparedConcreteTickets(CompleteOrderEvent completeOrderEvent)
+    {
+        log.info("publishing event to PreparedConcreteTickets, event: {}", completeOrderEvent.toString());
+        rabbitMqMessageProducer.publish
+                (
+                        completeOrderEvent,
+                        rabbitMqOrderConfig.getInternalExchange(),
+                        rabbitMqOrderConfig.getPreparedConcreteTicketsRoutingKey()
                 );
     }
 }

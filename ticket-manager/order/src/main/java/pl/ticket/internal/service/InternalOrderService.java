@@ -24,9 +24,7 @@ public class InternalOrderService
 
     private final SagaOrderProcessService sagaOrderProcessService;
     private final InternalOrderRepository internalOrderRepository;
-    private final EmailClient emailClient;
-    private final CartClient cartClient;
-    private final EventClient eventClient;
+
     @Transactional
     public void changeStatusToReserved(OrderEvent orderEvent)
     {
@@ -48,16 +46,20 @@ public class InternalOrderService
     }
 
     @Transactional
-    public void changeStatusToCompleted(OrderEvent orderEvent)
+    public void changeStatusToPaid(OrderEvent orderEvent)
     {
+        //jak pozyskać dokładne dane ticketu bez requestu http
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
         //TODO:do notification with tickets/products hash (QR code?) może endpoint w tickecie do generowania biletów wysyłanych na maila
 
         //request do eventu żeby stworzył concrete tickets
-        List<ConcreteTicketDto> concreteTicketsThatWereBought = eventClient.createConcreteTicketsThatWereBought(orderEvent.getOrderRows());
-/*        CartSummaryDto cart = cartClient.getCart(cartId);
-        List<TicketWithDetailsDto> orderedTickets = eventClient.getTicketsWithDetailsByTicketIds(itemIds);*/
-        order.setOrderStatus(OrderStatus.COMPLETED);
+        //List<ConcreteTicketDto> concreteTicketsThatWereBought = eventClient.createConcreteTicketsThatWereBought(orderEvent.getOrderRows());
+//       CartSummaryDto cart = cartClient.getCart(cartId);
+ //       List<TicketWithDetailsDto> orderedTickets = eventClient.getTicketsWithDetailsByTicketIds(itemIds);*/
+        //send notification - your order has been paid please wait for another mail with your tickets
+        //send to the que that add tickets
+        sagaOrderProcessService.publishToPrepareConcreteTickets(orderEvent);
+        order.setOrderStatus(OrderStatus.PAID);
     }
 
     @Transactional
@@ -75,5 +77,12 @@ public class InternalOrderService
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
         //TODO:do notification
         order.setOrderStatus(OrderStatus.CANCELED);
+    }
+
+    @Transactional
+    public void changeStatusToCompleted(CompleteOrderEvent orderEvent)
+    {
+        Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
+        order.setOrderStatus(OrderStatus.COMPLETED);
     }
 }

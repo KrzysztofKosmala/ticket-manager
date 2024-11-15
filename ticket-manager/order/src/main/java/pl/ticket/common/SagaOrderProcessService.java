@@ -47,4 +47,15 @@ public class SagaOrderProcessService
                         rabbitMqOrderConfig.getUnbookOrderRoutingKey()
                 );
     }
+
+    public void publishToPrepareConcreteTickets(OrderEvent orderEvent)
+    {
+        log.info("publishing event to prepareConcreteTickets, event: {}", orderEvent.toString());
+        rabbitMqMessageProducer.publish
+                (
+                        orderEvent,
+                        rabbitMqOrderConfig.getInternalExchange(),
+                        rabbitMqOrderConfig.getPrepareConcreteTicketsRoutingKey()
+                );
+    }
 }

@@ -23,6 +23,8 @@ public class RabbitMqOrderConfig
     private String reservationRejectedQueue;
     @Value("${rabbitmq.order-queue.orderUnbooked}")
     private String orderUnbookedQueue;
+    @Value("${rabbitmq.order-queue.preparedConcreteTickets}")
+    private String preparedConcreteTicketsQueue;
 
     /*Routing keys*/
     @Value("${rabbitmq.order-routing-keys.internal-reservationCompleted}")
@@ -31,5 +33,8 @@ public class RabbitMqOrderConfig
     private String reservationRejectedRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-orderUnbooked}")
     private String orderUnbookedRoutingKey;
+    @Value("${rabbitmq.order-routing-keys.internal-preparedConcreteTickets}")
+    private String preparedConcreteTicketsRoutingKey;
+
 
 }

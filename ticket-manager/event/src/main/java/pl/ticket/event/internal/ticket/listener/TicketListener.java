@@ -4,8 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import pl.ticket.dto.CompleteOrderEvent;
+import pl.ticket.dto.ConcreteTicketDto;
 import pl.ticket.dto.OrderEvent;
+import pl.ticket.event.internal.ticket.service.InternalConcreteTicketService;
 import pl.ticket.event.internal.ticket.service.InternalTicketService;
+import pl.ticket.event.internal.ticket.service.SagaReservationProcessService;
+
+import java.util.List;
 
 @Component
 @Slf4j
@@ -14,6 +20,8 @@ public class TicketListener
 {
 
         private final InternalTicketService internalTicketService;
+        private final InternalConcreteTicketService internalConcreteTicketService;
+        private final SagaReservationProcessService sagaReservationProcessService;
 
         @RabbitListener(queues = "${rabbitmq.order-queue.orderCreated}", errorHandler = "reservationProcessExceptionHandler")
         public void handleTicketReservation(OrderEvent orderEvent)
@@ -29,5 +37,20 @@ public class TicketListener
                 log.info("Received event to unbook ticket, event: {}", orderEvent.toString());
                 internalTicketService.unbookTickets(orderEvent);
 
+        }
+
+        @RabbitListener(queues = "${rabbitmq.order-queue.prepareConcreteTickets}")
+        public void handlePrepareConcreteTickets(OrderEvent orderEvent)
+        {
+                //TODO: co z rollbackiem jak tutaj sie wysypie?
+                log.info("Received event to prepare concrete tickets, event: {}", orderEvent.toString());
+                List<ConcreteTicketDto> concreteTickets = internalConcreteTicketService.createConcreteTickets(orderEvent.getOrderRows());
+
+                sagaReservationProcessService.publishPreparedConcreteTickets(CompleteOrderEvent.builder()
+                                .orderId(orderEvent.getOrderId())
+                                .clientEmail(orderEvent.getClientEmail())
+                                .message(orderEvent.getMessage())
+                                .concreteTickets(concreteTickets)
+                        .build());
         }
 }

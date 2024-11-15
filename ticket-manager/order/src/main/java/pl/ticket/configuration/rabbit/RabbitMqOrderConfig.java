@@ -29,6 +29,10 @@ public class RabbitMqOrderConfig
     private String reservationRejectedQueue;
     @Value("${rabbitmq.order-queue.paymentCompleted}")
     private String paymentCompletedQueue;
+    @Value("${rabbitmq.order-queue.prepareConcreteTickets}")
+    private String prepareConcreteTicketsQueue;
+    @Value("${rabbitmq.order-queue.preparedConcreteTickets}")
+    private String preparedConcreteTicketsQueue;
     @Value("${rabbitmq.order-queue.paymentRejected}")
     private String paymentRejectedQueue;
     @Value("${rabbitmq.order-queue.unbookOrder}")
@@ -51,6 +55,10 @@ public class RabbitMqOrderConfig
     private String paymentCompletedRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-paymentRejected}")
     private String paymentRejectedRoutingKey;
+    @Value("${rabbitmq.order-routing-keys.internal-prepareConcreteTickets}")
+    private String prepareConcreteTicketsRoutingKey;
+    @Value("${rabbitmq.order-routing-keys.internal-preparedConcreteTickets}")
+    private String preparedConcreteTicketsRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-unbookOrder}")
     private String unbookOrderRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-orderUnbooked}")
@@ -70,26 +78,21 @@ public class RabbitMqOrderConfig
     {
         return new Queue(this.orderCreatedQueue);
     }
-
     @Bean
     public Queue orderReservedQueue()
     {
         return new Queue(this.orderReservedQueue);
     }
-
     @Bean
     public Queue orderChangeStatusQueue()
     {
         return new Queue(this.orderChangeStatusQueue);
     }
-
-
     @Bean
     public Queue reservationCompletedQueue()
     {
         return new Queue(this.reservationCompletedQueue);
     }
-
     @Bean
     public Queue reservationRejectedQueue()
     {
@@ -114,6 +117,16 @@ public class RabbitMqOrderConfig
     public Queue orderUnbookedQueue()
     {
         return new Queue(this.orderUnbookedQueue);
+    }
+    @Bean
+    public Queue prepareConcreteTicketsQueue()
+    {
+        return new Queue(this.prepareConcreteTicketsQueue);
+    }
+    @Bean
+    public Queue preparedConcreteTicketsQueue()
+    {
+        return new Queue(this.preparedConcreteTicketsQueue);
     }
     /*Binding beans*/
 
@@ -166,5 +179,14 @@ public class RabbitMqOrderConfig
     {
         return BindingBuilder.bind(orderUnbookedQueue()).to(internalTopicExchange()).with(this.orderUnbookedRoutingKey);
     }
-
+    @Bean
+    public Binding prepareConcreteTicketsBinding()
+    {
+        return BindingBuilder.bind(prepareConcreteTicketsQueue()).to(internalTopicExchange()).with(this.prepareConcreteTicketsRoutingKey);
+    }
+    @Bean
+    public Binding preparedConcreteTicketsBinding()
+    {
+        return BindingBuilder.bind(preparedConcreteTicketsQueue()).to(internalTopicExchange()).with(this.preparedConcreteTicketsRoutingKey);
+    }
 }

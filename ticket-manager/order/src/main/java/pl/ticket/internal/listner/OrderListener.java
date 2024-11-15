@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import pl.ticket.dto.CompleteOrderEvent;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.internal.service.InternalOrderService;
 
@@ -32,8 +33,9 @@ public class OrderListener
     @RabbitListener(queues = "${rabbitmq.order-queue.paymentCompleted}")
     public void consumePaymentCompleted(OrderEvent orderEvent)
     {
-        log.info("Received event to update order status to completed, event: {}", orderEvent.toString());
-        internalOrderService.changeStatusToCompleted(orderEvent);
+        log.info("Received event to update order status to paid, event: {}", orderEvent.toString());
+        //TODO: jakis mail z potwirerdzeniem
+        internalOrderService.changeStatusToPaid(orderEvent);
     }
 
     @RabbitListener(queues = "${rabbitmq.order-queue.paymentRejected}")
@@ -49,5 +51,13 @@ public class OrderListener
     {
         log.info("Received event to update order status to canceled, event: {}", orderEvent.toString());
         internalOrderService.cancelOrder(orderEvent);
+    }
+
+    @RabbitListener(queues = "${rabbitmq.order-queue.preparedConcreteTickets}")
+    public void consumePreparedConcreteTickets(CompleteOrderEvent orderEvent)
+    {
+        log.info("Received event to update order status to completed, event: {}", orderEvent.toString());
+        //TODO: mail z ticketami z qr codami
+        internalOrderService.changeStatusToCompleted(orderEvent);
     }
 }

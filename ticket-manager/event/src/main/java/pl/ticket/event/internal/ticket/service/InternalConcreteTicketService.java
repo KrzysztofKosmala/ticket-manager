@@ -32,6 +32,7 @@ public class InternalConcreteTicketService
             {
                 InternalConcreteTicket internalConcreteTicket = InternalConcreteTicket.builder()
                         .generalTicketId(internalTicket)
+                        //TODO: zbudować mechanizm do qr codów
                         .qrCode(new byte[0])
                         .build();
                 concreteTickets.add(internalConcreteTicket);
