@@ -13,7 +13,6 @@ import pl.ticket.payment.service.PaymentService;
 public class PaymentListener {
     private final PaymentService paymentService;
 
-    /*TODO: jak zwrocic link. czy do Orderu czy do użytkownika bezpośrednio? jaka praktyka jest lepsza*/
     @RabbitListener(queues = "${rabbitmq.order-queue.orderReserved}")
     public void consumeOrderCreated(OrderEvent orderEvent) {
         log.info("Received event to init the order payment, event: {}", orderEvent.toString());

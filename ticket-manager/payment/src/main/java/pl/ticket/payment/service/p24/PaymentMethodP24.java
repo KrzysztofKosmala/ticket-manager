@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.ticket.dto.OrderEvent;
+import pl.ticket.payment.model.PaymentOrderStatus;
 import pl.ticket.payment.service.p24.fakePayment.PaymentInitializer;
 import reactor.core.publisher.Mono;
 
@@ -61,7 +62,7 @@ public class PaymentMethodP24 implements PaymentInitializer {
     }
 
     @Override
-    public boolean verifyPayment(OrderEvent orderEvent) {
+    public boolean verifyPayment(PaymentOrderStatus paymentOrderStatus) {
         return false;
     }
 
