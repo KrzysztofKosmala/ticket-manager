@@ -1,12 +1,16 @@
 package pl.ticket.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-@Data
+
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Builder
+@AllArgsConstructor
 public class EventOccurrenceDto
 {
     private Long id;

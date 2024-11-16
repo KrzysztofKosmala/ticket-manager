@@ -39,15 +39,14 @@ public class CartMapper
 
     private List<CartSummaryItemDto> mapToCartItems(List<CartItem> items)
     {
-       return items.stream().map(this::mapToCartItem).toList();
+       return items.stream().map(this::mapToCartSummaryItemDto).toList();
     }
 
-    private CartSummaryItemDto mapToCartItem(CartItem cartItem)
+    private CartSummaryItemDto mapToCartSummaryItemDto(CartItem cartItem)
     {
         return CartSummaryItemDto.builder()
                 .id(cartItem.getId())
                 .quantity(cartItem.getQuantity())
-                //todo: można tu zwracac caly ticket pozuskujac go z ticket controllera
                 .product(ProductDto.builder()
                         .id(cartItem.getProductId())
                         .price(cartItem.getProductPrice())

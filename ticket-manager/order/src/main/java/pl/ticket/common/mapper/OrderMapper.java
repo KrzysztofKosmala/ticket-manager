@@ -52,16 +52,21 @@ public class OrderMapper
         return OrderRowDto.builder()
                 .id(orderRow.getId())
                 .quantity(orderRow.getQuantity())
+                .productName(orderRow.getProductName())
+                .description(orderRow.getDescription())
                 .productId(orderRow.getProductId())
                 .price(orderRow.getPrice())
                 .build();
     }
-    public static OrderRow mapToOrderRowWithQuantity(Long orderId, CartSummaryItemDto cartItem) {
+    public static OrderRow toOrderRow(Long orderId, CartSummaryItemDto itemDto, TicketWithDetailsDto ticket) {
+
         return OrderRow.builder()
-                .quantity(cartItem.getQuantity())
-                .productId(cartItem.getProduct().getId())
-                .price(cartItem.getProduct().getPrice())
                 .orderId(orderId)
+                .productId(itemDto.getProduct().getId())
+                .price(itemDto.getProduct().getPrice())
+                .quantity(itemDto.getQuantity())
+                .productName(ticket.getEvent().getTitle())
+                .description(String.format("Data: %s Godzina: %s.", ticket.getEventOccurrence().getDate(), ticket.getEventOccurrence().getTime()))
                 .build();
     }
 

@@ -1,39 +1,61 @@
 <configuration>
-    <!-- Definiowanie identyfikatora mikroserwisu -->
-    <property name="appName" value="order"/>
 
-    <!-- Console Appender (do wyświetlania pełnych logów w konsoli) -->
+    <!-- Appender do pliku z logami tylko SLF4J (np. central.log) -->
+    <appender name="SLF4J_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>log.log</file> <!-- Zmienna ścieżka, dostosuj ją do swojego środowiska -->
+        <!-- Strategia rotacji: codzienna -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Określenie wzorca dla archiwizowanych plików -->
+            <fileNamePattern>log-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Zachowanie plików logów przez 30 dni, potem są usuwane -->
+            <maxHistory>30</maxHistory> <!-- Max liczba dni, przez które logi będą przechowywane -->
+            <totalSizeCap>10GB</totalSizeCap> <!-- Opcjonalnie ustawienie maksymalnej całkowitej wielkości logów -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} ORDER SERVICE - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender do pliku z wszystkimi logami (np. all-logs.log) -->
+    <appender name="ALL_LOGS_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>log-all.log</file> <!-- Zmienna ścieżka, dostosuj ją do swojego środowiska -->
+        <!-- Strategia rotacji: codzienna -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Określenie wzorca dla archiwizowanych plików -->
+            <fileNamePattern>log-all-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Zachowanie plików logów przez 30 dni, potem są usuwane -->
+            <maxHistory>30</maxHistory> <!-- Max liczba dni, przez które logi będą przechowywane -->
+            <totalSizeCap>10GB</totalSizeCap> <!-- Opcjonalnie ustawienie maksymalnej całkowitej wielkości logów -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} ${spring.application.name} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender do konsoli -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} ${spring.application.name} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Logstash TCP Appender (do wysyłania logów do Logstash) -->
-    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>localhost:5000</destination>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <!-- Minimalny zestaw pól do wysyłania -->
-            <fieldNames>
-                <timestamp>time</timestamp>
-                <message>message</message>
-            </fieldNames>
-            <customFields>{"service":"${appName}"}</customFields>
-            <includeContext>false</includeContext>
-            <includeMdc>false</includeMdc>
-            <includeCallerData>false</includeCallerData>
-            <includeStructuredArguments>false</includeStructuredArguments>
-            <includeNonStructuredArguments>false</includeNonStructuredArguments>
-        </encoder>
-    </appender>
+    <!-- Główny logger (wszystkie logi na konsoli) -->
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ALL_LOGS_FILE" /> <!-- Wszelkie logi systemowe trafią do pliku all-logs.log -->
+    </root>
 
-    <!-- Logger aplikacji do Logstash (tylko logi z Twojego pakietu) -->
-    <logger name="pl.ticket" level="INFO" additivity="false">
-        <appender-ref ref="LOGSTASH"/>
+    <!-- Logger dla logów SLF4J (tylko logi z mikroserwisów SLF4J) -->
+    <logger name="pl.ticket" level="INFO">
+        <appender-ref ref="SLF4J_FILE" /> <!-- Logi z SLF4J tylko w pliku central.log -->
     </logger>
 
-    <!-- Root logger do wyświetlania wszystkich logów w konsoli -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-    </root>
+    <!-- Wyłączenie logów systemowych Springa, ale zapisywanie do pliku all-logs.log -->
+    <logger name="org.springframework" level="INFO">
+        <appender-ref ref="ALL_LOGS_FILE" />
+    </logger>
+    <logger name="org.hibernate" level="INFO">
+        <appender-ref ref="ALL_LOGS_FILE" />
+    </logger>
+
 </configuration>

@@ -23,6 +23,8 @@ public class OrderRow
     private Long id;
     private Long orderId;
     private Long productId;
+    private String productName;
+    private String description;
     private int quantity;
     private BigDecimal price;
     private Long shipmentId;

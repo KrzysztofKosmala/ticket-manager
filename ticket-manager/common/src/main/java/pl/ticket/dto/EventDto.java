@@ -1,12 +1,14 @@
 package pl.ticket.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @Builder
+@AllArgsConstructor
 public class EventDto
 {
     private Long id;

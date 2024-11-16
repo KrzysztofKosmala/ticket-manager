@@ -29,9 +29,10 @@ public class InternalConcreteTicket
 
     @ManyToOne
     @JoinColumn(name = "general_ticket_id")
-    private InternalTicket generalTicketId;
+    private InternalTicket generalTicket;
     private Boolean isUsed;
-    @Lob
+
+    @Column(name = "qr_code")
     private byte[] qrCode;
 
 }

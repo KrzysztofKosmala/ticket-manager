@@ -4,7 +4,7 @@
 CREATE TABLE concrete_ticket (
                         id SERIAL PRIMARY KEY,
                         general_ticket_id INTEGER NOT NULL,
-                        qrCode bytea,
-                        isUsed bool default false,
+                        qr_code BYTEA,
+                        is_used bool default false,
                         FOREIGN KEY (general_ticket_id) REFERENCES ticket(id) ON DELETE CASCADE
 );

@@ -1,65 +1,87 @@
 package pl.ticket.common.mapper;
 
-import pl.ticket.common.model.dto.OrderDto;
-import pl.ticket.dto.CartSummaryDto;
-import pl.ticket.dto.CartSummaryItemDto;
-import pl.ticket.dto.EmailMessage;
-import pl.ticket.dto.TicketWithDetailsDto;
-
-import java.util.List;
+import pl.ticket.dto.*;
 
 public class EmailMessageGenerator
 {
-    public static EmailMessage orderCreatedMessage(OrderDto order, List<TicketWithDetailsDto> orderedTickets)
+    public static EmailMessage orderPaidMessage(OrderEvent order)
     {
-        /*TODO dodać ładne maile*/
         return EmailMessage.builder()
-                .to(order.getEmail())
-                .subject("Twoje zamówienie zostało przyjęte.")
-                .body(orderedTickets.toString())
+                .to(order.getClientEmail())
+                .subject("Twoje zamówienie zostało opłacone.")
+                .body(buildOrderPaidEmailBody(order))
                 .build();
     }
 
-    private static String formatEmailBody(CartSummaryDto cart) {
+    private static String buildOrderPaidEmailBody(OrderEvent order) {
         StringBuilder body = new StringBuilder();
-        body.append("<html><body>");
-        body.append("<h2>Twoje zamówienie zostało przyjęte</h2>");
-        body.append("<p>Dziękujemy za złożenie zamówienia! Poniżej znajdują się szczegóły:</p>");
 
-        body.append("<table style='width:100%; border-collapse: collapse;'>");
-        body.append("<tr><th style='border: 1px solid #dddddd; padding: 8px;'>Produkt</th>")
-                .append("<th style='border: 1px solid #dddddd; padding: 8px;'>Ilość</th>")
-                .append("<th style='border: 1px solid #dddddd; padding: 8px;'>Cena jednostkowa</th>")
-                .append("<th style='border: 1px solid #dddddd; padding: 8px;'>Wartość</th></tr>");
+        body.append("<!DOCTYPE html>")
+                .append("<html>")
+                .append("<head>")
+                .append("<style>")
+                .append("body { font-family: Arial, sans-serif; line-height: 1.6; }")
+                .append(".container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }")
+                .append(".header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; font-size: 20px; }")
+                .append(".order-summary { margin-top: 20px; }")
+                .append("table { width: 100%; border-collapse: collapse; margin-top: 10px; }")
+                .append("th, td { text-align: left; padding: 8px; border: 1px solid #ddd; }")
+                .append("th { background-color: #f4f4f4; }")
+                .append(".footer { margin-top: 20px; font-size: 12px; color: #666; text-align: center; }")
+                .append("</style>")
+                .append("</head>")
+                .append("<body>")
+                .append("<div class='container'>")
+                .append("<div class='header'>Twoje zamówienie zostało opłacone</div>")
+                .append("<p>Drogi Kliencie,</p>")
+                .append("<p>Dziękujemy za Twoje zamówienie. Poniżej znajdziesz jego szczegóły:</p>")
+                .append("<div class='order-summary'>")
+                .append("<strong>ID Zamówienia: </strong>").append(order.getOrderId()).append("<br>");
 
-        for (CartSummaryItemDto item : cart.getItems()) {
+        body.append("<table>")
+                .append("<thead>")
+                .append("<tr>")
+                .append("<th>Produkt</th>")
+                .append("<th>Opis</th>")
+                .append("<th>Ilość</th>")
+                .append("<th>Cena</th>")
+                .append("</tr>")
+                .append("</thead>")
+                .append("<tbody>");
+
+        for (OrderRowDto row : order.getOrderRows()) {
             body.append("<tr>")
-                    .append("<td style='border: 1px solid #dddddd; padding: 8px;'>")
-                    //.append(item.getProduct().))
-                    .append("</td>")
-                    .append("<td style='border: 1px solid #dddddd; padding: 8px;'>")
-                    .append(item.getQuantity())
-                    .append("</td>")
-                    .append("<td style='border: 1px solid #dddddd; padding: 8px;'>")
-                    .append(item.getProduct().getPrice().toString())
-                    .append(" PLN</td>")
-                    .append("<td style='border: 1px solid #dddddd; padding: 8px;'>")
-                    .append(item.getLineValue().toString())
-                    .append(" PLN</td>")
+                    .append("<td>").append(row.getProductName()).append("</td>")
+                    .append("<td>").append(row.getDescription()).append("</td>")
+                    .append("<td>").append(row.getQuantity()).append("</td>")
+                    .append("<td>").append(row.getPrice()).append(" zł</td>")
                     .append("</tr>");
         }
 
-        body.append("</table>");
-
-        body.append("<h3>Podsumowanie:</h3>");
-        body.append("<p><strong>Całkowita wartość zamówienia: </strong>")
-                .append(cart.getSummary().getGrossValue().toString())
-                .append(" PLN</p>");
-
-        body.append("<p>Jeżeli masz jakieś pytania, skontaktuj się z nami.</p>");
-        body.append("<p>Pozdrawiamy,<br>Zespół Sklepu</p>");
-        body.append("</body></html>");
+        body.append("</tbody>")
+                .append("</table>")
+                .append("</div>")
+                .append("<p>Jeśli masz jakiekolwiek pytania, skontaktuj się z nami.</p>")
+                .append("<div class='footer'>Dziękujemy za zakupy w naszym sklepie!</div>")
+                .append("</div>")
+                .append("</body>")
+                .append("</html>");
 
         return body.toString();
     }
+
+/*    public static EmailMessage orderCompletedMessage(CompleteOrderEvent orderEvent)
+    {
+        return EmailMessage.builder()
+                .to(orderEvent.getClientEmail())
+                .subject("Twoje zamówienie zostało zrealizowane.")
+                .body(buildOrderCompletedEmailBody(orderEvent))
+                .build();
+    }*/
+
+/*    private static String buildOrderCompletedEmailBody(CompleteOrderEvent orderEvent)
+    {
+
+    }*/
+
 }

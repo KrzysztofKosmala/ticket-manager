@@ -24,6 +24,7 @@ import pl.ticket.feign.event.EventClient;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,7 @@ public class OrderService
     private final OrderRowRepository orderRowRepository;
     private final EmailClient emailClient;
 
+
     @Transactional
     public OrderSummary placeOrder(OrderDto orderDto, String userId)
     {
@@ -50,23 +52,31 @@ public class OrderService
 
         orderRepository.save(order);
 
-        List<OrderRow> orderRows = saveProductRows(cart, order.getId());
+        //TODO: można to zatąpić hashmapą
+        List<Long> cartItemIds = cart.getItems().stream().map(cartItem -> cartItem.getProduct().getId()).toList();
+        List<TicketWithDetailsDto> ticketsWithDetailsByTicketIds = eventClient.getTicketsWithDetailsByTicketIds(cartItemIds);
+
+        List<OrderRow> orderRows = saveProductRows(cart, order.getId(), ticketsWithDetailsByTicketIds);
 
         order.setOrderRows(orderRows);
 
         OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
 
         sagaOrderProcessService.publishOrderCreated(orderEvent);
-        clearOrderCart(orderDto);
+        //clearOrderCart(orderDto);
         return OrderMapper.createOrderSummary(order, "to be implemented");
     }
 
-    private List<OrderRow> saveProductRows(CartSummaryDto cart, Long orderId) {
-        return cart.getItems().stream()
-                .map(cartItem -> OrderMapper.mapToOrderRowWithQuantity(orderId, cartItem)
-                )
-                .peek(orderRowRepository::save)
-                .toList();
+    private List<OrderRow> saveProductRows(CartSummaryDto cart, Long orderId, List<TicketWithDetailsDto> ticketsWithDetailsByTicketIds) {
+
+        return ticketsWithDetailsByTicketIds.stream().map(ticket ->
+                {
+                    CartSummaryItemDto itemDto = cart.getItems().stream().filter(item -> item.getProduct().getId().equals(ticket.getId())).findFirst().get();
+
+                    return OrderMapper.toOrderRow(orderId, itemDto, ticket);
+                }
+        ).peek(orderRowRepository::save).toList();
+
     }
 
     private void clearOrderCart(OrderDto orderDto) {
