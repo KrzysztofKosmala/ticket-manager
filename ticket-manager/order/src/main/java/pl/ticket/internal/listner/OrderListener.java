@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import pl.ticket.common.mapper.EmailMessageGenerator;
 import pl.ticket.dto.CompleteOrderEvent;
-import pl.ticket.dto.EmailMessage;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.email.EmailClient;
 import pl.ticket.internal.service.InternalOrderService;

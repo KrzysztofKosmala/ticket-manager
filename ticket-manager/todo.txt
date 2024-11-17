@@ -1,11 +1,10 @@
 
 
-dodać wysyłanie maili we wszyskich miejscach
-image service
-dodać wybieranie obrazków do potrzebnych mijesc
-dodać zwracanie obrazków w potrzebnych miejscach
 rozne strategie wyswietlania strony glownej bazując na poprzednich zakupach lub ogladanych eventach
 zrobic tak żeby przy wyciąganiu event nie zaciągały sie od razy event occurances
+//TODO: dodać handling exceptions
+logi wszędzie
+dodać dodawanie obrazków
 
 Kamil:
 /*TODO: skoro chcemy zwrócić event occurance to chyba powinno być w innaj paczce np event occurance a nie event*/
