@@ -1,10 +1,7 @@
 package pl.ticket.event.internal.ticket.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -12,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "concrete_ticket")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class InternalConcreteTicket
 {
     @Id

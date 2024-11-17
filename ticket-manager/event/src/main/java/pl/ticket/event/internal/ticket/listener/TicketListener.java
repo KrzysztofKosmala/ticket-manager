@@ -48,12 +48,7 @@ public class TicketListener
                 //TODO: co z rollbackiem jak tutaj sie wysypie?
                 log.info("Received event to prepare concrete tickets, event: {}", orderEvent.toString());
                 List<InternalConcreteTicket> concreteTickets = internalConcreteTicketService.createConcreteTickets(orderEvent.getOrderRows());
-
-
-
                 List<ConcreteTicketDto> concreteTicketsDto = internalConcreteTicketRepository.findConcreteTicketDtosByGeneralTicketIds(concreteTickets.stream().map(InternalConcreteTicket::getId).toList());
-
-
                 sagaReservationProcessService.publishPreparedConcreteTickets(CompleteOrderEvent.builder()
                                 .orderId(orderEvent.getOrderId())
                                 .clientEmail(orderEvent.getClientEmail())

@@ -8,6 +8,7 @@ import java.util.List;
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
+@ToString
 public class OrderEvent
 {
     private Long orderId;

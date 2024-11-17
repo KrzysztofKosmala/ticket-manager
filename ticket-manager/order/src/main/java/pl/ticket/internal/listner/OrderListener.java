@@ -61,8 +61,7 @@ public class OrderListener
     public void consumePreparedConcreteTickets(CompleteOrderEvent orderEvent)
     {
         log.info("Received event to update order status to completed, event: {}", orderEvent.toString());
-
-        //TODO: mail z ticketami z qr codami
+        emailClient.publishEmail(EmailMessageGenerator.orderCompleted(orderEvent));
         internalOrderService.changeStatusToCompleted(orderEvent);
     }
 }

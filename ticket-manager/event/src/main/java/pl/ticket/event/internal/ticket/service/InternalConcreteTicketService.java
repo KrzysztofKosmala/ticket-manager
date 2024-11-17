@@ -3,6 +3,7 @@ package pl.ticket.event.internal.ticket.service;
 import com.google.zxing.WriterException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.ConcreteTicketDto;
 import pl.ticket.dto.OrderRowDto;
@@ -14,7 +15,7 @@ import pl.ticket.event.internal.ticket.repository.InternalTicketRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+@Slf4j
 @Service
 @AllArgsConstructor
 public class InternalConcreteTicketService
@@ -44,9 +45,8 @@ public class InternalConcreteTicketService
         internalConcreteTickets.forEach(internalConcreteTicket -> {
             try {
                 internalConcreteTicket.setQrCode(qrGenerator.generateQRCode(internalConcreteTicket.getId().toString(), 200,200));
-            } catch (WriterException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (WriterException | IOException e) {
+                log.info("Error creating qr code for ticket {}", internalConcreteTicket.toString());
                 throw new RuntimeException(e);
             }
         });

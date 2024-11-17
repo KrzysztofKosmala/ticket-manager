@@ -27,7 +27,6 @@ public class SagaReservationProcessService
                         rabbitMqOrderConfig.getInternalExchange(),
                         rabbitMqOrderConfig.getReservationCompletedRoutingKey()
                 );
-        log.info("published event to reservation completed, event: {}", orderEvent.toString());
     }
 
     public void publishReservationRejected(OrderEvent orderEvent)
