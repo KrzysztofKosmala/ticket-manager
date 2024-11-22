@@ -14,7 +14,6 @@
     <modules>
         <module>custumer</module>
         <module>event</module>
-        <module>booking</module>
         <module>eureka-server</module>
         <module>feign</module>
         <module>apigw</module>
