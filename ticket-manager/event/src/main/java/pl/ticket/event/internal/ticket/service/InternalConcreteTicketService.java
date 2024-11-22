@@ -90,6 +90,7 @@ public class InternalConcreteTicketService
                         qrCodeDto.getEventId().equals(internalConcreteTicket.getGeneralTicket().getEventOccurrence().getEventId())
         ){
             internalConcreteTicket.setIsUsed(true);
+            internalConcreteTicketRepository.save(internalConcreteTicket);
             return true;
         }else{
             return false;
