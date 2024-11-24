@@ -11,8 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig
-{
+public class SecurityConfig {
     private final String[] swaggerApis = {"/swagger-ui.html",
             "/swagger-ui/**",
             "/swagger-resources/**",

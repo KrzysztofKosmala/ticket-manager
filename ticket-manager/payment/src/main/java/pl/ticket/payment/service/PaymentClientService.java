@@ -3,10 +3,13 @@ package pl.ticket.payment.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pl.ticket.payment.service.p24.fakePayment.PaymentInitializer;
+import pl.ticket.payment.service.p24.fake.PaymentInitializer;
 
 import java.util.Map;
 
+/**
+ * Serwis wybiera implementacje dla payment
+ */
 @Service
 @RequiredArgsConstructor
 public class PaymentClientService {

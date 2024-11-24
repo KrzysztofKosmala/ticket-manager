@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.amqp.RabbitMqMessageProducer;
+import pl.ticket.dto.EmailMessage;
 import pl.ticket.payment.configuration.rabbit.RabbitMqOrderConfig;
 import pl.ticket.dto.OrderEvent;
 
@@ -33,6 +34,17 @@ public class SagaPaymentProcessService
                         orderEvent,
                         rabbitMqOrderConfig.getInternalExchange(),
                         rabbitMqOrderConfig.getPaymentRejected()
+                );
+    }
+
+    public void publishEmailPayment(EmailMessage emailMessage)
+    {
+        log.info("publishing email for payment of order: {}", emailMessage.getSubject());
+        rabbitMqMessageProducer.publish
+                (
+                        emailMessage,
+                        rabbitMqOrderConfig.getInternalExchange(),
+                        rabbitMqOrderConfig.getEmailRoutingKey()
                 );
     }
 

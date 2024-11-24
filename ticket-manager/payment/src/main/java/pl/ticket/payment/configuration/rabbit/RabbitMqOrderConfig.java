@@ -6,12 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Getter
-public class RabbitMqOrderConfig
-{
-
+public class RabbitMqOrderConfig {
     @Value("${rabbitmq.exchanges.internal}")
     private String internalExchange;
-
     /*Queues*/
     @Value("${rabbitmq.order-queue.paymentInitialized}")
     private String paymentInitialized;
@@ -21,6 +18,9 @@ public class RabbitMqOrderConfig
     private String paymentRejected;
     @Value("${rabbitmq.order-queue.orderReserved}")
     private String orderReserved;
+    @Value("${rabbitmq.email-queue.email}")
+    private String emailQueue;
+
     /*Routing keys*/
     @Value("${rabbitmq.order-routing-keys.internal-paymentInitialized}")
     private String internalPaymentInitializedRoutingKey;
@@ -30,6 +30,6 @@ public class RabbitMqOrderConfig
     private String internalPaymentRejectedRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-orderReserved}")
     private String internalOrderReservedRoutingKey;
-
-
+    @Value("${rabbitmq.email-routing-keys.internal-email}")
+    private String emailRoutingKey;
 }

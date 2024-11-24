@@ -9,6 +9,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@ToString
 public class EmailMessage implements Serializable
 {
     private String to;
