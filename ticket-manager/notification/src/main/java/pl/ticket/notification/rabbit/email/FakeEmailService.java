@@ -13,5 +13,7 @@ public class FakeEmailService implements EmailSender
     public void send(EmailMessage message)
     {
         log.info("Sending email");
+        log.info("Subject: " + message.getSubject());
+        log.info("To: " + message.getTo());
     }
 }

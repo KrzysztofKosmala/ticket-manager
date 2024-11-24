@@ -1,4 +1,4 @@
-package pl.ticket.payment.service.p24;
+package pl.ticket.payment.service.p24.real;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package pl.ticket.payment.service.p24;
+package pl.ticket.payment.service.p24.real;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.ticket.dto.OrderEvent;
-import pl.ticket.payment.model.PaymentOrderStatus;
-import pl.ticket.payment.service.p24.fakePayment.PaymentInitializer;
+import pl.ticket.payment.model.PaymentStatus;
+import pl.ticket.payment.service.p24.fake.PaymentInitializer;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -23,7 +23,7 @@ public class PaymentMethodP24 implements PaymentInitializer {
     }
 
     @Override
-    public String initPayment(OrderEvent newOrder) {
+    public void initPayment(OrderEvent newOrder) {
         System.out.println("@#@# config: " + config.getMerchantId());
         log.info("Inicjalizacja platnosci");
         ResponseEntity<TransactionRegisterResponse> result = p24Client
@@ -54,17 +54,18 @@ public class PaymentMethodP24 implements PaymentInitializer {
                 .block();// synchronicznie odczytane dzieki block()
 
         if(result != null && result.getBody() != null && result.getBody().getData() != null){
-            return config.isTestMode() ? config.getTestUrl() : config.getUrl() + "/trnRequest/"
+            String url = config.isTestMode() ? config.getTestUrl() : config.getUrl() + "/trnRequest/"
                     + result.getBody().getData().token();
         }
 
-        return "Not fully implemented P24 payment service: " + result.getStatusCode();
+        log.warn("Not fully implemented P24 payment service: " + result.getStatusCode());
     }
 
     @Override
-    public boolean verifyPayment(PaymentOrderStatus paymentOrderStatus) {
-        return false;
+    public void verifyPayment(OrderEvent orderEvent) {
     }
+
+
 
     private String createSessionId(OrderEvent newOrder) {
         return "order_id_";
