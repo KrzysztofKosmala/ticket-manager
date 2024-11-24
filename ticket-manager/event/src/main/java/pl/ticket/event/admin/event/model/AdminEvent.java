@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
+import pl.ticket.event.admin.image.model.AdminImage;
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
 
 import java.util.List;
@@ -35,4 +36,12 @@ public class AdminEvent
     private String description;
     private String slug;
     private Long categoryId;
+
+    @ManyToMany
+    @JoinTable(
+            name = "event_image",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<AdminImage> images;
 }
