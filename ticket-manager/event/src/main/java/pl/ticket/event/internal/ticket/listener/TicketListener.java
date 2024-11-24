@@ -42,7 +42,7 @@ public class TicketListener
 
         }
 
-        @RabbitListener(queues = "${rabbitmq.order-queue.prepareConcreteTickets}")
+        @RabbitListener(queues = "${rabbitmq.order-queue.prepareConcreteTickets}", errorHandler = "ticketValidationExceptionHandler")
         public void handlePrepareConcreteTickets(OrderEvent orderEvent)
         {
                 //TODO: co z rollbackiem jak tutaj sie wysypie?

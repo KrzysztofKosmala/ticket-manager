@@ -48,16 +48,7 @@ public class InternalOrderService
     @Transactional
     public void changeStatusToPaid(OrderEvent orderEvent)
     {
-        //jak pozyskać dokładne dane ticketu bez requestu http
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
-        //TODO:do notification with tickets/products hash (QR code?) może endpoint w tickecie do generowania biletów wysyłanych na maila
-
-        //request do eventu żeby stworzył concrete tickets
-        //List<ConcreteTicketDto> concreteTicketsThatWereBought = eventClient.createConcreteTicketsThatWereBought(orderEvent.getOrderRows());
-//       CartSummaryDto cart = cartClient.getCart(cartId);
- //       List<TicketWithDetailsDto> orderedTickets = eventClient.getTicketsWithDetailsByTicketIds(itemIds);*/
-        //send notification - your order has been paid please wait for another mail with your tickets
-        //send to the que that add tickets
         sagaOrderProcessService.publishToPrepareConcreteTickets(orderEvent);
         order.setOrderStatus(OrderStatus.PAID);
     }

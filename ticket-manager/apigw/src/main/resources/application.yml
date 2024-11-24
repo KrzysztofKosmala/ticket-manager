@@ -13,10 +13,6 @@ spring:
           uri: lb://CUSTOMER
           predicates:
             - Path=/customers/v3/api-docs, /api/v1/customers/**
-        - id: booking
-          uri: lb://BOOKING
-          predicates:
-            - Path=/bookings/v3/api-docs, /api/v1/bookings/**
         - id: event
           uri: lb://EVENT
           predicates:
