@@ -20,14 +20,6 @@ public class EmailClientService
         if(isFakeProp.equals("fakeEmailService"))
             return senderMap.get("fakeEmailService");
 
-        return senderMap.get("emailSimpleService");
-    }
-
-    public EmailSender getInstance(String beanName)
-    {
-        if(isFakeProp.equals("fakeEmailService"))
-            return senderMap.get("fakeEmailService");
-
-        return senderMap.get(beanName);
+        return senderMap.get("simpleMailService");
     }
 }

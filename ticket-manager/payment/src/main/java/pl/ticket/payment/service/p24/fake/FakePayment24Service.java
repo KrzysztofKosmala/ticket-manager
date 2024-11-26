@@ -1,11 +1,16 @@
 package pl.ticket.payment.service.p24.fake;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.EmailMessage;
 import pl.ticket.dto.OrderEvent;
+import pl.ticket.email.EmailClient;
 import pl.ticket.payment.common.mail.EmailMessageGenerator;
 import pl.ticket.payment.model.PaymentOrderStatus;
 import pl.ticket.payment.model.PaymentStatus;
@@ -18,16 +23,19 @@ import java.util.concurrent.ScheduledFuture;
 
 @Slf4j
 @Service
+//@RequiredArgsConstructor
+//@AllArgsConstructor
 public class FakePayment24Service implements PaymentInitializer {
     private final SagaPaymentProcessService sagaPaymentProcessService;
     private final PaymentOrderStatusService paymentOrderStatusService;
     private final static String PAYMENT_URL = "localhost:8082/api/v1/payments/";
     private final TaskScheduler scheduler;
     private ScheduledFuture<?> scheduledTask;
+    private final ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 
     public FakePayment24Service(SagaPaymentProcessService sagaPaymentProcessService,
                                 PaymentOrderStatusService paymentOrderStatusService) {
-        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+
         taskScheduler.initialize();
         this.sagaPaymentProcessService = sagaPaymentProcessService;
         this.scheduler = taskScheduler;
@@ -63,8 +71,13 @@ public class FakePayment24Service implements PaymentInitializer {
     private boolean checkStatusPayment(PaymentStatus paymentStatus){
         if (paymentStatus.equals(PaymentStatus.PENDING)){
             return false;
+        }else if (paymentStatus.equals(PaymentStatus.PAID)){
+            return true;
+
+        }else if (paymentStatus.equals(PaymentStatus.REJECTED)){
+            return false;
         }
-        return true;
+        return false;
     }
 
     private void sendMail(OrderEvent orderEvent, String paymentUrl) {

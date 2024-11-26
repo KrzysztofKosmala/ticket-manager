@@ -3,6 +3,7 @@ package pl.ticket.payment.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.OrderEvent;
+import pl.ticket.email.EmailClient;
 import pl.ticket.payment.model.PaymentOrderStatus;
 import pl.ticket.payment.model.PaymentStatus;
 import pl.ticket.payment.service.p24.fake.FakePayment24Service;
@@ -12,6 +13,8 @@ import pl.ticket.payment.service.p24.fake.FakePayment24Service;
 public class PaymentService {
     private final PaymentClientService paymentClientService;
     private final PaymentOrderStatusService paymentOrderStatusService;
+
+
 
     public PaymentService(PaymentClientService paymentClientService, PaymentOrderStatusService paymentOrderStatusService) {
         this.paymentClientService = paymentClientService;

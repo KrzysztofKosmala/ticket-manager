@@ -2,6 +2,22 @@ server:
   port: 8086
 
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ticketmanager255@gmail.com
+    password: cfjh dimw gmnc dlht
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
   application:
     name: customer
   rabbitmq:
@@ -15,7 +31,6 @@ eureka:
     register-with-eureka: true
 
 
-
 rabbitmq:
   exchanges:
     internal: internal.exchange
@@ -27,4 +42,13 @@ rabbitmq:
 
 email:
     sender:
-      strategy: fakeEmailService
+      strategy: fakeEmailService #simpleMailService #fakeEmailService
+
+
+openapi:
+  info:
+    title: Noti Doc
+    version: 1.0.0
+  service:
+    description: Noti APIs
+    url: http://localhost:8086

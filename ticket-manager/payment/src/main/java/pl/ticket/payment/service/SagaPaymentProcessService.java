@@ -44,7 +44,7 @@ public class SagaPaymentProcessService
                 (
                         emailMessage,
                         rabbitMqOrderConfig.getInternalExchange(),
-                        rabbitMqOrderConfig.getEmailRoutingKey()
+                        rabbitMqOrderConfig.getEmailQueue()
                 );
     }
 
