@@ -19,7 +19,6 @@
         <module>apigw</module>
         <module>ampq</module>
         <module>notification</module>
-        <module>image</module>
         <module>cart</module>
         <module>order</module>
         <module>common</module>
