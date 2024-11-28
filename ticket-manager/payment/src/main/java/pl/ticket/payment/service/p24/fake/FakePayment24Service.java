@@ -25,7 +25,7 @@ public class FakePayment24Service implements PaymentInitializer {
     private final SagaPaymentProcessService sagaPaymentProcessService;
     private final PaymentOrderStatusService paymentOrderStatusService;
     private final EmailClient emailClient;
-    private final static String PAYMENT_URL = "localhost:8082/api/v1/payments/";
+    private final static String PAYMENT_URL = "https://localhost:8082/api/v1/payments/";
     private TaskScheduler scheduler;
     private ScheduledFuture<?> scheduledTask;
     private ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();

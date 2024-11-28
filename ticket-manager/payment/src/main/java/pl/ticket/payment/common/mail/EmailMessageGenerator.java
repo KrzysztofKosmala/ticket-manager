@@ -38,9 +38,9 @@ public class EmailMessageGenerator
                 .append("<div class='header'>Twoja płatność za zamówienie</div>")
                 .append("<p>Drogi Kliencie,</p>")
                 .append("<p>Dziękujemy za Twoje zamówienie. Poniżej znajdziesz link do płatności:</p>")
-                .append("<a href=").append(paymentUrl).append("/pay>").append("Opłać zamówienie").append("</a>")
+                .append("<a href='").append(paymentUrl).append("/pay'>").append("Opłać zamówienie!").append("</a>")
                 .append("<p>Jeżeli chcesz anulować płatność kliknij w link poniżej</p>")
-                .append("<a href=").append(paymentUrl).append("/reject>").append("Anuluj zamówienie").append("</a></br>");
+                .append("<a href='").append(paymentUrl).append("/reject'>").append("Anuluj zamówienie!").append("</a></br>");
 
         body.append("<table>")
                 .append("<thead>")
