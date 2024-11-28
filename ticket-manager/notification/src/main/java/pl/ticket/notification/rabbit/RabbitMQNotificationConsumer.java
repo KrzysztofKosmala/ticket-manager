@@ -1,5 +1,6 @@
 package pl.ticket.notification.rabbit;
 
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -16,8 +17,7 @@ public class RabbitMQNotificationConsumer
     private final EmailClientService emailClientService;
 
     @RabbitListener(queues = "${rabbitmq.email-queue.email}")
-    public void emailsConsumer(EmailMessage message)
-    {
+    public void emailsConsumer(EmailMessage message) throws MessagingException {
         log.info("Consumed {} from queue", message);
         emailClientService.getInstance().send(message);
     }

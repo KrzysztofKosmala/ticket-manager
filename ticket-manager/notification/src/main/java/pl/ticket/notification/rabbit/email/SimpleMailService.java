@@ -1,9 +1,11 @@
 package pl.ticket.notification.rabbit.email;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.EmailMessage;
 
@@ -20,15 +22,21 @@ public class SimpleMailService implements EmailSender {
 
     @Override
     public void send(EmailMessage message) {
-        log.info("Sending email");
-        log.info("Subject: " + message.getSubject());
-        log.info("To: " + message.getTo());
+        log.info("Wysyłanie e-mail...");
+        log.info("Temat: " + message.getSubject());
+        log.info("Do: " + message.getTo());
 
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(message.getTo());
-        simpleMailMessage.setSubject(message.getSubject());
-        simpleMailMessage.setText(message.getBody());
-        simpleMailMessage.setFrom(projectMail);
-        mailSender.send(simpleMailMessage);
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(message.getTo());
+            helper.setSubject(message.getSubject());
+            helper.setText(message.getBody(), true);
+            helper.setFrom(projectMail);
+            mailSender.send(mimeMessage);
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

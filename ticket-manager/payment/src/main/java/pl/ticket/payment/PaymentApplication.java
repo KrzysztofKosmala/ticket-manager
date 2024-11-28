@@ -6,7 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(
         scanBasePackages = {
                 "pl.ticket.payment",
-                "pl.ticket.amqp"
+                "pl.ticket.amqp",
+                "pl.ticket.email"
         }
 )
 public class PaymentApplication {

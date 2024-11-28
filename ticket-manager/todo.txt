@@ -31,7 +31,5 @@ role użytkoników
 zmiana hasła (kolejki i keycloack)
 więcej atrybutów uzywkonika
 dodać opcje zarządzania orderem dla admina plus testy
-dodać nie fake implementacje wysyłania maili
 sprwadzić proces koszyka i zamówienia pod kątem ceny(cena powinna być jakoś weryfikowana po wysłaniu z front endu)
-// TODO: do zrobienia fake p24 serwis aby legitnie zasymulowac proces platnosci
 

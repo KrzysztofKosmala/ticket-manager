@@ -11,7 +11,7 @@ public class EmailMessageGenerator
     {
         return EmailMessage.builder()
                 .to(order.getClientEmail())
-                .subject("Płatność za zamoówienie - " + order.getOrderId())
+                .subject("Płatność za zamoówienie nr " + order.getOrderId())
                 .body(buildPaymentEmailBody(order, paymentUrl))
                 .build();
     }
@@ -38,9 +38,9 @@ public class EmailMessageGenerator
                 .append("<div class='header'>Twoja płatność za zamówienie</div>")
                 .append("<p>Drogi Kliencie,</p>")
                 .append("<p>Dziękujemy za Twoje zamówienie. Poniżej znajdziesz link do płatności:</p>")
-                .append("<p>").append(paymentUrl).append("</p>")
+                .append("<a href=").append(paymentUrl).append("/pay>").append("Opłać zamówienie").append("</a>")
                 .append("<p>Jeżeli chcesz anulować płatność kliknij w link poniżej</p>")
-                .append("<p>localhost:8082/api/v1/payments/reject</p>").append("<br>");
+                .append("<a href=").append(paymentUrl).append("/reject>").append("Anuluj zamówienie").append("</a></br>");
 
         body.append("<table>")
                 .append("<thead>")

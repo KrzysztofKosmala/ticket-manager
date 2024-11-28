@@ -25,7 +25,7 @@ public class PaymentConfig {
     @ConditionalOnProperty(name="app.payments.initializer", havingValue = "fakePayment24Service")
     public PaymentInitializer fakePaymentService(SagaPaymentProcessService sagaPaymentProcessService,
                                                  PaymentOrderStatusService paymentOrderStatusService,
-    EmailClient emailClient ){
-        return new FakePayment24Service(sagaPaymentProcessService, paymentOrderStatusService);
+                                                 EmailClient emailClient){
+        return new FakePayment24Service(sagaPaymentProcessService, paymentOrderStatusService, emailClient);
     }
 }

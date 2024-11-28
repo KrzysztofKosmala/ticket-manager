@@ -14,15 +14,16 @@ public class PaymentController {
     }
 
     @GetMapping("/{orderId}")
-    public void payOrder(@PathVariable Long orderId){
+    public void simulateOrderPaymentStatus(@PathVariable Long orderId){
         paymentService.simulateOrderPaymentStatus(orderId);
     }
-
-    @GetMapping("/mail")
-    public void payOrder(){
-
+    @GetMapping("/{orderId}/pay")
+    public void payOrder(@PathVariable Long orderId){
+        paymentService.payOrder(orderId);
     }
-
-
+    @GetMapping("/{orderId}/reject")
+    public void rejectOrder(@PathVariable Long orderId){
+        paymentService.rejectOrder(orderId);
+    }
 }
 

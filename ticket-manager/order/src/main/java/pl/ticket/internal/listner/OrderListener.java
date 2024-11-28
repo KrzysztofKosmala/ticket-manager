@@ -45,6 +45,7 @@ public class OrderListener
     public void consumePaymentRejected(OrderEvent orderEvent)
     {
         log.info("Received event to update order status to processing, event: {}", orderEvent.toString());
+        emailClient.publishEmail(EmailMessageGenerator.orderRejectedMessage(orderEvent));
         internalOrderService.unbookOrder(orderEvent);
     }
 

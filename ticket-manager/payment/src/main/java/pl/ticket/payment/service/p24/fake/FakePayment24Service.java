@@ -1,10 +1,7 @@
 package pl.ticket.payment.service.p24.fake;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
@@ -23,24 +20,15 @@ import java.util.concurrent.ScheduledFuture;
 
 @Slf4j
 @Service
-//@RequiredArgsConstructor
-//@AllArgsConstructor
+@RequiredArgsConstructor
 public class FakePayment24Service implements PaymentInitializer {
     private final SagaPaymentProcessService sagaPaymentProcessService;
     private final PaymentOrderStatusService paymentOrderStatusService;
+    private final EmailClient emailClient;
     private final static String PAYMENT_URL = "localhost:8082/api/v1/payments/";
-    private final TaskScheduler scheduler;
+    private TaskScheduler scheduler;
     private ScheduledFuture<?> scheduledTask;
-    private final ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-
-    public FakePayment24Service(SagaPaymentProcessService sagaPaymentProcessService,
-                                PaymentOrderStatusService paymentOrderStatusService) {
-
-        taskScheduler.initialize();
-        this.sagaPaymentProcessService = sagaPaymentProcessService;
-        this.scheduler = taskScheduler;
-        this.paymentOrderStatusService = paymentOrderStatusService;
-    }
+    private ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 
     private String generateFakeToken(){
         return UUID.randomUUID().toString();
@@ -48,10 +36,12 @@ public class FakePayment24Service implements PaymentInitializer {
 
     @Override
     public void initPayment(OrderEvent orderEvent) {
-
+        log.info("Tworzenie płatności za zamówienie nr: {}", orderEvent.getOrderId());
+        taskScheduler.initialize();
+        scheduler = taskScheduler;
         String paymentUrl = PAYMENT_URL + orderEvent.getOrderId();
 
-        //zapisac do bazy orderId + status platnosci na PENDING + link
+        //zapisujemy orderId + status platnosci + link do platnosci
         paymentOrderStatusService.savePayment(PaymentOrderStatus.builder()
                 .orderId(orderEvent.getOrderId())
                 .paymentUrl(paymentUrl)
@@ -65,27 +55,19 @@ public class FakePayment24Service implements PaymentInitializer {
 
     @Override
     public void verifyPayment(OrderEvent orderEvent) {
+        log.info("Weryfikacja zamówienia nr {} " + orderEvent.getOrderId());
         startTaskWithTimeout(paymentOrderStatusService,
                 orderEvent, 20000, 180000);
     }
-    private boolean checkStatusPayment(PaymentStatus paymentStatus){
-        if (paymentStatus.equals(PaymentStatus.PENDING)){
-            return false;
-        }else if (paymentStatus.equals(PaymentStatus.PAID)){
-            return true;
-
-        }else if (paymentStatus.equals(PaymentStatus.REJECTED)){
-            return false;
-        }
-        return false;
-    }
 
     private void sendMail(OrderEvent orderEvent, String paymentUrl) {
+        log.info("Wysyłanie e-mail z linkiem do płatności");
         EmailMessage emailMessage = EmailMessageGenerator.payOrderMessage(orderEvent, paymentUrl);
-        sagaPaymentProcessService.publishEmailPayment(emailMessage);
+        emailClient.publishEmail(emailMessage);
     }
 
     public PaymentStatus simulateOrderPayment(){
+        log.info("Dokonywanie płatności za zamówienie");
         return getRandomStatus();
     }
 
@@ -100,34 +82,40 @@ public class FakePayment24Service implements PaymentInitializer {
 
         Runnable task = () -> {
             long elapsedTime = System.currentTimeMillis() - startTime;
-            log.info("Wykonanie zadania: " + System.currentTimeMillis());
-
+            log.info("Sprawdzenie statusu płatności dla zamówienia nr {}", orderEvent.getOrderId());
             PaymentOrderStatus paymentOrderStatus = paymentOrderStatusService.findByOrderId(orderEvent.getOrderId());
-            boolean isPaid = checkStatusPayment(paymentOrderStatus.getPaymentStatus());
+            PaymentStatus status = paymentOrderStatus.getPaymentStatus();
+            log.info("Status płatności: {}", status);
+
 
             // Zakończ zadanie po określonym czasie lub jak płatność jest opłacone
-            if (elapsedTime >= timeoutMillis || isPaid) {
-                log.info("Zadanie zakończone po osiągnięciu limitu czasu.");
+            if (elapsedTime >= timeoutMillis || status.equals(PaymentStatus.PAID) || status.equals(PaymentStatus.REJECTED)) {
+                log.info("Weryfikacja została zakończona po osiągniecia maksymalnego czasu lub status zmienił się na PAID lub REJECTED");
                 stopTask();
-                publishPaymentStatus(orderEvent, isPaid);
+                publishPaymentStatus(orderEvent, status);
+
+                // todo: obsluzyc status PENDING - anulowac zamowienie
             }
         };
         scheduledTask = scheduler.scheduleAtFixedRate(task, intervalMillis);
-        log.info("Zadanie zostało uruchomione!");
+        log.info("Weryfikacja zamówienia nr {} została uruchomiona", orderEvent.getOrderId());
     }
 
     private void stopTask() {
         if (scheduledTask != null) {
             scheduledTask.cancel(false);
-            log.info("Zadanie zostało zatrzymane.");
+            log.info("Weryfikacja została zakończona");
         }
     }
 
-    private void publishPaymentStatus(OrderEvent orderEvent, boolean isPaid){
-        if(isPaid){
+    private void publishPaymentStatus(OrderEvent orderEvent, PaymentStatus status){
+
+        if(status.equals(PaymentStatus.PAID)){
             sagaPaymentProcessService.publishPaymentCompleted(orderEvent);
-        } else {
+        } else if (status.equals(PaymentStatus.REJECTED)){
             sagaPaymentProcessService.publishPaymentRejected(orderEvent);
+        }else {
+            // todo: obsluzyc wyjatek
         }
     }
 }

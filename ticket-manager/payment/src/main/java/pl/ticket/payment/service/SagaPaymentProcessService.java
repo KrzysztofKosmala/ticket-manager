@@ -23,7 +23,7 @@ public class SagaPaymentProcessService
                         (
                                 orderEvent,
                                 rabbitMqOrderConfig.getInternalExchange(),
-                                rabbitMqOrderConfig.getPaymentCompleted()
+                                rabbitMqOrderConfig.getInternalPaymentCompletedRoutingKey()
                         );
     }
     public void publishPaymentRejected(OrderEvent orderEvent)
@@ -33,19 +33,10 @@ public class SagaPaymentProcessService
                 (
                         orderEvent,
                         rabbitMqOrderConfig.getInternalExchange(),
-                        rabbitMqOrderConfig.getPaymentRejected()
-                );
-    }
+                        rabbitMqOrderConfig.getInternalOrderReservedRoutingKey()
 
-    public void publishEmailPayment(EmailMessage emailMessage)
-    {
-        log.info("publishing email for payment of order: {}", emailMessage.getSubject());
-        rabbitMqMessageProducer.publish
-                (
-                        emailMessage,
-                        rabbitMqOrderConfig.getInternalExchange(),
-                        rabbitMqOrderConfig.getEmailQueue()
                 );
+
     }
 
 }

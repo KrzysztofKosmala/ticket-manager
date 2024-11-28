@@ -3,7 +3,6 @@ package pl.ticket.payment.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.OrderEvent;
-import pl.ticket.email.EmailClient;
 import pl.ticket.payment.model.PaymentOrderStatus;
 import pl.ticket.payment.model.PaymentStatus;
 import pl.ticket.payment.service.p24.fake.FakePayment24Service;
@@ -22,13 +21,11 @@ public class PaymentService {
     }
 
     public void initPayment(OrderEvent orderEvent) {
-        log.info("Init payment for order: " + orderEvent.getOrderId());
         paymentClientService.getInstance().initPayment(orderEvent);
         verifyPayment(orderEvent);
     }
 
     public void verifyPayment(OrderEvent orderEvent) {
-        log.info("Verify payment for order: " + orderEvent.getOrderId());
         paymentClientService.getInstance().verifyPayment(orderEvent);
     }
 
@@ -43,4 +40,21 @@ public class PaymentService {
         paymentOrderStatus.setPaymentStatus(paymentStatus);
         paymentOrderStatusService.savePayment(paymentOrderStatus);
     }
+
+    public void payOrder(Long orderId) {
+        makePayment(orderId, PaymentStatus.PAID);
+
+    }
+
+    public void rejectOrder(Long orderId) {
+        makePayment(orderId, PaymentStatus.REJECTED);
+    }
+
+    private void makePayment(Long orderId, PaymentStatus rejected) {
+        PaymentOrderStatus paymentOrderStatus = paymentOrderStatusService
+                .findByOrderId(orderId);
+        paymentOrderStatus.setPaymentStatus(rejected);
+        paymentOrderStatusService.savePayment(paymentOrderStatus);
+    }
+
 }

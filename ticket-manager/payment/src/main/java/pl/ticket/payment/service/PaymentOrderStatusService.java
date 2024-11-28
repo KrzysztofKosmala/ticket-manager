@@ -18,10 +18,9 @@ public class PaymentOrderStatusService {
     }
 
     public void savePayment(PaymentOrderStatus paymentOrderStatus){
-        log.info("@#@# Payment save!");
-
-        PaymentOrderStatus savedPayment = paymentOrderStatusRepository.save(paymentOrderStatus);
-        log.info("@#@# saved payment!");
+        log.info("Zapis płatności do bazy danych");
+        paymentOrderStatusRepository.save(paymentOrderStatus);
+        log.info("Płatność zapisana");
     }
 
     public void changePaymentStatusForOrderId(Long orderId, PaymentStatus status) {
