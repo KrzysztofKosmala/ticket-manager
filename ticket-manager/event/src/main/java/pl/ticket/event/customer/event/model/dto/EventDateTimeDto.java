@@ -14,9 +14,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+//TODO:zmienić nazwe
 public class EventDateTimeDto {
     private String title;
     private String description;
     private LocalDate date;
+    //TODO: zmienić na "at"
     private List<LocalTime> times = new ArrayList<>();
 }

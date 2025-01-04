@@ -16,11 +16,12 @@ public interface EventRepository extends JpaRepository<Event, Long>
     Optional<Event> findBySlug(String slug);
     Page<Event> findByCategoryId(Long id, Pageable pageable);
 
-    @Query("SELECT e FROM Event e JOIN FETCH e.occurrences")
-    List<Event> findAllEventsPaged(Pageable pageable);
-
-    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.occurrences WHERE e.id = :id")
+    @Query("SELECT e FROM Event e")
+    List<Event> findAllPaged(Pageable pageable);
+    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.occurrences o WHERE e.id = :id")
     Optional<Event> findByIdWithOccurrences(@Param("id") Long id);
+    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.occurrences o WHERE e.id = :id AND o.date = :date")
+    Optional<Event> findByIdWithMatchingDateOccurrences(@Param("id") Long id, @Param("date") LocalDate date);
 
     @Query("SELECT e FROM Event e JOIN FETCH e.occurrences o WHERE o.date = :date")
     List<Event> findByDatePaged(@Param("date") LocalDate date, Pageable pageable);

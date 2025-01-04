@@ -16,8 +16,6 @@ Kamil:
            - te dwa requesty da sie pewnie zrobić za jednym zamachem wyciągając przez ticket repository z joinem na event occurance i odpoweidnimi warunkami na czas i id eventu
            - nie powinno sie korzystać z repo z innej paczki bezpośrednio tylko korzystać z servisu z innej paczki także jak coś to nie ticketRepository tylko korzystamy z ticketService*/
 
-/*TODO: zamiast filtrowania powinno być z repo zwrócone tylko te o potrzebnym czasie*/
-/*TODO: zwraca liste eventów które występują w wybrany dzien ale wraz z całą listą occurances a tych occurances może być z 1000*/
 /*TODO: czy to znaczy że jak mamy 300 eventOccurance tego eventu o godzinie 10 to ta lista będzie miała 300 elementów "10:00"*/
 /*TODO: skoro metoda to getEventOccurrence to dlaczego zwracamy EventTicket (ta nazwa mało mówi) ? */
 EventDateTimeDto - ta nazwa też mało mówi

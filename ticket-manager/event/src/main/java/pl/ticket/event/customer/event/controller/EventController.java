@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import pl.ticket.dto.EventDto;
-import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
 import pl.ticket.event.customer.event.service.EventService;
 import pl.ticket.event.customer.event.model.dto.EventTicketDto;
@@ -19,9 +18,10 @@ import java.util.List;
 @RequestMapping("api/v1/events")
 public record EventController(EventService eventService)
 {
+
     @GetMapping
-    public Page<Event> getEvents(@RequestParam(defaultValue = "0") int page,
-                                 @RequestParam(defaultValue = "5") int size){
+    public Page<EventDto> getEvents(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "5") int size){
         log.info("Getting all events");
         return eventService.getEvents(PageRequest.of(page,size));
     }
@@ -32,6 +32,7 @@ public record EventController(EventService eventService)
         return eventService.getEventById(eventId);
     }
 
+    //zzwracać tylko z occurances w podanej dacie
     @GetMapping("/date/{date}")
     public Page<EventDateTimeDto> getEventsByDate(@PathVariable LocalDate date, @RequestParam(defaultValue = "0") int page,
                                                    @RequestParam(defaultValue = "5") int size) {
@@ -41,9 +42,9 @@ public record EventController(EventService eventService)
 
     // kiedy wchodzimy w konkretny event i wybrany dzien -> dostajemy opis, date i godziny wystapien danego wydarzenia
     @GetMapping("/{eventId}/{date}")
-    public EventDateTimeDto getEvent(@PathVariable Long eventId, @PathVariable LocalDate date) {
+    public EventDto getEvent(@PathVariable Long eventId, @PathVariable LocalDate date) {
         log.info("Getting event for Id: {] date: {}", eventId, date);
-        //TODO: może to zwróćmy tylko jak jest jakikolwiek bilet
+
         return eventService.getEventByIdAndDate(eventId, date);
     }
 

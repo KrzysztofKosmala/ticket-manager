@@ -1,17 +1,15 @@
 package pl.ticket.event.customer.event.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
 
 import java.util.List;
 
 
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @NoArgsConstructor
@@ -36,7 +34,7 @@ public class Event
     private String title;
     private String description;
     private String slug;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "eventId")
     private List<EventOccurrence> occurrences;
 

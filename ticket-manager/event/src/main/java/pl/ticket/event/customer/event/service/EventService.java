@@ -48,34 +48,26 @@ public class EventService {
                 .build();
     }
 
-    public EventDateTimeDto getEventByIdAndDate(Long eventId, LocalDate date) {
-        Optional<Event> eventById = eventRepository.findByIdWithOccurrences(eventId);
+    public EventDto getEventByIdAndDate(Long eventId, LocalDate date) {
 
-        if(!eventById.isPresent()){
-            throw new EventDateException("Nie znaleziono wydarzenia o podanym id: " + eventId);
-        }
-        Event event = eventById.get();
-        List<EventOccurrence> occurrences = event.getOccurrences();
+        Event event = eventRepository.findByIdWithMatchingDateOccurrences(eventId, date)
+                .orElseThrow(() -> new EventDateException("Nie znaleziono takiego wydarzenia."));
 
-        /*TODO: zamiast filtrowania powinno być z repo zwrócone tylko te o requestowanym czasie*/
-        List<LocalTime> times = occurrences.stream()
-                .filter(occurrence -> occurrence.getDate().equals(date))
-                .map(EventOccurrence::getTime).toList();
-
-        if (times.isEmpty()){
-            throw new EventDateException("W dniu " + date + " nie ma takiego wydarzenia");
-        }
-
-        return eventMapper.mapToEventDateTimeDto(event, date, times);
+        return eventMapper.mapToEventDto(event);
     }
 
-    public Page<Event> getEvents(Pageable pageable) {
-        List<Event> allEventsPaged = eventRepository.findAllEventsPaged(pageable);
-        return new PageImpl<>(allEventsPaged, pageable, allEventsPaged.size());
+    public Page<EventDto> getEvents(Pageable pageable) {
+        List<Event> allPaged = eventRepository.findAllPaged(pageable);
+        List<EventDto> pagedEventsDto = allPaged.stream().map(eventMapper::mapToEventDtoWithoutOccurrences).collect(Collectors.toList());
+        return new PageImpl<>(pagedEventsDto, pageable, pagedEventsDto.size());
     }
 
+
+
+
+    /*TODO: poprawić reszte i testy*/
     public Page<EventDateTimeDto> getEventsByDate(LocalDate date, Pageable pageable) {
-        /*TODO: zwraca liste eventów które występują w wybrany dzien ale wraz z całą listą occurances a tych occurances może być z 1000*/
+
         List<Event> events = eventRepository.findByDatePaged(date, pageable);
         List<EventDateTimeDto> result = eventMapper.mapToListEventDateTimeDto(events, date);
 
