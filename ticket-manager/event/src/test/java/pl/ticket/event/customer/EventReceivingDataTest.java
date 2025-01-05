@@ -11,7 +11,6 @@ import pl.ticket.event.data_provider.EventProvider;
 import pl.ticket.event.data_provider.TicketProvider;
 import pl.ticket.event.IT.PrePost;
 import pl.ticket.event.customer.event.model.Event;
-import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
 import pl.ticket.event.customer.event.repository.EventRepository;
 import pl.ticket.event.customer.event.service.EventMapper;
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
@@ -95,7 +94,7 @@ public class EventReceivingDataTest extends PrePost {
         assertEquals(timeParsed, eventOccurrence.getTime());
         assertEquals(true, eventOccurrence.getIsCommonPool());
 
-        List<Ticket> ticketsForOccurrence = ticketRepository.findTicketsOccurrenceId(eventOccurrence.getId());
+        List<Ticket> ticketsForOccurrence = ticketRepository.findTicketsByEventOccurrenceId(eventOccurrence.getId());
 
         assertEquals(2, ticketsForOccurrence.size());
         assertFalse(ticketsForOccurrence.isEmpty());

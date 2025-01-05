@@ -36,9 +36,9 @@ public class Ticket
     private BigDecimal price;
     private int amount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_occurrence_id", nullable = false)
     private EventOccurrence eventOccurrence;
-/*    @Version
-    private Long version;*/
+    @Version
+    private Long version;
 }

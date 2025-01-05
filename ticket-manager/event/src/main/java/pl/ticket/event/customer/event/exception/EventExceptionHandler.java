@@ -10,8 +10,8 @@ import java.time.ZonedDateTime;
 
 @ControllerAdvice
 public class EventExceptionHandler {
-    @ExceptionHandler(value = {EventDateException.class})
-    public ResponseEntity<Object> handleEvenDateException(EventDateException ex) {
+    @ExceptionHandler(value = {EventDataException.class})
+    public ResponseEntity<Object> handleEvenDateException(EventDataException ex) {
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         EventException eventException = new EventException

@@ -8,16 +8,17 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.ticket.event.customer.ticket.model.dto.TicketDto;
 import pl.ticket.event.customer.ticket.service.TicketService;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("api/v1/tickets")
 public record TicketController(TicketService ticketService) {
 
-    /*TODO: zwracamy ticketdto w którym jest lista ticketów ? ticketDto sugeruje że zwracamy pojedynczy ticket*/
-    @GetMapping({"/{eventId}"})
-    public TicketDto getTicketsForEvent(@PathVariable Long eventId){
-        log.info("Getting tickets for eventId: {} with occurrences", eventId);
-        return ticketService.getTicketsForEvent(eventId);
+    @GetMapping({"/{eventOccurrenceId}"})
+    public List<TicketDto> getTicketsForEventOccurrence(@PathVariable Long eventOccurrenceId){
+        log.info("Getting tickets for eventOccurrenceId: {}", eventOccurrenceId);
+        return ticketService.getTicketsForEventOccurrence(eventOccurrenceId);
     }
 
 }

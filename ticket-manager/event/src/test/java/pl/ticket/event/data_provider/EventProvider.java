@@ -1,8 +1,6 @@
 package pl.ticket.event.data_provider;
 
 
-import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

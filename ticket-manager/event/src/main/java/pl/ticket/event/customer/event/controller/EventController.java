@@ -5,13 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import pl.ticket.dto.EventDto;
-import pl.ticket.event.customer.event.model.dto.EventDateTimeDto;
 import pl.ticket.event.customer.event.service.EventService;
-import pl.ticket.event.customer.event.model.dto.EventTicketDto;
 import pl.ticket.feign.event.CapacityCheckResponse;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -32,31 +29,20 @@ public record EventController(EventService eventService)
         return eventService.getEventById(eventId);
     }
 
-    //zzwracać tylko z occurances w podanej dacie
+
     @GetMapping("/date/{date}")
-    public Page<EventDateTimeDto> getEventsByDate(@PathVariable LocalDate date, @RequestParam(defaultValue = "0") int page,
+    public Page<EventDto> getEventsByDate(@PathVariable LocalDate date, @RequestParam(defaultValue = "0") int page,
                                                    @RequestParam(defaultValue = "5") int size) {
         log.info("Getting events for date: {}", date);
         return eventService.getEventsByDate(date,PageRequest.of(page ,size));
     }
 
-    // kiedy wchodzimy w konkretny event i wybrany dzien -> dostajemy opis, date i godziny wystapien danego wydarzenia
+
     @GetMapping("/{eventId}/{date}")
     public EventDto getEvent(@PathVariable Long eventId, @PathVariable LocalDate date) {
         log.info("Getting event for Id: {] date: {}", eventId, date);
 
         return eventService.getEventByIdAndDate(eventId, date);
-    }
-
-    // kiedy jestśmy w konkretnym evencie, wybieramy godzine(nasz occurrence) i pokazujemy bilety
-    /*TODO: skoro metoda to getEventOccurrence to dlaczego zwracamy EventTicket (ta nazwa mało mówi) ? */
-    @GetMapping("/{eventId}/{date}/{time}")
-    public List<EventTicketDto> getEventOccurrenceByDateAndTime(@PathVariable Long eventId,
-                                                                @PathVariable String time,
-                                                                @PathVariable LocalDate date) {
-        log.info("Getting event for Id: {] time: {}", eventId, time);
-        //TODO: może to zwróćmy tylko jak jest jakikolwiek bilet
-        return eventService.getEventOccurrenceByDateAndTime(eventId, time, date);
     }
 
     @GetMapping("/capacity-check/{eventId}")
@@ -66,6 +52,5 @@ public record EventController(EventService eventService)
         return eventService.checkCapacity(eventId);
     }
 
-    //po slug jak w niego wejdziesz to zeby bylo juz wiecej info jak wszystkie dostepne godziny tego dnia i rodzaje biletow i ceny
 
 }

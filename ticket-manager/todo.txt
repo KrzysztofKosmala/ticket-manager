@@ -11,18 +11,8 @@ naprawa routingu w apigw
 
 
 Kamil:
-/*TODO: skoro chcemy zwrócić event occurance to chyba powinno być w innaj paczce np event occurance a nie event*/
-/*TODO:
-           - te dwa requesty da sie pewnie zrobić za jednym zamachem wyciągając przez ticket repository z joinem na event occurance i odpoweidnimi warunkami na czas i id eventu
-           - nie powinno sie korzystać z repo z innej paczki bezpośrednio tylko korzystać z servisu z innej paczki także jak coś to nie ticketRepository tylko korzystamy z ticketService*/
 
-/*TODO: czy to znaczy że jak mamy 300 eventOccurance tego eventu o godzinie 10 to ta lista będzie miała 300 elementów "10:00"*/
-/*TODO: skoro metoda to getEventOccurrence to dlaczego zwracamy EventTicket (ta nazwa mało mówi) ? */
-EventDateTimeDto - ta nazwa też mało mówi
-EventDateException - może też inna nazwa bo widze że używamy nie tylko jak jest problem z datą ale też jak nie ma eventu o podanym id
-//TODO: może to zwróćmy tylko jak jest jakikolwiek bilet
-/*TODO: zwracamy ticketdto w którym jest lista ticketów ? ticketDto sugeruje że zwracamy pojedynczy ticket*/
-/*TODO: skoro jesteśmy w paczce ticketu to powinniśmy korzystać z warstwy servisu kiedy chcemy coś zrobić w evencie a nie bezpośrednio przez repo*/
+
 po tym wszystkim trzeba by było testy poprawić i uwzględnić te casy co opisałem
 
 role użytkoników

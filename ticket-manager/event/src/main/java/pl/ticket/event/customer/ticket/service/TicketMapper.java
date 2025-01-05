@@ -13,21 +13,13 @@ import java.util.List;
 @Component
 public class TicketMapper {
 
-    public TicketDto mapToTicketDto(Event event, List<TicketListDto> ticketListDtos){
+    public TicketDto mapToTicketDto(Ticket ticketsByEventOccurrenceId)
+    {
         return TicketDto.builder()
-                .eventName(event.getTitle())
-                .tickets(ticketListDtos)
+                .id(ticketsByEventOccurrenceId.getId())
+                .price(ticketsByEventOccurrenceId.getPrice())
+                .amount(ticketsByEventOccurrenceId.getAmount())
+                .type(ticketsByEventOccurrenceId.getType().getType())
                 .build();
-    }
-
-    public List<TicketListDto> mapToListTicketListDto(List<Ticket> tickets){
-        return tickets.stream()
-                .map(ticket -> TicketListDto.builder()
-                        .price(ticket.getPrice())
-                        .type(ticket.getType())
-                        .date(ticket.getEventOccurrence().getDate())
-                        .time(ticket.getEventOccurrence().getTime())
-                        .amount(ticket.getAmount())
-                        .build()).toList();
     }
 }

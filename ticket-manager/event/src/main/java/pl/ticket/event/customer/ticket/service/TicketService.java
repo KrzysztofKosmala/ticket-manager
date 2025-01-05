@@ -2,36 +2,23 @@ package pl.ticket.event.customer.ticket.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.ticket.event.customer.event.exception.EventDateException;
-import pl.ticket.event.customer.event.model.Event;
-import pl.ticket.event.customer.event.repository.EventRepository;
 import pl.ticket.event.customer.ticket.model.Ticket;
-import pl.ticket.event.customer.ticket.model.dto.TicketListDto;
 import pl.ticket.event.customer.ticket.model.dto.TicketDto;
 import pl.ticket.event.customer.ticket.repository.TicketRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class TicketService
 {
     private final TicketRepository ticketRepository;
-    private final EventRepository eventRepository;
     private final TicketMapper ticketMapper;
 
-    public TicketDto getTicketsForEvent(Long id) {
-        Optional<Event> optionalEvent = eventRepository.findByIdWithOccurrences(id);
-        /*TODO: skoro jesteśmy w paczce ticketu to powinniśmy korzystać z warstwy servisu kiedy chcemy coś zrobić w evencie a nie bezpośrednio przez repo*/
-        if(!optionalEvent.isPresent()){
-            throw new EventDateException("Nie znaleziono wydarzenia o id: + " + id);
-        }
-        Event event = optionalEvent.get();
-        List<Ticket> tickets = ticketRepository.findTicketsByEventId(id);
+    public List<TicketDto> getTicketsForEventOccurrence(Long id)
+    {
+        List<Ticket> ticketsByEventOccurrenceId = ticketRepository.findTicketsByEventOccurrenceId(id);
 
-        List<TicketListDto> ticketListDtos = ticketMapper.mapToListTicketListDto(tickets);
-
-        return ticketMapper.mapToTicketDto(event, ticketListDtos);
+        return ticketsByEventOccurrenceId.stream().map(ticketMapper::mapToTicketDto).toList();
     }
 }

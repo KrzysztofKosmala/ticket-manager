@@ -12,6 +12,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findTicketsByEventId(@Param("id") Long id);
 
     @Query("SELECT t FROM Ticket t WHERE t.eventOccurrence.id = :id")
-    List<Ticket> findTicketsOccurrenceId(@Param("id") Long id);
+    List<Ticket> findTicketsByEventOccurrenceId(@Param("id") Long id);
 
 }

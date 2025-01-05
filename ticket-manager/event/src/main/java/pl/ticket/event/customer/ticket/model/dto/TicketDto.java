@@ -1,18 +1,25 @@
 package pl.ticket.event.customer.ticket.model.dto;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
+import pl.ticket.event.customer.ticket.model.TicketType;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketDto {
-    private String eventName; //czy to potrzebne czy da sie jakos inaczej pozyskać lub dodać taki parametr do ticketu ale wtedy by trzeba go dodać do sql do testow do adminticket do internal ticket itp?
-    /*TODO: ticketlist sugeruje że w środku jest lista chyba powinno być coś w stylu List<ticketDto>*/
-    private List<TicketListDto> tickets;
+public class TicketDto
+{
+
+    private Long id;
+    private String type;
+    private BigDecimal price;
+    private int amount;
 }
