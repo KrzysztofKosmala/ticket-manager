@@ -20,13 +20,13 @@ public record EventController(EventService eventService)
     public Page<EventDto> getEvents(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "5") int size){
         log.info("Getting all events");
-        return eventService.getEvents(PageRequest.of(page,size));
+        return eventService.getEventsWithoutOccurrences(PageRequest.of(page,size));
     }
 
     @GetMapping("/{eventId}")
     public EventDto getEventById(@PathVariable("eventId") Long eventId)
     {
-        return eventService.getEventById(eventId);
+        return eventService.getEventDetailsById(eventId);
     }
 
 
@@ -34,7 +34,7 @@ public record EventController(EventService eventService)
     public Page<EventDto> getEventsByDate(@PathVariable LocalDate date, @RequestParam(defaultValue = "0") int page,
                                                    @RequestParam(defaultValue = "5") int size) {
         log.info("Getting events for date: {}", date);
-        return eventService.getEventsByDate(date,PageRequest.of(page ,size));
+        return eventService.getEventsWithOccurrencesOnDate(date,PageRequest.of(page ,size));
     }
 
 
@@ -42,7 +42,7 @@ public record EventController(EventService eventService)
     public EventDto getEvent(@PathVariable Long eventId, @PathVariable LocalDate date) {
         log.info("Getting event for Id: {] date: {}", eventId, date);
 
-        return eventService.getEventByIdAndDate(eventId, date);
+        return eventService.getEventDetailsByIdAndDate(eventId, date);
     }
 
     @GetMapping("/capacity-check/{eventId}")

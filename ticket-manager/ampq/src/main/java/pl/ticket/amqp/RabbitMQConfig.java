@@ -20,8 +20,6 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig
 {
     private final ConnectionFactory connectionFactory;
-    private final Tracer tracer;
-    private final Propagator propagator;
     @Bean
     public AmqpTemplate amqpTemplate()
     {

@@ -9,8 +9,6 @@ import pl.ticket.dto.EventDto;
 import pl.ticket.event.customer.event.exception.EventDataException;
 import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.repository.EventRepository;
-import pl.ticket.event.customer.event_occurrence.repository.EventOccurrenceRepository;
-import pl.ticket.event.customer.ticket.repository.TicketRepository;
 import pl.ticket.feign.event.CapacityCheckResponse;
 
 import java.time.LocalDate;
@@ -22,13 +20,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventService {
     private final EventRepository eventRepository;
-    private final EventOccurrenceRepository eventOccurrenceRepository;
-    private final TicketRepository ticketRepository;
 
     private final EventMapper eventMapper;
 
-    public EventDto getEventById(Long id) {
-        Event event = eventRepository.findByIdWithOccurrences(id).orElseThrow();
+    public EventDto getEventDetailsById(Long id) {
+        Event event = eventRepository.findByIdWithOccurrences(id).orElseThrow(() -> new EventDataException("Nie znaleziono takiego wydarzenia."));
 
         return EventDto.builder()
                 .id(event.getId())
@@ -43,23 +39,23 @@ public class EventService {
                 .build();
     }
 
-    public EventDto getEventByIdAndDate(Long eventId, LocalDate date) {
+    public EventDto getEventDetailsByIdAndDate(Long eventId, LocalDate date) {
 
-        Event event = eventRepository.findByIdWithMatchingDateOccurrences(eventId, date)
+        Event event = eventRepository.findByIdWithOccurrencesOnDate(eventId, date)
                 .orElseThrow(() -> new EventDataException("Nie znaleziono takiego wydarzenia."));
 
         return eventMapper.mapToEventDto(event);
     }
 
-    public Page<EventDto> getEvents(Pageable pageable) {
+    public Page<EventDto> getEventsWithoutOccurrences(Pageable pageable) {
         List<Event> allPaged = eventRepository.findAllPaged(pageable);
         List<EventDto> pagedEventsDto = allPaged.stream().map(eventMapper::mapToEventDtoWithoutOccurrences).collect(Collectors.toList());
         return new PageImpl<>(pagedEventsDto, pageable, pagedEventsDto.size());
     }
 
-    public Page<EventDto> getEventsByDate(LocalDate date, Pageable pageable) {
+    public Page<EventDto> getEventsWithOccurrencesOnDate(LocalDate date, Pageable pageable) {
 
-        List<Event> events = eventRepository.findByDatePaged(date, pageable);
+        List<Event> events = eventRepository.findAllWithOccurrencesOnDate(date, pageable);
 
         if (events.isEmpty()) {
             throw new EventDataException("W danym dniu nie ma żadnego wydarzenia!");

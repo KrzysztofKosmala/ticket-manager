@@ -12,9 +12,6 @@ naprawa routingu w apigw
 
 Kamil:
 
-
-po tym wszystkim trzeba by było testy poprawić i uwzględnić te casy co opisałem
-
 role użytkoników
 zmiana hasła (kolejki i keycloack)
 więcej atrybutów uzywkonika

@@ -21,10 +21,10 @@ public interface EventRepository extends JpaRepository<Event, Long>
     @Query("SELECT e FROM Event e LEFT JOIN FETCH e.occurrences o WHERE e.id = :id")
     Optional<Event> findByIdWithOccurrences(@Param("id") Long id);
     @Query("SELECT e FROM Event e LEFT JOIN FETCH e.occurrences o WHERE e.id = :id AND o.date = :date")
-    Optional<Event> findByIdWithMatchingDateOccurrences(@Param("id") Long id, @Param("date") LocalDate date);
+    Optional<Event> findByIdWithOccurrencesOnDate(@Param("id") Long id, @Param("date") LocalDate date);
 
     @Query("SELECT e FROM Event e JOIN FETCH e.occurrences o WHERE o.date = :date")
-    List<Event> findByDatePaged(@Param("date") LocalDate date, Pageable pageable);
+    List<Event> findAllWithOccurrencesOnDate(@Param("date") LocalDate date, Pageable pageable);
 
     @Query(value = "SELECT CASE WHEN capacity > 0 THEN true ELSE false END FROM Event WHERE id = :eventId", nativeQuery = true)
     boolean hasAvailableCapacity(@Param("eventId") Integer eventId);
