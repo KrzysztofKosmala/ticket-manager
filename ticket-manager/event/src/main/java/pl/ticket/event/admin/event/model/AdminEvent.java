@@ -37,11 +37,7 @@ public class AdminEvent
     private String slug;
     private Long categoryId;
 
-    @ManyToMany
-    @JoinTable(
-            name = "event_image",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "image_id")
-    )
-    private List<AdminImage> images;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private AdminImage image;
 }

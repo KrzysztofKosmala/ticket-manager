@@ -34,4 +34,6 @@ public class AdminEventCreationDto {
     private Boolean isCommonTicketPool;
 
     private List<AdminTicketCreationDto> tickets;
+
+    private Long imageId;
 }

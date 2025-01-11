@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import pl.ticket.event.admin.event.model.AdminEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,7 @@ public class AdminImage {
     @Column(name = "thumbImage")
     private String thumbImage;
 
-    @ManyToMany(mappedBy = "images", cascade = CascadeType.ALL)
-    private List<AdminEvent> events;
+    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
+    private List<AdminEvent> events = new ArrayList<>();
 }
 

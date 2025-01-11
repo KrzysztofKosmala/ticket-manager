@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.ticket.dto.UploadResponse;
@@ -53,5 +54,10 @@ public class AdminImageService
         imageRepository.save(model);
 
         return new UploadResponse(name, "Image uploaded successfully");
+    }
+
+    public AdminImage findById(Long id)
+    {
+        return imageRepository.findById(id).orElseThrow();
     }
 }

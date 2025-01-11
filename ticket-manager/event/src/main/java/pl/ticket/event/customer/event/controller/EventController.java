@@ -16,6 +16,8 @@ import java.time.LocalDate;
 public record EventController(EventService eventService)
 {
 
+    /*TODO: Return with image*/
+
     @GetMapping
     public Page<EventDto> getEvents(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "5") int size){

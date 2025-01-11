@@ -14,6 +14,8 @@ import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceRegularCreationDto;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.admin.event_occurrence.service.AdminEventOccurrenceService;
+import pl.ticket.event.admin.image.model.AdminImage;
+import pl.ticket.event.admin.image.service.AdminImageService;
 import pl.ticket.event.admin.ticket.model.AdminTicket;
 import pl.ticket.event.admin.ticket.service.AdminTicketService;
 
@@ -33,24 +35,24 @@ public class AdminEventService {
     private final AdminEventUtils adminEventUtils;
     private final AdminTicketService adminTicketService;
     private final AdminEventMapper adminEventMapper;
+    private final AdminImageService imageService;
 
     public void createEventOccasional(AdminEventOccasionalCreationDto adminEventOccasionalCreationDto)
     {
-        if (adminEventOccasionalCreationDto.getEventType().equals(EventType.OCCASIONAL)) {
-
-            AdminEvent event = adminEventMapper.mapToAdminEvent(adminEventOccasionalCreationDto);
-            // lista wystąpień z requestu
-            List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
-
-            List<AdminEventOccurrence> adminEventOccurrences = mapToAdminEventOccurrence(event, eventOccurrences, adminEventOccasionalCreationDto.getIsCommonTicketPool());
-            adminEventOccurrenceService.createEventOccurrences(adminEventOccurrences);
-
-            List<AdminTicket> tickets = adminEventMapper.prepareTicketsForEachOccurrence(event,
-                    adminEventOccurrences,  adminEventOccasionalCreationDto);
-            adminTicketService.createTickets(tickets);
-        } else {
+        /*TODO: dodać obrazki*/
+        if (!adminEventOccasionalCreationDto.getEventType().equals(EventType.OCCASIONAL)) {
             throw new NoSuchElementException("Wrong event type!");
         }
+        AdminEvent event = adminEventMapper.mapToAdminEvent(adminEventOccasionalCreationDto);
+        // lista wystąpień z requestu
+        List<AdminEventOccurrenceOccasionalCreationDto> eventOccurrences = adminEventOccasionalCreationDto.getEventOccurrences();
+
+        List<AdminEventOccurrence> adminEventOccurrences = mapToAdminEventOccurrence(event, eventOccurrences, adminEventOccasionalCreationDto.getIsCommonTicketPool());
+        adminEventOccurrenceService.createEventOccurrences(adminEventOccurrences);
+
+        List<AdminTicket> tickets = adminEventMapper.prepareTicketsForEachOccurrence(event,
+                adminEventOccurrences,  adminEventOccasionalCreationDto);
+        adminTicketService.createTickets(tickets);
     }
 
     private static List<AdminEventOccurrence> mapToAdminEventOccurrence(AdminEvent event,
@@ -65,53 +67,19 @@ public class AdminEventService {
                 .toList();
     }
 
-
-    public void createEventRegular(AdminEventRegularCreationDto adminEventRegularCreationDto) {
-        if (adminEventRegularCreationDto.getEventType().equals(EventType.REGULAR)) {
-            AdminEvent event = adminEventMapper.mapToAdminEvent(adminEventRegularCreationDto);
-            // pobieramy wszystkie daty z podanego przedziału z requestu
-            // czy zakres nie jest za duży? check
-            List<LocalDate> datesFromRange = adminEventUtils.datesFromRange(adminEventRegularCreationDto.getStartDate(),
-                    adminEventRegularCreationDto.getEndDate());
-
-            prepareOccurrencesForRequestedRangeOfDate(adminEventRegularCreationDto, datesFromRange, event.getId());
-        } else {
-            throw new NoSuchElementException("Wrong event type!");
-        }
-    }
-
-    private void prepareOccurrencesForRequestedRangeOfDate(AdminEventRegularCreationDto adminEventRegularCreationDto,
-                                                           List<LocalDate> datesFromRange, Long eventId) {
-        List<AdminEventOccurrence> occurrences = new ArrayList<>();
-
-        // pobieramy liste naszych occurences
-        for (AdminEventOccurrenceRegularCreationDto regularEvent : adminEventRegularCreationDto.getOccurrences()) {
-            for (LocalDate date : datesFromRange) {
-                // wyciągamy z daty dzień tygodnia w j. polskim np. wtorek, sobota ..
-                String namOfDayWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("pl-PL"));
-                // parametr po jakim dniu tygodnia mamy tworzyć wystąpienie - przyrownujemy z obiektem ktory otrzymalismy
-                if (namOfDayWeek.equals(regularEvent.getDay())) {
-                    // tworzymy listę wystąpień dla konkretnego czasu, dnia tygodnia wraz z pozostałymi miejscami
-                    occurrences.add(AdminEventOccurrence.builder()
-                            .eventId(eventId)
-                            .date(date)
-                            .time(regularEvent.getTime())
-                            .isCommonPool(adminEventRegularCreationDto.getIsCommonTicketPool())
-                            .build());
-                }
-            }
-            adminEventOccurrenceService.createEventOccurrences(occurrences);
-        }
-    }
-
     @Transactional
-    public void createEventRegular2(AdminEventRegularCreationDto adminEventRegularCreationDto)
+    public void createEventRegular(AdminEventRegularCreationDto adminEventRegularCreationDto)
     {
         adminEventServiceValidator.validateAdminEventRegularCreationDto(adminEventRegularCreationDto);
 
+        AdminImage image = imageService.findById(adminEventRegularCreationDto.getImageId());
+
+
+        /*TODO: Sprawdzić to bo nie wtorzą sie eventy z ostatniego dnia jakby zakres był wyłączny*/
         List<LocalDate> datesFromRange = adminEventUtils.datesFromRange(adminEventRegularCreationDto.getStartDate(), adminEventRegularCreationDto.getEndDate());
 
         AdminEvent event = adminEventMapper.mapToAdminEvent(adminEventRegularCreationDto);
+        event.setImage(image);
         adminEventRepository.save(event);
 
         List<AdminEventOccurrence> adminEventOccurrences = adminEventMapper.prepareOccurrencesForRequestedRangeOfDate(adminEventRegularCreationDto, datesFromRange, event.getId());

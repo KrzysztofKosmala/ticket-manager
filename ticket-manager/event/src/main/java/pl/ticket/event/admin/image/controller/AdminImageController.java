@@ -28,4 +28,9 @@ public class AdminImageController
         return ResponseEntity.ok(imageService.uploadFile(image, description));
     }
 
+    /*TODO:
+    *  - delete
+    *  - get by smth
+    *  - serve file*/
+
 }

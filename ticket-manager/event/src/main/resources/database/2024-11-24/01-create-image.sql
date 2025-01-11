@@ -8,11 +8,11 @@ CREATE TABLE image (
                        thumb_image VARCHAR(255)
 );
 
--- Tabela pośrednia dla relacji wiele-do-wielu
-CREATE TABLE event_image (
-                             event_id BIGINT NOT NULL,
-                             image_id BIGINT NOT NULL,
-                             PRIMARY KEY (event_id, image_id),
-                             CONSTRAINT fk_event FOREIGN KEY (event_id) REFERENCES event (id) ON DELETE CASCADE,
-                             CONSTRAINT fk_image FOREIGN KEY (image_id) REFERENCES image (id) ON DELETE CASCADE
-);
+-- Dodanie kolumny image_id do tabeli event
+ALTER TABLE event
+    ADD COLUMN image_id BIGINT;
+
+-- Dodanie klucza obcego do tabeli event dla relacji wiele-do-jednego z tabelą image
+ALTER TABLE event
+    ADD CONSTRAINT fk_event_image
+        FOREIGN KEY (image_id) REFERENCES image (id) ON DELETE SET NULL;

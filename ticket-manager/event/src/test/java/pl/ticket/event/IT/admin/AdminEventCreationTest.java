@@ -59,7 +59,7 @@ public class AdminEventCreationTest extends PrePost
         long countedTicketsBefore = adminTicketRepository.count();
 
 
-        adminEventService.createEventRegular2(dto);
+        adminEventService.createEventRegular(dto);
 
 
         long countedEventsAfter = adminEventRepository.count();
