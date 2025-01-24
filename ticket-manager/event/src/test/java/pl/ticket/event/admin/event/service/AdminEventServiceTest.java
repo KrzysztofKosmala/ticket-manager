@@ -9,6 +9,8 @@ import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
 import pl.ticket.event.admin.event.mapper.AdminEventMapper;
 import pl.ticket.event.admin.event.model.AdminEvent;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
+import pl.ticket.event.admin.image.service.AdminImageService;
+import pl.ticket.event.common.mapper.EventMapper;
 import pl.ticket.event.data_provider.AdminEventRegularCreationDtoProvider;
 import pl.ticket.event.admin.event.service.validation.AdminEventServiceValidator;
 import pl.ticket.event.admin.event.utils.AdminEventUtils;
@@ -53,7 +55,8 @@ class AdminEventServiceTest
         AdminEventUtils adminEventUtils = new AdminEventUtils();
         AdminEventMapper adminEventMapper = new AdminEventMapper(new SlugifyUtils(), adminEventUtils);
         AdminTicketService adminTicketService = Mockito.mock(AdminTicketService.class);
-
+        AdminImageService adminImageService = Mockito.mock(AdminImageService.class);
+        EventMapper eventMapper = new EventMapper();
 
         AdminEventService adminEventService = new AdminEventService(
                 adminEventRepository,
@@ -61,7 +64,9 @@ class AdminEventServiceTest
                 adminEventServiceValidator,
                 adminEventUtils,
                 adminTicketService,
-                adminEventMapper
+                adminEventMapper,
+                adminImageService,
+                eventMapper
         );
 
         when(adminEventRepository.save(ArgumentMatchers.any(AdminEvent.class)))
@@ -76,7 +81,7 @@ class AdminEventServiceTest
 
         ArgumentCaptor<List<AdminEventOccurrence>> occurrenceCaptor = ArgumentCaptor.forClass(List.class);
 
-        adminEventService.createEventRegular2(dto);
+        adminEventService.createEventRegular(dto);
 
         verify(adminEventOccurrenceService).createEventOccurrences(occurrenceCaptor.capture());
         List<AdminEventOccurrence> capturedOccurrences = occurrenceCaptor.getValue();

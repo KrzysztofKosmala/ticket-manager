@@ -3,6 +3,7 @@ package pl.ticket.event.customer.event.model;
 import jakarta.persistence.*;
 import lombok.*;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
+import pl.ticket.event.admin.image.model.AdminImage;
 import pl.ticket.event.customer.event_occurrence.model.EventOccurrence;
 
 import java.util.List;
@@ -38,4 +39,7 @@ public class Event
     @JoinColumn(name = "eventId")
     private List<EventOccurrence> occurrences;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private AdminImage image;
 }

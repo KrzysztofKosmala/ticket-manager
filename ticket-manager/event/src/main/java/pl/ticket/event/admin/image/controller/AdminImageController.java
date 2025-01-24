@@ -1,15 +1,19 @@
 package pl.ticket.event.admin.image.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResourceLoader;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.ticket.dto.UploadResponse;
 import pl.ticket.event.admin.image.service.AdminImageService;
+import org.springframework.core.io.Resource;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("api/v1/admin/images")
@@ -28,9 +32,21 @@ public class AdminImageController
         return ResponseEntity.ok(imageService.uploadFile(image, description));
     }
 
-    /*TODO:
-    *  - delete
-    *  - get by smth
-    *  - serve file*/
+    @DeleteMapping("/images/{id}")
+    public void deleteImage(@PathVariable Long id)
+    {
+        imageService.deleteImage(id);
+    }
+
+    @GetMapping("/data/productImage/{name}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String name) throws IOException
+    {
+        FileSystemResourceLoader fileSystemResourceLoader = new FileSystemResourceLoader();
+        String uploadDir = "./data/productImages/";
+        Resource resource = fileSystemResourceLoader.getResource(uploadDir + name);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(Path.of(name)))
+                .body(resource);
+    }
 
 }

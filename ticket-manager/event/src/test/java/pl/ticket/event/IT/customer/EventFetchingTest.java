@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import pl.ticket.dto.EventDto;
 import pl.ticket.event.customer.event.service.EventService;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @Transactional
+@Sql(scripts={"classpath:test-data-v3.sql"})
 public class EventFetchingTest extends PrePost {
 
     @Autowired
@@ -39,7 +41,7 @@ public class EventFetchingTest extends PrePost {
         assertEquals(2, toCheck.getOccurrences().size());
         assertEquals("2024-10-21", toCheck.getOccurrences().get(0).getDate().toString());
         assertEquals("2024-10-21", toCheck.getOccurrences().get(1).getDate().toString());
-
+        assertEquals(111, toCheck.getImageDto().getId());
         assertEquals("Dziady", toCheck.getTitle());
 
 

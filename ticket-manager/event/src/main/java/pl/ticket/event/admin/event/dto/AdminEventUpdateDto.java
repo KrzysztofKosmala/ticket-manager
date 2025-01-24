@@ -25,4 +25,7 @@ public class AdminEventUpdateDto
 
     @NotNull
     private Long categoryId;
+
+    @NotNull
+    private Long imageId;
 }

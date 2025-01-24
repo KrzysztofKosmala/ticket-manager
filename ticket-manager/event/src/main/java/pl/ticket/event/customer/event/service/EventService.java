@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.EventDto;
+import pl.ticket.event.common.mapper.EventMapper;
 import pl.ticket.event.customer.event.exception.EventDataException;
 import pl.ticket.event.customer.event.model.Event;
 import pl.ticket.event.customer.event.repository.EventRepository;

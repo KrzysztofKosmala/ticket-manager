@@ -1,8 +1,6 @@
-INSERT INTO category (id, name, description, slug)
-VALUES
-    (111, 'Concert', 'Live concert event.', 'concert-a'),
-    (222, 'Workshop', 'Interactive workshop.', 'workshop-b'),
-    (333, 'Opera', 'Musical event.', 'opera-a');
+-- insert sample data for category
+INSERT INTO category (id, name, description, slug) VALUES (1, 'Spektakl', 'spektakl opis', 'spe');
+INSERT INTO category (id, name, description, slug) VALUES (2, 'Wystawa', 'wystawa opis', 'wys');
 
 INSERT INTO event (id, capacity, title, description, slug, category_id)
 VALUES

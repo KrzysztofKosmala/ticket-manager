@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,6 @@ public class AdminImageService
         String name = slugifyUtils.slugifySlug(image.getOriginalFilename());
 
         Path path = Paths.get(IMAGE_UPLOAD_DIR).resolve(name);
-        // Upewnij się, że katalog docelowy istnieje
 
         try(InputStream inputStream = image.getInputStream())
         {
@@ -54,6 +54,13 @@ public class AdminImageService
         imageRepository.save(model);
 
         return new UploadResponse(name, "Image uploaded successfully");
+    }
+
+    public void deleteImage(Long id)
+    {
+        Optional<AdminImage> image = imageRepository.findById(id);
+        image.ifPresent(adminImage -> adminImage.getEvents().forEach(product -> product.setImage(null)));
+        imageRepository.deleteById(id);
     }
 
     public AdminImage findById(Long id)

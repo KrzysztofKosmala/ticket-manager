@@ -3,7 +3,10 @@ package pl.ticket.event.admin.event.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+import pl.ticket.dto.EventDto;
 import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventOccasionalCreationDto;
 import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
@@ -45,5 +48,12 @@ public class AdminEventController
     {
         log.info("Event updated {}", adminEventUpdateDto);
         eventService.updateEvent(id, adminEventUpdateDto);
+    }
+
+    @GetMapping
+    public Page<EventDto> getEvents(@RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "5") int size){
+        log.info("Getting all events");
+        return eventService.getEventsWithoutOccurrences(PageRequest.of(page,size));
     }
 }

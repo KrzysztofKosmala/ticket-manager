@@ -3,7 +3,12 @@ package pl.ticket.event.admin.event.service;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pl.ticket.dto.EventDto;
 import pl.ticket.event.admin.event.dto.*;
 import pl.ticket.event.admin.event.mapper.AdminEventMapper;
 import pl.ticket.event.admin.event.service.validation.AdminEventServiceValidator;
@@ -18,6 +23,8 @@ import pl.ticket.event.admin.image.model.AdminImage;
 import pl.ticket.event.admin.image.service.AdminImageService;
 import pl.ticket.event.admin.ticket.model.AdminTicket;
 import pl.ticket.event.admin.ticket.service.AdminTicketService;
+import pl.ticket.event.common.mapper.EventMapper;
+import pl.ticket.event.customer.event.model.Event;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -25,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +44,7 @@ public class AdminEventService {
     private final AdminTicketService adminTicketService;
     private final AdminEventMapper adminEventMapper;
     private final AdminImageService imageService;
+    private final EventMapper eventMapper;
 
     public void createEventOccasional(AdminEventOccasionalCreationDto adminEventOccasionalCreationDto)
     {
@@ -101,6 +110,7 @@ public class AdminEventService {
         adminEventRepository.deleteById(id);
     }
 
+    @Transactional
     public void updateEvent(Long id, AdminEventUpdateDto adminEventUpdateDto)
     {
         AdminEvent adminEvent = adminEventRepository.findById(id).orElseThrow(() -> new NotFoundException("Nie ma takiego Eventu"));
@@ -110,6 +120,15 @@ public class AdminEventService {
         adminEvent.setCategoryId(adminEventUpdateDto.getCategoryId());
         adminEvent.setSlug(adminEventUpdateDto.getSlug());
 
+        AdminImage image = imageService.findById(adminEventUpdateDto.getImageId());
+        adminEvent.setImage(image);
+
         adminEventRepository.save(adminEvent);
+    }
+
+    public Page<EventDto> getEventsWithoutOccurrences(Pageable pageable) {
+        List<AdminEvent> allPaged = adminEventRepository.findAllPaged(pageable);
+        List<EventDto> pagedEventsDto = allPaged.stream().map(eventMapper::mapToEventDtoWithoutOccurrences).collect(Collectors.toList());
+        return new PageImpl<>(pagedEventsDto, pageable, pagedEventsDto.size());
     }
 }

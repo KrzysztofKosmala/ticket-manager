@@ -1,3 +1,8 @@
+INSERT INTO image (id, name, description, thumb_image)
+VALUES
+    (111, 'First', 'Big ipg.', '/data/small.jpg'),
+    (222, 'Second', 'Small png.', 'data/big.png');
+
 -- Wstawienie przykładowych Kategorii
 INSERT INTO category (id, name, description, slug)
 VALUES
@@ -5,10 +10,10 @@ VALUES
     (222, 'Workshop', 'Interactive workshop.', 'workshop-b');
 
 -- Wstawienie przykładowych Eventów
-INSERT INTO event (id, capacity, title, description, slug, category_id)
+INSERT INTO event (id, capacity, title, description, slug, category_id, image_id)
 VALUES
-    (111, 100, 'Concert A', 'Live concert event.', 'concert-a', 111),
-    (222, 50, 'Workshop B', 'Interactive workshop.', 'workshop-b', 222);
+    (111, 100, 'Concert A', 'Live concert event.', 'concert-a', 111, 111),
+    (222, 50, 'Workshop B', 'Interactive workshop.', 'workshop-b', 222, 222);
 
 -- Wstawienie przykładowych Event Occurrences
 INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool)
@@ -26,3 +31,4 @@ VALUES
     (444, 222, 111, 'HALF_PRICE', 99.99, 30, 0),
     (555, 333, 222, 'FULL_PRICE', 49.99, 50, 0),
     (666, 333, 222, 'HALF_PRICE', 99.99, 30, 0)
+

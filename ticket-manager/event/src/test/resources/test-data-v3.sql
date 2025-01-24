@@ -1,13 +1,18 @@
+INSERT INTO image (id, name, description, thumb_image)
+VALUES
+    (111, 'First', 'Big ipg.', '/data/small.jpg'),
+    (222, 'Second', 'Small png.', 'data/big.png');
+
 -- insert sample data for category
 INSERT INTO category (id, name, description, slug) VALUES (1, 'Spektakl', 'spektakl opis', 'spe');
 INSERT INTO category (id, name, description, slug) VALUES (2, 'Wystawa', 'wystawa opis', 'wys');
 
 -- insert sample data for event
-INSERT INTO event (id, capacity, category_id, title, description, slug) VALUES (1, 100, 1, 'Dziady', 'Dramat Adama Mickiewicza jest uważany za jedno z największych dzieł polskiego i europejskiego romantyzmu', 'dz');
-INSERT INTO event (id, capacity, category_id, title, description, slug) VALUES (2, 80, 1, 'Wujaszek Wania', ' Została wydana w 1898 roku i w ciągu kilku lat doczekała się licznych realizacji teatralnych, zarówno zagranicznych, jak i polskich', 'ww');
-INSERT INTO event (id, capacity, category_id, title, description, slug) VALUES (3, 60, 1, 'Anioły w Ameryce', 'To przełomowa sztuka amerykańskiego dramatopisarza Tony’ego Kushnera, która zdobyła mnóstwo prestiżowych nagród, m.in. nagrodę Pulitzera, Tony Award i Drama Desk', 'aa');
-INSERT INTO event (id, capacity, category_id, title, description, slug) VALUES (4, 100, 2, 'NO RISK NO FUN', 'Wrócicie do lektur Tyrmanda i kuszącego wdzięku lat 50., nauczycie się rozpoznawać warszawskie ptaki, przejdziecie seans terapeutyczny z pomocą sztuki, wyjdziecie z nowym warszawskim tatuażem i przejdziecie po księżycowym dywanie', 'nr');
-INSERT INTO event (id, capacity, category_id, title, description, slug) VALUES (5, 150, 2, 'KURTYNA W GÓRĘ', 'Risk made in Warsaw to warszawska marka odzieżowa nierozerwalnie związana z lokalną kulturą. Tworzy nie tylko super wygodne ubrania, ale też specjalizuje się w publicystyce odzieżowej', 'kg');
+INSERT INTO event (id, capacity, category_id, title, description, slug, image_id) VALUES (1, 100, 1, 'Dziady', 'Dramat Adama Mickiewicza jest uważany za jedno z największych dzieł polskiego i europejskiego romantyzmu', 'dz', 111);
+INSERT INTO event (id, capacity, category_id, title, description, slug, image_id) VALUES (2, 80, 1, 'Wujaszek Wania', ' Została wydana w 1898 roku i w ciągu kilku lat doczekała się licznych realizacji teatralnych, zarówno zagranicznych, jak i polskich', 'ww', 222);
+INSERT INTO event (id, capacity, category_id, title, description, slug, image_id) VALUES (3, 60, 1, 'Anioły w Ameryce', 'To przełomowa sztuka amerykańskiego dramatopisarza Tony’ego Kushnera, która zdobyła mnóstwo prestiżowych nagród, m.in. nagrodę Pulitzera, Tony Award i Drama Desk', 'aa', 111);
+INSERT INTO event (id, capacity, category_id, title, description, slug, image_id) VALUES (4, 100, 2, 'NO RISK NO FUN', 'Wrócicie do lektur Tyrmanda i kuszącego wdzięku lat 50., nauczycie się rozpoznawać warszawskie ptaki, przejdziecie seans terapeutyczny z pomocą sztuki, wyjdziecie z nowym warszawskim tatuażem i przejdziecie po księżycowym dywanie', 'nr', 222);
+INSERT INTO event (id, capacity, category_id, title, description, slug, image_id) VALUES (5, 150, 2, 'KURTYNA W GÓRĘ', 'Risk made in Warsaw to warszawska marka odzieżowa nierozerwalnie związana z lokalną kulturą. Tworzy nie tylko super wygodne ubrania, ale też specjalizuje się w publicystyce odzieżowej', 'kg',111);
 
 -- insert sample data for occurence
 INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (1, 1, '2024-10-20', '15:00:00', true);

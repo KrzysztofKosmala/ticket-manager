@@ -18,4 +18,5 @@ public class EventDto
     private String description;
     private String slug;
     private List<EventOccurrenceDto> occurrences;
+    private ImageDto imageDto;
 }
