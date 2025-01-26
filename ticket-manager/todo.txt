@@ -10,8 +10,6 @@ dodać gdzies cashing
 zniżki
 naprawa routingu w apigw
 
-
-sprzwdzic tworzenie event occurances
 przy usuwaniu eventu/ticketow co z zakupionymi? napisz testy
 
 

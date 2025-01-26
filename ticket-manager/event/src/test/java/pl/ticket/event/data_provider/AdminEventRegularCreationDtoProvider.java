@@ -24,6 +24,7 @@ public class AdminEventRegularCreationDtoProvider
         dto1.setCapacity(100);
         dto1.setSlug("event-1");
         dto1.setCategoryId(1L);
+        dto1.setImageId(111L);
         dto1.setIsCommonTicketPool(true);
         dto1.setStartDate(LocalDate.of(2024, 8,19));
         dto1.setEndDate(LocalDate.of(2024, 9,2));
@@ -32,6 +33,38 @@ public class AdminEventRegularCreationDtoProvider
                 (
                         new AdminEventOccurrenceRegularCreationDto(LocalTime.of(10,0), "sobota"),
                         new AdminEventOccurrenceRegularCreationDto(LocalTime.of(11,0), "sobota"),
+                        new AdminEventOccurrenceRegularCreationDto(LocalTime.of(9,0), "środa")
+                ));
+
+        dto1.setTickets(List.of
+                (
+                        new AdminTicketCreationDto(AdminTicketType.FULL_PRICE, BigDecimal.valueOf(25), 0),
+                        new AdminTicketCreationDto(AdminTicketType.HALF_PRICE, BigDecimal.valueOf(12), 0)
+                ));
+
+        return dto1;
+
+    }
+
+    public AdminEventRegularCreationDto correct2()
+    {
+        AdminEventRegularCreationDto dto1 = new AdminEventRegularCreationDto();
+
+        dto1.setEventType(EventType.REGULAR);
+        dto1.setTitle("Event 3");
+        dto1.setDescription("Description 1");
+        dto1.setCapacity(100);
+        dto1.setSlug("event-1");
+        dto1.setCategoryId(1L);
+        dto1.setIsCommonTicketPool(true);
+        dto1.setImageId(111L);
+        dto1.setStartDate(LocalDate.of(2025, 1,24));
+        dto1.setEndDate(LocalDate.of(2026, 1,24));
+
+        dto1.setOccurrences(List.of
+                (
+                        new AdminEventOccurrenceRegularCreationDto(LocalTime.of(10,0), "sobota"),
+                        new AdminEventOccurrenceRegularCreationDto(LocalTime.of(11,0), "niedziela"),
                         new AdminEventOccurrenceRegularCreationDto(LocalTime.of(9,0), "środa")
                 ));
 

@@ -1,5 +1,6 @@
 package pl.ticket.event.IT.admin;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -44,6 +45,12 @@ public class AdminEventCreationTest extends PrePost
                         6,
                         12,
                         1
+                ),
+                Arguments.of(
+                        adminEventRegularCreationDtoProvider.correct2(),
+                        157,
+                        314,
+                        1
                 )
         );
     }
@@ -51,6 +58,7 @@ public class AdminEventCreationTest extends PrePost
 
     @ParameterizedTest
     @MethodSource("provideAdminEventRegularCreationDtos")
+    @Transactional
     public void shouldCreateEventWithOccurrencesAndTickets(AdminEventRegularCreationDto dto, long expectedOccurrencesCount, long expectedTicketsCount, long expectedEventCount)
     {
 

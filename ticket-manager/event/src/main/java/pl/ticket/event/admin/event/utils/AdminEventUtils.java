@@ -18,11 +18,11 @@ public class AdminEventUtils
     }
 
     public List<LocalDate> datesFromRange(LocalDate startDate, LocalDate endDate) {
-        List<LocalDate> datesFromRange = startDate.datesUntil(endDate)
+        List<LocalDate> datesFromRange = startDate.datesUntil(endDate.plusDays(1))
                 .collect(Collectors.toList());
 
         //TODO: 365 z pliku ma sie zaczytywać
-        if(datesFromRange.size() > 365) {
+        if(datesFromRange.size() > 366) {
             throw new InvalidRequestedDataException("Maksymalnie można stwożyć eventy na rok w przód.");
         }
 

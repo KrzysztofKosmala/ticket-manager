@@ -18,17 +18,17 @@ VALUES
 -- Wstawienie przykładowych Event Occurrences
 INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool)
 VALUES
-    (111, 111, '2024-08-19', '18:00:00', true),
-    (222, 111, '2024-08-26', '18:00:00', true),
-    (333, 222, '2024-09-02', '14:00:00', true);
+    (111111, 111, '2024-08-19', '18:00:00', true),
+    (222222, 111, '2024-08-26', '18:00:00', true),
+    (333333, 222, '2024-09-02', '14:00:00', true);
 
 -- Wstawienie przykładowych Ticketów
 INSERT INTO ticket (id,event_occurrence_id, event_id, type, price, amount, version)
 VALUES
-    (111, 111, 111, 'FULL_PRICE', 49.99, 50, 0),
-    (222, 111, 111, 'HALF_PRICE', 99.99, 30, 0),
-    (333, 222, 111, 'FULL_PRICE', 49.99, 50, 0),
-    (444, 222, 111, 'HALF_PRICE', 99.99, 30, 0),
-    (555, 333, 222, 'FULL_PRICE', 49.99, 50, 0),
-    (666, 333, 222, 'HALF_PRICE', 99.99, 30, 0)
+    (1111111, 111111, 111, 'FULL_PRICE', 49.99, 50, 0),
+    (2222222, 111111, 111, 'HALF_PRICE', 99.99, 30, 0),
+    (3333333, 222222, 111, 'FULL_PRICE', 49.99, 50, 0),
+    (4444444, 222222, 111, 'HALF_PRICE', 99.99, 30, 0),
+    (5555555, 333333, 222, 'FULL_PRICE', 49.99, 50, 0),
+    (6666666, 333333, 222, 'HALF_PRICE', 99.99, 30, 0)
 
