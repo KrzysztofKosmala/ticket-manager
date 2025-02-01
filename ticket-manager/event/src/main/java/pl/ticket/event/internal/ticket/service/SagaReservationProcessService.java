@@ -1,13 +1,12 @@
 package pl.ticket.event.internal.ticket.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.amqp.RabbitMqMessageProducer;
 import pl.ticket.dto.CompleteOrderEvent;
 import pl.ticket.dto.OrderEvent;
-import pl.ticket.event.configuration.rabbit.RabbitMqOrderConfig;
+import pl.ticket.event.configuration.rabbit.RabbitMqConfig;
 
 
 @Service
@@ -16,7 +15,7 @@ import pl.ticket.event.configuration.rabbit.RabbitMqOrderConfig;
 public class SagaReservationProcessService
 {
     private final RabbitMqMessageProducer rabbitMqMessageProducer;
-    private final RabbitMqOrderConfig rabbitMqOrderConfig;
+    private final RabbitMqConfig rabbitMqConfig;
 
     public void publishReservationCompleted(OrderEvent orderEvent)
     {
@@ -24,8 +23,8 @@ public class SagaReservationProcessService
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,
-                        rabbitMqOrderConfig.getInternalExchange(),
-                        rabbitMqOrderConfig.getReservationCompletedRoutingKey()
+                        rabbitMqConfig.getInternalExchange(),
+                        rabbitMqConfig.getReservationCompletedRoutingKey()
                 );
     }
 
@@ -35,8 +34,8 @@ public class SagaReservationProcessService
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,
-                        rabbitMqOrderConfig.getInternalExchange(),
-                        rabbitMqOrderConfig.getReservationRejectedRoutingKey()
+                        rabbitMqConfig.getInternalExchange(),
+                        rabbitMqConfig.getReservationRejectedRoutingKey()
                 );
     }
 
@@ -46,8 +45,8 @@ public class SagaReservationProcessService
         rabbitMqMessageProducer.publish
                 (
                         order,
-                        rabbitMqOrderConfig.getInternalExchange(),
-                        rabbitMqOrderConfig.getOrderUnbookedRoutingKey()
+                        rabbitMqConfig.getInternalExchange(),
+                        rabbitMqConfig.getOrderUnbookedRoutingKey()
                 );
     }
     public void publishPreparedConcreteTickets(CompleteOrderEvent completeOrderEvent)
@@ -56,8 +55,8 @@ public class SagaReservationProcessService
         rabbitMqMessageProducer.publish
                 (
                         completeOrderEvent,
-                        rabbitMqOrderConfig.getInternalExchange(),
-                        rabbitMqOrderConfig.getPreparedConcreteTicketsRoutingKey()
+                        rabbitMqConfig.getInternalExchange(),
+                        rabbitMqConfig.getPreparedConcreteTicketsRoutingKey()
                 );
     }
 }

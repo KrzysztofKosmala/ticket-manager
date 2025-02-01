@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import pl.ticket.dto.ConcreteTicketDtoList;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.payment.service.PaymentService;
 
@@ -18,4 +19,11 @@ public class PaymentListener {
         log.info("Received event to init the order payment, event: {}", orderEvent.toString());
         paymentService.initPayment(orderEvent);
     }
+
+    @RabbitListener(queues = "${rabbitmq.refound-queue.refoundPayment}")
+    public void consumeOrderCreated(ConcreteTicketDtoList concreteTicketDtoList) {
+        log.info("Received tickets that should be refounded, event: {}", concreteTicketDtoList.toString());
+        paymentService.refoundPayment(concreteTicketDtoList);
+    }
+
 }

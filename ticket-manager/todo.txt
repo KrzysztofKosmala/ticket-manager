@@ -10,6 +10,9 @@ dodać gdzies cashing
 zniżki
 naprawa routingu w apigw
 
+zmienić order row - wywalic ilosc i kazdy row w nowym rekordzie co pozwoli na dodanie wygenerowanego konketnego ticket id do order row
+
+prześledzić usuwanie eventu(jakie tickety poswinny zostac zrefundowane a jakie nie)
 przy usuwaniu eventu/ticketow co z zakupionymi? napisz testy
 
 

@@ -83,8 +83,6 @@ public class AdminEventService {
 
         AdminImage image = imageService.findById(adminEventRegularCreationDto.getImageId());
 
-
-        /*TODO: Sprawdzić to bo nie wtorzą sie eventy z ostatniego dnia jakby zakres był wyłączny*/
         List<LocalDate> datesFromRange = adminEventUtils.datesFromRange(adminEventRegularCreationDto.getStartDate(), adminEventRegularCreationDto.getEndDate());
 
         AdminEvent event = adminEventMapper.mapToAdminEvent(adminEventRegularCreationDto);
@@ -103,7 +101,10 @@ public class AdminEventService {
     {
         List<AdminEventOccurrence> eventOccurrences = adminEventOccurrenceService.findByEventId(id);
 
-        eventOccurrences.forEach(occurrence -> adminTicketService.deleteTickets(occurrence.getTickets()));
+        eventOccurrences.forEach(occurrence -> {
+
+            adminTicketService.deleteTickets(occurrence);
+        });
 
         adminEventOccurrenceService.deleteOccurrences(eventOccurrences);
 

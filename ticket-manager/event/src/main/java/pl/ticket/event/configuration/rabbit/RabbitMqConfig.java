@@ -1,17 +1,12 @@
 package pl.ticket.event.configuration.rabbit;
 
 import lombok.Getter;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Getter
-public class RabbitMqOrderConfig
+public class RabbitMqConfig
 {
     @Value("${rabbitmq.exchanges.internal}")
     private String internalExchange;
@@ -25,6 +20,8 @@ public class RabbitMqOrderConfig
     private String orderUnbookedQueue;
     @Value("${rabbitmq.order-queue.preparedConcreteTickets}")
     private String preparedConcreteTicketsQueue;
+    @Value("${rabbitmq.refound-queue.refoundPayment}")
+    private String refoundPaymentQueue;
 
     /*Routing keys*/
     @Value("${rabbitmq.order-routing-keys.internal-reservationCompleted}")
@@ -35,6 +32,7 @@ public class RabbitMqOrderConfig
     private String orderUnbookedRoutingKey;
     @Value("${rabbitmq.order-routing-keys.internal-preparedConcreteTickets}")
     private String preparedConcreteTicketsRoutingKey;
-
+    @Value("${rabbitmq.refound-routing-keys.internal-refoundPayment}")
+    private String refoundPaymentRoutingKey;
 
 }

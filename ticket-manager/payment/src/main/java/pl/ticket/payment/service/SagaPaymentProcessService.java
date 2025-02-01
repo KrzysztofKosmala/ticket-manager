@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.amqp.RabbitMqMessageProducer;
-import pl.ticket.dto.EmailMessage;
-import pl.ticket.payment.configuration.rabbit.RabbitMqOrderConfig;
+import pl.ticket.payment.configuration.rabbit.RabbitMqConfig;
 import pl.ticket.dto.OrderEvent;
 
 @Service
@@ -14,7 +13,7 @@ import pl.ticket.dto.OrderEvent;
 public class SagaPaymentProcessService
 {
     private final RabbitMqMessageProducer rabbitMqMessageProducer;
-    private final RabbitMqOrderConfig rabbitMqOrderConfig;
+    private final RabbitMqConfig rabbitMqConfig;
 
     public void publishPaymentCompleted(OrderEvent orderEvent)
     {
@@ -22,8 +21,8 @@ public class SagaPaymentProcessService
         rabbitMqMessageProducer.publish
                         (
                                 orderEvent,
-                                rabbitMqOrderConfig.getInternalExchange(),
-                                rabbitMqOrderConfig.getInternalPaymentCompletedRoutingKey()
+                                rabbitMqConfig.getInternalExchange(),
+                                rabbitMqConfig.getInternalPaymentCompletedRoutingKey()
                         );
     }
     public void publishPaymentRejected(OrderEvent orderEvent)
@@ -32,8 +31,8 @@ public class SagaPaymentProcessService
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,
-                        rabbitMqOrderConfig.getInternalExchange(),
-                        rabbitMqOrderConfig.getInternalOrderReservedRoutingKey()
+                        rabbitMqConfig.getInternalExchange(),
+                        rabbitMqConfig.getInternalPaymentRejectedRoutingKey()
 
                 );
 

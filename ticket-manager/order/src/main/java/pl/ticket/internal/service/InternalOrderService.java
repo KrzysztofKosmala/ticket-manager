@@ -74,6 +74,7 @@ public class InternalOrderService
     public void changeStatusToCompleted(CompleteOrderEvent orderEvent)
     {
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
+
         order.setOrderStatus(OrderStatus.COMPLETED);
     }
 }

@@ -42,7 +42,7 @@ public class AdminEventOccurrenceService
     {
         AdminEventOccurrence adminEventOccurrence = eventOccurrenceRepository.findById(id).orElseThrow();
 
-        adminTicketService.deleteTickets(adminEventOccurrence.getTickets());
+        adminTicketService.deleteTickets(adminEventOccurrence);
 
         eventOccurrenceRepository.deleteById(id);
     }

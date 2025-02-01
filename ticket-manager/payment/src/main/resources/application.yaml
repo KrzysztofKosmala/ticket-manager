@@ -75,4 +75,7 @@ rabbitmq:
     email: email.queue
   email-routing-keys:
     internal-email: internal.email.routing-key
-
+  refound-queue:
+    refoundPayment: refoundPayment.queue
+  refound-routing-keys:
+    internal-refoundPayment: internal.refoundPayment.routing-key

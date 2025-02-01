@@ -10,10 +10,10 @@ spring:
     url: jdbc:postgresql://localhost:51/event
     username: admin
   profiles:
-    active: test
+    active: prod
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -73,6 +73,10 @@ rabbitmq:
     internal-orderUnbooked: internal.orderUnbooked.routing-key
     internal-prepareConcreteTickets: internal.prepareConcreteTickets.routing-key
     internal-preparedConcreteTickets: internal.preparedConcreteTickets.routing-key
+  refound-queue:
+    refoundPayment: refoundPayment.queue
+  refound-routing-keys:
+    internal-refoundPayment: internal.refoundPayment.routing-key
 
 
 

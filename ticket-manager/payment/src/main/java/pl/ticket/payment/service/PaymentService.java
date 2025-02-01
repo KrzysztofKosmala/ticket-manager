@@ -2,6 +2,7 @@ package pl.ticket.payment.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pl.ticket.dto.ConcreteTicketDtoList;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.payment.model.PaymentOrderStatus;
 import pl.ticket.payment.model.PaymentStatus;
@@ -57,4 +58,8 @@ public class PaymentService {
         paymentOrderStatusService.savePayment(paymentOrderStatus);
     }
 
+    public void refoundPayment(ConcreteTicketDtoList concreteTicketDtoList)
+    {
+        log.info("refound payment");
+    }
 }

@@ -62,6 +62,7 @@ public class OrderService
 
         OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
 
+        log.info("created new order: " + orderEvent.toString());
         sagaOrderProcessService.publishOrderCreated(orderEvent);
         //clearOrderCart(orderDto);
         return OrderMapper.createOrderSummary(order, "to be implemented");
