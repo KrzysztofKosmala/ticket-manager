@@ -35,14 +35,13 @@ public class InternalConcreteTicketService
         for(OrderRowDto orderRow: orderRows)
         {
             InternalTicket internalTicket = internalTicketRepository.findById(orderRow.getProductId()).orElseThrow();
-            for (int i=0; i<orderRow.getQuantity(); i++)
-            {
+
                 InternalConcreteTicket internalConcreteTicket = InternalConcreteTicket.builder()
                         .generalTicket(internalTicket)
                         .isUsed(false)
                         .build();
                 concreteTickets.add(internalConcreteTicket);
-            }
+
         }
         List<InternalConcreteTicket> internalConcreteTickets = internalConcreteTicketRepository.saveAll(concreteTickets);
 

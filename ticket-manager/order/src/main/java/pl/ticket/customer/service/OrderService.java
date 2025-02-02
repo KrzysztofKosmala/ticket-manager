@@ -23,6 +23,7 @@ import pl.ticket.dto.CartSummaryDto;
 import pl.ticket.feign.event.EventClient;
 
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +53,6 @@ public class OrderService
 
         orderRepository.save(order);
 
-        //TODO: można to zatąpić hashmapą
         List<Long> cartItemIds = cart.getItems().stream().map(cartItem -> cartItem.getProduct().getId()).toList();
         List<TicketWithDetailsDto> ticketsWithDetailsByTicketIds = eventClient.getTicketsWithDetailsByTicketIds(cartItemIds);
 
@@ -70,13 +70,16 @@ public class OrderService
 
     private List<OrderRow> saveProductRows(CartSummaryDto cart, Long orderId, List<TicketWithDetailsDto> ticketsWithDetailsByTicketIds) {
 
-        return ticketsWithDetailsByTicketIds.stream().map(ticket ->
+
+        List<OrderRow> orderRows = ticketsWithDetailsByTicketIds.stream().map(ticket ->
                 {
                     CartSummaryItemDto itemDto = cart.getItems().stream().filter(item -> item.getProduct().getId().equals(ticket.getId())).findFirst().get();
 
                     return OrderMapper.toOrderRow(orderId, itemDto, ticket);
                 }
-        ).peek(orderRowRepository::save).toList();
+        ).flatMap(Collection::stream).toList();
+
+        return orderRowRepository.saveAll(orderRows);
 
     }
 

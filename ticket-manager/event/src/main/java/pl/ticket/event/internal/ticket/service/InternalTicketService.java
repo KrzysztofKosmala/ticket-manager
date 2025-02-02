@@ -29,11 +29,11 @@ public class InternalTicketService
             InternalTicket ticket = internalTicketRepository.findById(orderRow.getProductId())
                     .orElseThrow(() -> new ReservationProcessException("Ticket not found for order ID: " + order.getOrderId(), order));
 
-            if (ticket.getAmount() < orderRow.getQuantity()) {
+            if (ticket.getAmount() < 1) {
                 throw new ReservationProcessException("Not enough tickets for order ID: " + order.getOrderId(), order);
             }
             // Rezerwacja biletów
-            ticket.setAmount(ticket.getAmount() - orderRow.getQuantity());
+            ticket.setAmount(ticket.getAmount() - 1);
         }
         //publish to queue reservation complete
         sagaReservationProcessService.publishReservationCompleted(order);
@@ -47,7 +47,7 @@ public class InternalTicketService
             InternalTicket ticket = internalTicketRepository.findById(orderRow.getProductId())
                     .orElseThrow(() -> new UnbookProcessException("Ticket not found for order ID: " + order.getOrderId(), order));
 
-            ticket.setAmount(ticket.getAmount() + orderRow.getQuantity());
+            ticket.setAmount(ticket.getAmount() + 1);
             internalTicketRepository.save(ticket);
         }
         //publish to queue reservation complete

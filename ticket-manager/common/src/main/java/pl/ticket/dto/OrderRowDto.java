@@ -14,7 +14,6 @@ public class OrderRowDto
     private Long productId;
     private String productName;
     private String description;
-    private int quantity;
     private BigDecimal price;
     private Long shipmentId;
 }

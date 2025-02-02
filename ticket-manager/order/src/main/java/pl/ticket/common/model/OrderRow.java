@@ -25,7 +25,7 @@ public class OrderRow
     private Long productId;
     private String productName;
     private String description;
-    private int quantity;
+    private Long concreteTicketId;
     private BigDecimal price;
     private Long shipmentId;
 }

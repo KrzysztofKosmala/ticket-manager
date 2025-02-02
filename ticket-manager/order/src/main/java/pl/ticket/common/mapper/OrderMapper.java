@@ -9,6 +9,8 @@ import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.dto.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderMapper
 {
@@ -38,36 +40,41 @@ public class OrderMapper
 
 
 
-    public static OrderRow toOrderRow(CartSummaryItemDto cartSummaryItemDto)
+/*    public static OrderRow toOrderRow(CartSummaryItemDto cartSummaryItemDto)
     {
         return OrderRow.builder()
                 .productId(cartSummaryItemDto.getProduct().getId())
                 .price(cartSummaryItemDto.getProduct().getPrice())
                 .quantity(cartSummaryItemDto.getQuantity())
                 .build();
-    }
+    }*/
 
     public static OrderRowDto toOrderRowDto(OrderRow orderRow)
     {
         return OrderRowDto.builder()
                 .id(orderRow.getId())
-                .quantity(orderRow.getQuantity())
                 .productName(orderRow.getProductName())
                 .description(orderRow.getDescription())
                 .productId(orderRow.getProductId())
                 .price(orderRow.getPrice())
                 .build();
     }
-    public static OrderRow toOrderRow(Long orderId, CartSummaryItemDto itemDto, TicketWithDetailsDto ticket) {
+    public static List<OrderRow> toOrderRow(Long orderId, CartSummaryItemDto itemDto, TicketWithDetailsDto ticket) {
 
-        return OrderRow.builder()
-                .orderId(orderId)
-                .productId(itemDto.getProduct().getId())
-                .price(itemDto.getProduct().getPrice())
-                .quantity(itemDto.getQuantity())
-                .productName(ticket.getEvent().getTitle())
-                .description(String.format("Data: %s Godzina: %s.", ticket.getEventOccurrence().getDate(), ticket.getEventOccurrence().getTime()))
-                .build();
+
+        List<OrderRow> orderRows = new ArrayList<>();
+        for(int i=0; i<itemDto.getQuantity(); i++ )
+        {
+            orderRows.add(OrderRow.builder()
+                    .orderId(orderId)
+                    .productId(itemDto.getProduct().getId())
+                    .price(itemDto.getProduct().getPrice())
+                    .productName(ticket.getEvent().getTitle())
+                    .description(String.format("Data: %s Godzina: %s.", ticket.getEventOccurrence().getDate(), ticket.getEventOccurrence().getTime()))
+                    .build());
+        }
+
+        return orderRows;
     }
 
     public static OrderSummary createOrderSummary(Order newOrder, String redirectUrl) {

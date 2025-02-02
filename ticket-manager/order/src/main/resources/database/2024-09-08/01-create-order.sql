@@ -17,7 +17,7 @@ CREATE TABLE order_row (
                            product_id BIGINT NOT NULL,
                            product_name VARCHAR(255) NOT NULL,
                            description VARCHAR(255) NOT NULL,
-                           quantity INT NOT NULL,
+                           concrete_ticket_id BIGINT,
                            price DECIMAL(6,2) NOT NULL,
                            CONSTRAINT fk_order_row_order_id FOREIGN KEY (order_id) REFERENCES "order"(id)
 );
