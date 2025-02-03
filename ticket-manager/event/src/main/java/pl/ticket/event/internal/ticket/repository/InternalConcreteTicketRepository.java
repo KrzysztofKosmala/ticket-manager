@@ -19,7 +19,8 @@ public interface InternalConcreteTicketRepository extends JpaRepository<Internal
         eo.date,
         eo.time,
         e.description,
-        ct.qrCode
+        ct.qrCode,
+        ct.orderRowId
     )
     FROM InternalConcreteTicket ct
     JOIN ct.generalTicket gt

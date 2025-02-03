@@ -16,5 +16,6 @@ public class QrCodeDto
     Long eventId;
     String date;
     String time;
+    Long orderRowId;
     Long eventOccurrenceId;
 }

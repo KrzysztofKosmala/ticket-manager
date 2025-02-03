@@ -17,7 +17,7 @@ public class SagaOrderProcessService
 
     public void publishOrderCreated(OrderEvent orderEvent)
     {
-        log.info("publishing event to order created, event: {}", orderEvent.toString());
+        log.trace("Publishing event to order created, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                         (
                                 orderEvent,
@@ -28,7 +28,7 @@ public class SagaOrderProcessService
 
     public void publishOrderReserved(OrderEvent orderEvent)
     {
-        log.info("publishing event to order reserved, event: {}", orderEvent.toString());
+        log.trace("Publishing event to order reserved, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,
@@ -50,7 +50,7 @@ public class SagaOrderProcessService
 
     public void publishToPrepareConcreteTickets(OrderEvent orderEvent)
     {
-        log.info("publishing event to prepareConcreteTickets, event: {}", orderEvent.toString());
+        log.trace("Publishing event to prepareConcreteTickets, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,

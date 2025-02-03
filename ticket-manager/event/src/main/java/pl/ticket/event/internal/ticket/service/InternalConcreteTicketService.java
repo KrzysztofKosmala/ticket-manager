@@ -38,6 +38,7 @@ public class InternalConcreteTicketService
 
                 InternalConcreteTicket internalConcreteTicket = InternalConcreteTicket.builder()
                         .generalTicket(internalTicket)
+                        .orderRowId(orderRow.getId())
                         .isUsed(false)
                         .build();
                 concreteTickets.add(internalConcreteTicket);
@@ -52,6 +53,7 @@ public class InternalConcreteTicketService
                 QrCodeDto qrCodeDto = QrCodeDto.builder()
                         .concreteTicketId(internalConcreteTicket.getId())
                         .isUsed(internalConcreteTicket.getIsUsed())
+                        .orderRowId(internalConcreteTicket.getOrderRowId())
                         .eventId(eventOccurrence.getEventId())
                         .date(eventOccurrence.getDate().format(dateFormatter))
                         .time(eventOccurrence.getTime().format(timeFormatter))

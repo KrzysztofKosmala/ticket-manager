@@ -16,13 +16,12 @@ public class EmailClient
 
     public void publishEmail(EmailMessage emailMessage)
     {
-        log.info("publishing message to email queue, email: {}", emailMessage.toString());
+        log.trace("Publishing message to email queue, email: {}", emailMessage.toString());
         rabbitMqMessageProducer.publish
                 (
                         emailMessage,
                         rabbitMqEmailConfig.getInternalExchange(),
                         rabbitMqEmailConfig.getEmailRoutingKey()
                 );
-        log.info("published message to email queue, email: {}", emailMessage.toString());
     }
 }

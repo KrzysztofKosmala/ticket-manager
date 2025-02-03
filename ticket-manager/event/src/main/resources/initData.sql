@@ -15,8 +15,8 @@ INSERT INTO event (id, capacity, category_id, title, description, slug,image_id)
 INSERT INTO event (id, capacity, category_id, title, description, slug,image_id) VALUES (5, 150, 2, 'KURTYNA W GÓRĘ', 'Risk made in Warsaw to warszawska marka odzieżowa nierozerwalnie związana z lokalną kulturą. Tworzy nie tylko super wygodne ubrania, ale też specjalizuje się w publicystyce odzieżowej', 'kg', 1);
 
 -- insert sample data for occurence
-INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (1, 1, '2025-01-26', '15:00:00', true);
-INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (2, 1, '2025-01-26', '20:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (1, 1, '2025-02-02', '15:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (2, 1, '2025-02-02', '20:00:00', true);
 
 
 INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (3, 2, '2024-11-08', '16:00:00', true);
@@ -27,8 +27,8 @@ INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (
 INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (8, 5, '2024-11-18', '16:00:00', true);
 INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (9, 5, '2024-12-17', '20:00:00', true);
 
-INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (10, 1, '2025-01-27', '15:00:00', true);
-INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (11, 1, '2025-01-27', '20:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (10, 1, '2025-02-03', '15:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (11, 1, '2025-02-03', '20:00:00', true);
 
 -- insert sample data for ticket - Dziady '2024-10-20', '15:00:00'
 INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (1, 1, 1, 'FULL_PRICE', 50, 60, 0);

@@ -29,4 +29,20 @@ public class OrderDto
     private Long shipmentId;
 
     private Long paymentId;
+
+    @Override
+    public String toString() {
+        return "OrderDto {\n" +
+                "  firstname='" + firstname + '\'' + "\n" +
+                "  lastname='" + lastname + '\'' + "\n" +
+                "  street='" + street + '\'' + "\n" +
+                "  zipcode='" + zipcode + '\'' + "\n" +
+                "  city='" + city + '\'' + "\n" +
+                "  email='" + email + '\'' + "\n" +
+                "  phone='" + phone + '\'' + "\n" +
+                "  cartId=" + cartId + "\n" +
+                "  shipmentId=" + shipmentId + "\n" +
+                "  paymentId=" + paymentId + "\n" +
+                '}';
+    }
 }

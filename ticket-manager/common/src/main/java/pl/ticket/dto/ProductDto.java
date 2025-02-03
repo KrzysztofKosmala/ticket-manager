@@ -15,4 +15,12 @@ public class ProductDto
 {
     private Long id;
     private BigDecimal price;
+
+    @Override
+    public String toString() {
+        return "\nProductDto {\n" +
+                "  id=" + id + "\n" +
+                "  price=" + price + "\n" +
+                '}';
+    }
 }

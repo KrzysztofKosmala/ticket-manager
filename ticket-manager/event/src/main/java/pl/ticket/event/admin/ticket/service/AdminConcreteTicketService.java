@@ -34,16 +34,17 @@ public class AdminConcreteTicketService
         if(date.isAfter(now) && !concreteTickets.isEmpty())// jeszcze prawdzic godzine
         {
                        //na kolejke do zwrotu kasy
-            List<ConcreteTicketDto> list = concreteTickets.stream()
+            List<ConcreteTicketDto> concreteTicketsToRefound = concreteTickets.stream()
                     .map(adminConcreteTicket ->
                         ConcreteTicketDto.builder()
                                 .id(adminConcreteTicket.getId())
+                                .orderRowId(adminConcreteTicket.getOrderRowId())
                                 .generalTicketId(adminConcreteTicket.getGeneralTicket().getId())
                                 .build())
                     .toList();
 
             ConcreteTicketDtoList concreteTicketDtoList = ConcreteTicketDtoList.builder()
-                    .concreteTicketDtoList(list)
+                    .concreteTicketDtoList(concreteTicketsToRefound)
                     .build();
 
             rabbitMqMessageProducer.publish

@@ -46,4 +46,16 @@ public class InternalTicket
     private InternalEvent event;
     @Version
     private Long version;
+
+    @Override
+    public String toString() {
+        return "InternalTicket {\n" +
+                "  id=" + id + "\n" +
+                "  type=" + type + "\n" +
+                "  price=" + price + "\n" +
+                "  amount=" + amount + "\n" +
+                "  eventOccurrence=" + (eventOccurrence != null ? eventOccurrence.getId() : "null") + "\n" +
+                "  version=" + version + "\n" +
+                '}';
+    }
 }

@@ -19,6 +19,7 @@ public class ReservationProcessExceptionHandler implements RabbitListenerErrorHa
     @Override
     public Object handleError(Message amqpMessage, org.springframework.messaging.Message<?> message, ListenerExecutionFailedException ex) {
         log.error("Error occurred while processing message: {}", ex.getMessage());
+        log.trace("Error occurred while processing message: {}", ex.getMessage());
 
         OrderEvent orderEvent = (OrderEvent) message.getPayload();
         orderEvent.setMessage(ex.getCause().getMessage());

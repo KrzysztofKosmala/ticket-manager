@@ -13,7 +13,9 @@ import pl.ticket.event.internal.ticket.service.InternalTicketService;
 import pl.ticket.event.internal.ticket.service.SagaReservationProcessService;
 
 import java.util.List;
+import java.util.Map;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -45,13 +47,19 @@ class TicketReservationTest extends PrePost
 
         List<InternalTicket> ticketsAfter = internalTicketRepository.findAllById(rowIds);
 
-        for(OrderRowDto orderRowDto : randomOrderEvent.getOrderRows())
-        {
-            InternalTicket ticketBefore = ticketsBefore.stream().filter(ticket -> ticket.getId().equals(orderRowDto.getProductId())).findFirst().get();
+        Map<Long, List<OrderRowDto>> rowsGroupedById = randomOrderEvent.getOrderRows().stream().collect(groupingBy(OrderRowDto::getProductId));
 
-            InternalTicket ticketAfter = ticketsAfter.stream().filter(ticket -> ticket.getId().equals(orderRowDto.getProductId())).findFirst().get();
-            assertEquals(ticketBefore.getAmount() - orderRowDto.getQuantity(), ticketAfter.getAmount(), "Unexpected ticket amount after reservation.");
+
+        for (Map.Entry<Long, List<OrderRowDto>> entry : rowsGroupedById.entrySet()) {
+            Long id = entry.getKey();
+            List<OrderRowDto> orderRows = entry.getValue();
+
+            InternalTicket ticketBefore = ticketsBefore.stream().filter(ticket -> ticket.getId().equals(id)).findFirst().get();
+            InternalTicket ticketAfter = ticketsAfter.stream().filter(ticket -> ticket.getId().equals(id)).findFirst().get();
+            assertEquals(ticketBefore.getAmount() - orderRows.size(), ticketAfter.getAmount(), "Unexpected ticket amount after reservation.");
+
         }
+
     }
 
     @Test
@@ -68,12 +76,17 @@ class TicketReservationTest extends PrePost
 
         List<InternalTicket> ticketsAfter = internalTicketRepository.findAllById(rowIds);
 
-        for(OrderRowDto orderRowDto : randomOrderEvent.getOrderRows())
-        {
-            InternalTicket ticketBefore = ticketsBefore.stream().filter(ticket -> ticket.getId().equals(orderRowDto.getProductId())).findFirst().get();
+        Map<Long, List<OrderRowDto>> rowsGroupedById = randomOrderEvent.getOrderRows().stream().collect(groupingBy(OrderRowDto::getProductId));
 
-            InternalTicket ticketAfter = ticketsAfter.stream().filter(ticket -> ticket.getId().equals(orderRowDto.getProductId())).findFirst().get();
-            assertEquals(ticketBefore.getAmount() + orderRowDto.getQuantity(), ticketAfter.getAmount(), "Unexpected ticket amount after reservation.");
+
+        for (Map.Entry<Long, List<OrderRowDto>> entry : rowsGroupedById.entrySet()) {
+            Long id = entry.getKey();
+            List<OrderRowDto> orderRows = entry.getValue();
+
+            InternalTicket ticketBefore = ticketsBefore.stream().filter(ticket -> ticket.getId().equals(id)).findFirst().get();
+            InternalTicket ticketAfter = ticketsAfter.stream().filter(ticket -> ticket.getId().equals(id)).findFirst().get();
+            assertEquals(ticketBefore.getAmount() + orderRows.size(), ticketAfter.getAmount(), "Unexpected ticket amount after reservation.");
+
         }
     }
 }

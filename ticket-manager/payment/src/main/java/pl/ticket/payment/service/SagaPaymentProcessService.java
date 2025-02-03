@@ -17,7 +17,7 @@ public class SagaPaymentProcessService
 
     public void publishPaymentCompleted(OrderEvent orderEvent)
     {
-        log.info("publishing event to order created, event: {}", orderEvent.toString());
+        log.trace("Publishing event to payment completed, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                         (
                                 orderEvent,
@@ -27,7 +27,7 @@ public class SagaPaymentProcessService
     }
     public void publishPaymentRejected(OrderEvent orderEvent)
     {
-        log.info("publishing event to order created, event: {}", orderEvent.toString());
+        log.trace("Publishing event to payment rejected, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,

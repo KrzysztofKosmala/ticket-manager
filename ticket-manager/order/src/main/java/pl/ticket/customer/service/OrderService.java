@@ -44,14 +44,17 @@ public class OrderService
     @Transactional
     public OrderSummary placeOrder(OrderDto orderDto, String userId)
     {
-
+        log.trace("New order request from user: {} Order: {}", userId, orderDto.toString());
         Long cartId = orderDto.getCartId();
 
         CartSummaryDto cart = cartClient.getCart(cartId);
 
+        log.trace("Fetched cart from CART SERVICE: {}", cart.toString());
+
         Order order = OrderMapper.createNewOrder(orderDto, cart, userId);
 
         orderRepository.save(order);
+
 
         List<Long> cartItemIds = cart.getItems().stream().map(cartItem -> cartItem.getProduct().getId()).toList();
         List<TicketWithDetailsDto> ticketsWithDetailsByTicketIds = eventClient.getTicketsWithDetailsByTicketIds(cartItemIds);
@@ -59,10 +62,10 @@ public class OrderService
         List<OrderRow> orderRows = saveProductRows(cart, order.getId(), ticketsWithDetailsByTicketIds);
 
         order.setOrderRows(orderRows);
+        log.trace("Saved order: {}", order.toString());
 
         OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
 
-        log.info("created new order: " + orderEvent.toString());
         sagaOrderProcessService.publishOrderCreated(orderEvent);
         //clearOrderCart(orderDto);
         return OrderMapper.createOrderSummary(order, "to be implemented");

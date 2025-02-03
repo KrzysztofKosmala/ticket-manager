@@ -14,4 +14,10 @@ import java.math.BigDecimal;
 public class SummaryDto
 {
     private BigDecimal grossValue;
+
+    @Override
+    public String toString() {
+        return "\nSummaryDto {\n" + "  grossValue=" + grossValue + "\n" +
+                "  ]\n";
+    }
 }

@@ -15,8 +15,8 @@ public class PaymentListener {
     private final PaymentService paymentService;
 
     @RabbitListener(queues = "${rabbitmq.order-queue.orderReserved}")
-    public void consumeOrderCreated(OrderEvent orderEvent) {
-        log.info("Received event to init the order payment, event: {}", orderEvent.toString());
+    public void consumeOrderReserved(OrderEvent orderEvent) {
+        log.trace("Received event to init the order payment, event: {}", orderEvent.toString());
         paymentService.initPayment(orderEvent);
     }
 

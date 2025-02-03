@@ -30,7 +30,7 @@ public class AdminConcreteTicket
     @JoinColumn(name = "general_ticket_id")
     private AdminTicket generalTicket;
     private Boolean isUsed;
-
+    private Long orderRowId;
     @Column(name = "qr_code")
     private byte[] qrCode;
 

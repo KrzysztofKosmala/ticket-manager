@@ -22,7 +22,7 @@ public class OrderListener
     @RabbitListener(queues = "${rabbitmq.order-queue.reservationCompleted}")
     public void consumeReservationCompleted(OrderEvent orderEvent)
     {
-        log.info("Received event to update order status to reserved, event: {}", orderEvent.toString());
+        log.trace("Received event to update order status to reserved, event: {}", orderEvent.toString());
         internalOrderService.changeStatusToReserved(orderEvent);
     }
 
@@ -36,7 +36,7 @@ public class OrderListener
     @RabbitListener(queues = "${rabbitmq.order-queue.paymentCompleted}")
     public void consumePaymentCompleted(OrderEvent orderEvent)
     {
-        log.info("Received event to update order status to paid, event: {}", orderEvent.toString());
+        log.trace("Received event to update order status to paid, event: {}", orderEvent.toString());
         emailClient.publishEmail(EmailMessageGenerator.orderPaidMessage(orderEvent));
         internalOrderService.changeStatusToPaid(orderEvent);
     }
@@ -60,7 +60,7 @@ public class OrderListener
     @RabbitListener(queues = "${rabbitmq.order-queue.preparedConcreteTickets}")
     public void consumePreparedConcreteTickets(CompleteOrderEvent orderEvent)
     {
-        log.info("Received event to update order status to completed, event: {}", orderEvent.toString());
+        log.info("Received CompleteOrderEvent to update order status to completed, event: {}", orderEvent.toString());
         emailClient.publishEmail(EmailMessageGenerator.orderCompleted(orderEvent));
         internalOrderService.changeStatusToCompleted(orderEvent);
     }

@@ -29,7 +29,7 @@ public class TicketListener
         @RabbitListener(queues = "${rabbitmq.order-queue.orderCreated}", errorHandler = "reservationProcessExceptionHandler")
         public void handleTicketReservation(OrderEvent orderEvent)
         {
-                log.info("Received event to update ticket amount, event: {}", orderEvent.toString());
+                log.trace("Received event to update ticket amount, event: {}", orderEvent.toString());
                 internalTicketService.reserveTickets(orderEvent);
 
         }
@@ -46,7 +46,7 @@ public class TicketListener
         public void handlePrepareConcreteTickets(OrderEvent orderEvent)
         {
                 //TODO: co z rollbackiem jak tutaj sie wysypie?
-                log.info("Received event to prepare concrete tickets, event: {}", orderEvent.toString());
+                log.trace("Received event to prepare concrete tickets, event: {}", orderEvent.toString());
                 List<InternalConcreteTicket> concreteTickets = internalConcreteTicketService.createConcreteTickets(orderEvent.getOrderRows());
                 List<ConcreteTicketDto> concreteTicketsDto = internalConcreteTicketRepository.findConcreteTicketDtosByGeneralTicketIds(concreteTickets.stream().map(InternalConcreteTicket::getId).toList());
                 sagaReservationProcessService.publishPreparedConcreteTickets(CompleteOrderEvent.builder()

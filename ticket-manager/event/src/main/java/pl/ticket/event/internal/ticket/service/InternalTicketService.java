@@ -2,6 +2,7 @@ package pl.ticket.event.internal.ticket.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.OrderEvent;
 import pl.ticket.dto.OrderRowDto;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InternalTicketService
 {
     private final InternalTicketRepository internalTicketRepository;
@@ -29,11 +31,14 @@ public class InternalTicketService
             InternalTicket ticket = internalTicketRepository.findById(orderRow.getProductId())
                     .orElseThrow(() -> new ReservationProcessException("Ticket not found for order ID: " + order.getOrderId(), order));
 
+            log.trace("Reserving ticket: {} for orderRow: {}", ticket.toString(), orderRow );
             if (ticket.getAmount() < 1) {
                 throw new ReservationProcessException("Not enough tickets for order ID: " + order.getOrderId(), order);
             }
             // Rezerwacja biletów
             ticket.setAmount(ticket.getAmount() - 1);
+
+            log.trace("New ticket amount: {}  value after reservation: {}", ticket.getId(), ticket.getAmount() );
         }
         //publish to queue reservation complete
         sagaReservationProcessService.publishReservationCompleted(order);

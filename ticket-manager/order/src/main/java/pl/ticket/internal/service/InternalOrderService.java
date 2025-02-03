@@ -33,6 +33,7 @@ public class InternalOrderService
 
         order.setOrderStatus(OrderStatus.RESERVED);
 
+        log.trace("Change status to order reserved: {}", orderEvent.getOrderId());
         sagaOrderProcessService.publishOrderReserved(orderEvent);
     }
 
@@ -49,6 +50,7 @@ public class InternalOrderService
     public void changeStatusToPaid(OrderEvent orderEvent)
     {
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
+        log.trace("Change status to order paid: {}", orderEvent.getOrderId());
         sagaOrderProcessService.publishToPrepareConcreteTickets(orderEvent);
         order.setOrderStatus(OrderStatus.PAID);
     }
@@ -74,7 +76,7 @@ public class InternalOrderService
     public void changeStatusToCompleted(CompleteOrderEvent orderEvent)
     {
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
-
+        log.trace("Change status to completed: {}", orderEvent.getOrderId());
         order.setOrderStatus(OrderStatus.COMPLETED);
     }
 }

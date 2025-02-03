@@ -1,8 +1,14 @@
 <configuration>
 
-    <!-- Appender do pliku z logami tylko SLF4J (np. central.log) -->
-    <appender name="SLF4J_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>log.log</file> <!-- Zmienna ścieżka, dostosuj ją do swojego środowiska -->
+    <!-- Appender do pliku z logami tylko TRACE z tego serwisu -->
+    <appender name="TRACE_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>log.log</file> <!-- Ścieżka do pliku log.log -->
+        <!-- Filtr, który przepuszcza tylko logi z poziomem TRACE -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>TRACE</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
         <!-- Strategia rotacji: codzienna -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Określenie wzorca dla archiwizowanych plików -->
@@ -45,9 +51,9 @@
         <appender-ref ref="ALL_LOGS_FILE" /> <!-- Wszelkie logi systemowe trafią do pliku all-logs.log -->
     </root>
 
-    <!-- Logger dla logów SLF4J (tylko logi z mikroserwisów SLF4J) -->
-    <logger name="pl.ticket" level="INFO">
-        <appender-ref ref="SLF4J_FILE" /> <!-- Logi z SLF4J tylko w pliku central.log -->
+    <!-- Logger dla logów TRACE z tego serwisu -->
+    <logger name="pl.ticket" level="TRACE">
+        <appender-ref ref="TRACE_FILE" /> <!-- Logi TRACE tylko w pliku log.log -->
     </logger>
 
     <!-- Wyłączenie logów systemowych Springa, ale zapisywanie do pliku all-logs.log -->

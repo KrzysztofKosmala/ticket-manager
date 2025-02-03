@@ -19,16 +19,13 @@ public class OrderEventDataProvider
                         (
                                 Arrays.asList(
                                         OrderRowDto.builder()
-                                        .productId(111L)
-                                        .quantity(10)
+                                        .productId(1111111L)
                                         .build(),
                                         OrderRowDto.builder()
-                                                .productId(222L)
-                                                .quantity(1)
+                                                .productId(1111111L)
                                                 .build(),
                                         OrderRowDto.builder()
-                                                .productId(333L)
-                                                .quantity(3)
+                                                .productId(3333333L)
                                                 .build()
                                 )
                         )
@@ -43,7 +40,6 @@ public class OrderEventDataProvider
                                 Arrays.asList(
                                         OrderRowDto.builder()
                                                 .productId(1L)
-                                                .quantity(10)
                                                 .build())
                         )
                 .build();

@@ -16,12 +16,13 @@ public class ConcreteTicketDto
     private Long id;
     private byte[] qrCode;
     private Long generalTicketId;
+    private Long orderRowId;
     private String title;
     private String date;
     private String time;
     private String description;
 
-    public ConcreteTicketDto(Long id,Long generalTicketId,String title, LocalDate date, LocalTime time, String description, byte[] qrCode)
+    public ConcreteTicketDto(Long id,Long generalTicketId,String title, LocalDate date, LocalTime time, String description, byte[] qrCode, Long orderRowId)
     {
         this.id = id;
         this.generalTicketId = generalTicketId;
@@ -36,5 +37,20 @@ public class ConcreteTicketDto
         this.time = time.format(timeFormatter);
         this.description = description;
         this.qrCode = qrCode;
+        this.orderRowId = orderRowId;
+    }
+
+
+    @Override
+    public String toString() {
+        return "ConcreteTicketDto {\n" +
+                "  id=" + id + "\n" +
+                "  generalTicketId=" + generalTicketId + "\n" +
+                "  title='" + title + "'\n" +
+                "  date='" + date + "'\n" +
+                "  time='" + time + "'\n" +
+                "  description='" + description + "'\n" +
+                "  orderRowId=" + orderRowId + "\n" +
+                "}";
     }
 }

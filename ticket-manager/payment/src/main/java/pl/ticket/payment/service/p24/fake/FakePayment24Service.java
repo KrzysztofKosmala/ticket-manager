@@ -36,7 +36,7 @@ public class FakePayment24Service implements PaymentInitializer {
 
     @Override
     public void initPayment(OrderEvent orderEvent) {
-        log.info("Tworzenie płatności za zamówienie nr: {}", orderEvent.getOrderId());
+        log.trace("Creating payment for order: {}", orderEvent.getOrderId());
         taskScheduler.initialize();
         scheduler = taskScheduler;
         String paymentUrl = PAYMENT_URL + orderEvent.getOrderId();
@@ -55,13 +55,13 @@ public class FakePayment24Service implements PaymentInitializer {
 
     @Override
     public void verifyPayment(OrderEvent orderEvent) {
-        log.info("Weryfikacja zamówienia nr {} " + orderEvent.getOrderId());
+        log.trace("Verifying payment for order nr: {}", orderEvent.getOrderId());
         startTaskWithTimeout(paymentOrderStatusService,
                 orderEvent, 20000, 180000);
     }
 
     private void sendMail(OrderEvent orderEvent, String paymentUrl) {
-        log.info("Wysyłanie e-mail z linkiem do płatności");
+        log.trace("Sending e-mail with link payment");
         EmailMessage emailMessage = EmailMessageGenerator.payOrderMessage(orderEvent, paymentUrl);
         emailClient.publishEmail(emailMessage);
     }
@@ -82,15 +82,15 @@ public class FakePayment24Service implements PaymentInitializer {
 
         Runnable task = () -> {
             long elapsedTime = System.currentTimeMillis() - startTime;
-            log.info("Sprawdzenie statusu płatności dla zamówienia nr {}", orderEvent.getOrderId());
+            log.trace("Checking payment status for order: {}", orderEvent.getOrderId());
             PaymentOrderStatus paymentOrderStatus = paymentOrderStatusService.findByOrderId(orderEvent.getOrderId());
             PaymentStatus status = paymentOrderStatus.getPaymentStatus();
-            log.info("Status płatności: {}", status);
+            log.trace("Payment status: {}", status);
 
 
             // Zakończ zadanie po określonym czasie lub jak płatność jest opłacone
             if (elapsedTime >= timeoutMillis || status.equals(PaymentStatus.PAID) || status.equals(PaymentStatus.REJECTED)) {
-                log.info("Weryfikacja została zakończona po osiągniecia maksymalnego czasu lub status zmienił się na PAID lub REJECTED");
+                log.trace("Verification was completed after the maximum time was reached or the status changed to PAID or REJECTED");
                 stopTask();
                 publishPaymentStatus(orderEvent, status);
 

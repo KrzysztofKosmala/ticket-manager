@@ -6,6 +6,7 @@ import pl.ticket.event.admin.event.repository.AdminEventRepository;
 import pl.ticket.event.admin.event.service.AdminEventService;
 import pl.ticket.event.admin.event_occurrence.repository.AdminEventOccurrenceRepository;
 import pl.ticket.event.IT.PrePost;
+import pl.ticket.event.admin.ticket.repository.AdminConcreteTicketRepository;
 import pl.ticket.event.admin.ticket.repository.AdminTicketRepository;
 import pl.ticket.event.customer.image.repository.ImageRepository;
 
@@ -27,6 +28,9 @@ public class AdminEventDeleteTest extends PrePost
     private AdminTicketRepository adminTicketRepository;
 
     @Autowired
+    private AdminConcreteTicketRepository adminConcreteTicketRepository;
+
+    @Autowired
     private ImageRepository imageRepository;
 
     @Test
@@ -39,10 +43,12 @@ public class AdminEventDeleteTest extends PrePost
         long countedEventsAfter = adminEventRepository.count();
         long countedOccurrencesAfter = eventOccurrenceRepository.count();
         long countedTicketsAfter = adminTicketRepository.count();
+        long countedConcreteTicketsAfter = adminConcreteTicketRepository.count();
 
         assertEquals(1, countedEventsAfter , "Unexpected event count after creation");
         assertEquals(1, countedOccurrencesAfter , "Unexpected occurrences count after creation");
         assertEquals(2, countedTicketsAfter , "Unexpected tickets count after creation");
         assertEquals(2, countedImagesAfter , "Unexpected tickets count after creation");
+        assertEquals(2, countedConcreteTicketsAfter , "Unexpected concrete tickets count after creation");
     }
 }

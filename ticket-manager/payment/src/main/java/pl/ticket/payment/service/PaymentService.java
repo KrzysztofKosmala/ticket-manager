@@ -43,12 +43,15 @@ public class PaymentService {
     }
 
     public void payOrder(Long orderId) {
+        log.trace("Paying for order {}", orderId);
         makePayment(orderId, PaymentStatus.PAID);
-
+        log.trace("Order {} paid successfully", orderId);
     }
 
     public void rejectOrder(Long orderId) {
+        log.trace("Rejecting order {}", orderId);
         makePayment(orderId, PaymentStatus.REJECTED);
+        log.trace("Order {} rejected successfully", orderId);
     }
 
     private void makePayment(Long orderId, PaymentStatus rejected) {
@@ -60,6 +63,8 @@ public class PaymentService {
 
     public void refoundPayment(ConcreteTicketDtoList concreteTicketDtoList)
     {
+        /*TODO: implement logic of refound*/
+        concreteTicketDtoList.getConcreteTicketDtoList().forEach(concreteTicketDto -> log.info(concreteTicketDto.getOrderRowId().toString()));
         log.info("refound payment");
     }
 }

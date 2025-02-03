@@ -25,7 +25,19 @@ public class OrderRow
     private Long productId;
     private String productName;
     private String description;
-    private Long concreteTicketId;
     private BigDecimal price;
     private Long shipmentId;
+
+    @Override
+    public String toString() {
+        return "OrderRow {\n" +
+                "  id=" + id + "\n" +
+                "  orderId=" + orderId + "\n" +
+                "  productId=" + productId + "\n" +
+                "  productName='" + productName + "'\n" +
+                "  description='" + description + "'\n" +
+                "  price=" + price + "\n" +
+                "  shipmentId=" + shipmentId + "\n" +
+                '}';
+    }
 }

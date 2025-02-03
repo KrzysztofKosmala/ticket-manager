@@ -19,7 +19,7 @@ public class SagaReservationProcessService
 
     public void publishReservationCompleted(OrderEvent orderEvent)
     {
-        log.info("publishing event to reservation completed, event: {}", orderEvent.toString());
+        log.trace("Publishing event to reservation completed, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,
@@ -30,7 +30,7 @@ public class SagaReservationProcessService
 
     public void publishReservationRejected(OrderEvent orderEvent)
     {
-        log.info("publishing event to reservation rejected, event: {}", orderEvent.toString());
+        log.trace("Publishing event to reservation rejected, event: {}", orderEvent.toString());
         rabbitMqMessageProducer.publish
                 (
                         orderEvent,
@@ -51,7 +51,7 @@ public class SagaReservationProcessService
     }
     public void publishPreparedConcreteTickets(CompleteOrderEvent completeOrderEvent)
     {
-        log.info("publishing event to PreparedConcreteTickets, event: {}", completeOrderEvent.toString());
+        log.trace("Publishing CompleteOrderEvent to PreparedConcreteTickets, event: {}", completeOrderEvent.toString());
         rabbitMqMessageProducer.publish
                 (
                         completeOrderEvent,

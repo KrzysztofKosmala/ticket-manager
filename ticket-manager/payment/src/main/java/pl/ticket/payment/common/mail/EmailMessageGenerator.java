@@ -57,7 +57,6 @@ public class EmailMessageGenerator
             body.append("<tr>")
                     .append("<td>").append(row.getProductName()).append("</td>")
                     .append("<td>").append(row.getDescription()).append("</td>")
-                    .append("<td>").append(row.getQuantity()).append("</td>")
                     .append("<td>").append(row.getPrice()).append(" zł</td>")
                     .append("</tr>");
         }

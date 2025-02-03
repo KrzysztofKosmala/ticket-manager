@@ -33,5 +33,14 @@ public class EventOccurrence
     @Column(name = "is_common_pool", nullable = false)
     private Boolean isCommonPool;
 
-
+    @Override
+    public String toString() {
+        return "EventOccurrence {\n" +
+                "  id=" + id + "\n" +
+                "  eventId=" + eventId + "\n" +
+                "  date=" + date + "\n" +
+                "  time=" + time + "\n" +
+                "  isCommonPool=" + isCommonPool + "\n" +
+                '}';
+    }
 }
