@@ -47,7 +47,6 @@ public class EmailMessageGenerator
                 .append("<tr>")
                 .append("<th>Produkt</th>")
                 .append("<th>Opis</th>")
-                .append("<th>Ilość</th>")
                 .append("<th>Cena</th>")
                 .append("</tr>")
                 .append("</thead>")

@@ -49,7 +49,7 @@ public class InternalTicket
 
     @Override
     public String toString() {
-        return "InternalTicket {\n" +
+        return "\nInternalTicket {\n" +
                 "  id=" + id + "\n" +
                 "  type=" + type + "\n" +
                 "  price=" + price + "\n" +

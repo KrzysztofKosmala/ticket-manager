@@ -33,6 +33,9 @@ class TicketReservationTest extends PrePost
     private InternalTicketService underTest;
     @Autowired
     private InternalTicketRepository internalTicketRepository;
+
+    /*TODO: wszystkie casy*/
+
     @Test
     void shouldReserveTicketsSuccessfully()
     {
