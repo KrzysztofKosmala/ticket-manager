@@ -70,7 +70,7 @@ public class EmailMessageGenerator
         return body.toString();
     }
 
-    public static EmailMessage orderRejectedMessage(OrderEvent order)
+    public static EmailMessage paymentRejectedMessage(OrderEvent order)
     {
         return EmailMessage.builder()
                 .to(order.getClientEmail())
@@ -100,7 +100,7 @@ public class EmailMessageGenerator
                 .append("<div class='container'>")
                 .append("<div class='header'>Twoje zamówienie zostało anulowane</div>")
                 .append("<p>Drogi Kliencie,</p>")
-                .append("<p>Twoje zamówienie : ").append(order.getOrderId()).append("zostało anulowane z braku płatności.</p>")
+                .append("<p>Twoje zamówienie : ").append(order.getOrderId()).append(" zostało anulowane z braku płatności.</p>")
                 .append("<div class='order-summary'>")
                 .append("<br>");
 
@@ -182,4 +182,41 @@ public class EmailMessageGenerator
         return emailBuilder.toString();
     }
 
+    public static EmailMessage reservationRejectedMessage(OrderEvent orderEvent) {
+
+        // Nagłówek wiadomości
+        String emailBuilder = "<html>" +
+                "<head>" +
+                "<style>" +
+                "body { font-family: Arial, sans-serif; }" +
+                ".container { width: 80%; margin: 0 auto; }" +
+                ".header { text-align: center; margin-bottom: 20px; }" +
+                ".content { margin-top: 20px; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='container'>" +
+                "<div class='header'>" +
+                "<h2>Rezerwacja nieudana</h2>" +
+                "<p>Przepraszamy, ale nie udało się zarezerwować wybranych biletów.</p>" +
+                "</div>" +
+                "<div class='content'>" +
+                "<p>Numer Twojego zamówienia: <strong>" +
+                orderEvent.getOrderId() + "</strong></p>" +
+                "<p>Adres e-mail klienta: <strong>" +
+                orderEvent.getClientEmail() + "</strong></p>" +
+                "<p>Twoje zamówienie zostało anulowane. Jeśli masz jakiekolwiek pytania, skontaktuj się z naszą obsługą klienta.</p>" +
+                "<p>Przepraszamy za wszelkie niedogodności i mamy nadzieję, że ponownie skorzystasz z naszych usług w przyszłości.</p>" +
+                "</div>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+
+        EmailMessage emailMessage = new EmailMessage();
+        emailMessage.setSubject("Rezerwacja nieudana - zamówienie anulowane");
+        emailMessage.setTo(orderEvent.getClientEmail());
+        emailMessage.setBody(emailBuilder);
+
+        return emailMessage;
+    }
 }

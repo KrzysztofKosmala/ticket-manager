@@ -1,5 +1,6 @@
 package pl.ticket.event.internal.ticket.service;
 
+import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class InternalTicketService
 
             log.trace("New ticket amount: {}  value after reservation: {}", ticket.getId(), ticket.getAmount() );
         }
+
         //publish to queue reservation complete
         sagaReservationProcessService.publishReservationCompleted(order);
     }

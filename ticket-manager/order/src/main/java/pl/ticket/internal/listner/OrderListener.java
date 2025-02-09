@@ -29,7 +29,7 @@ public class OrderListener
     @RabbitListener(queues = "${rabbitmq.order-queue.reservationRejected}")
     public void consumeReservationRejected(OrderEvent orderEvent)
     {
-        log.info("Received event to update order status to rejected, event: {}", orderEvent.toString());
+        log.trace("Received event to update order status to rejected, event: {}", orderEvent.toString());
         internalOrderService.changeStatusToCanceled(orderEvent);
     }
 
@@ -44,8 +44,8 @@ public class OrderListener
     @RabbitListener(queues = "${rabbitmq.order-queue.paymentRejected}")
     public void consumePaymentRejected(OrderEvent orderEvent)
     {
-        log.info("Received event to update order status to processing, event: {}", orderEvent.toString());
-        emailClient.publishEmail(EmailMessageGenerator.orderRejectedMessage(orderEvent));
+        log.trace("Received event to update order status to cancelling, event: {}", orderEvent.toString());
+        emailClient.publishEmail(EmailMessageGenerator.paymentRejectedMessage(orderEvent));
         internalOrderService.unbookOrder(orderEvent);
     }
 
@@ -53,14 +53,14 @@ public class OrderListener
     @RabbitListener(queues = "${rabbitmq.order-queue.orderUnbooked}")
     public void consumeOrderUnbooked(OrderEvent orderEvent)
     {
-        log.info("Received event to update order status to canceled, event: {}", orderEvent.toString());
+        log.trace("Received event to update order status to canceled, event: {}", orderEvent.toString());
         internalOrderService.cancelOrder(orderEvent);
     }
 
     @RabbitListener(queues = "${rabbitmq.order-queue.preparedConcreteTickets}")
     public void consumePreparedConcreteTickets(CompleteOrderEvent orderEvent)
     {
-        log.info("Received CompleteOrderEvent to update order status to completed, event: {}", orderEvent.toString());
+        log.trace("Received CompleteOrderEvent to update order status to completed, event: {}", orderEvent.toString());
         emailClient.publishEmail(EmailMessageGenerator.orderCompleted(orderEvent));
         internalOrderService.changeStatusToCompleted(orderEvent);
     }

@@ -5,10 +5,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.ticket.common.model.Order;
+import pl.ticket.common.model.OrderStatus;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>
 {
     @Query("SELECT o FROM Order o WHERE o.id = :id")
     Order findOrderById(@Param("id") Long id);
+
+    OrderStatus findOrderStatusById(Long id);
 }

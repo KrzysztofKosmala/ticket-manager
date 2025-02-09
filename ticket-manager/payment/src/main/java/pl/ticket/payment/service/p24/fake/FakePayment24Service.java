@@ -115,7 +115,7 @@ public class FakePayment24Service implements PaymentInitializer {
         } else if (status.equals(PaymentStatus.REJECTED)){
             sagaPaymentProcessService.publishPaymentRejected(orderEvent);
         }else {
-            // todo: obsluzyc wyjatek
+            sagaPaymentProcessService.publishPaymentRejected(orderEvent);
         }
     }
 }

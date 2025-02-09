@@ -9,6 +9,7 @@ import pl.ticket.common.SagaOrderProcessService;
 import pl.ticket.common.mapper.EmailMessageGenerator;
 import pl.ticket.common.model.Order;
 import pl.ticket.common.model.OrderRow;
+import pl.ticket.common.model.OrderStatus;
 import pl.ticket.common.model.dto.OrderDto;
 import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.customer.repository.OrderRepository;
@@ -67,8 +68,8 @@ public class OrderService
         OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
 
         sagaOrderProcessService.publishOrderCreated(orderEvent);
-        //clearOrderCart(orderDto);
-        return OrderMapper.createOrderSummary(order, "to be implemented");
+        clearOrderCart(orderDto);
+        return OrderMapper.createOrderSummary(order, "/api/v1/orders/" + order.getId() + "/status");
     }
 
     private List<OrderRow> saveProductRows(CartSummaryDto cart, Long orderId, List<TicketWithDetailsDto> ticketsWithDetailsByTicketIds) {
@@ -87,9 +88,14 @@ public class OrderService
     }
 
     private void clearOrderCart(OrderDto orderDto) {
+        log.trace("Deleting cart from CART SERVICE: {}", orderDto.getCartId());
         cartClient.deleteItemsByCartId(orderDto.getCartId());
         cartClient.deleteCart(orderDto.getCartId());
     }
 
 
+    public OrderStatus getStatus(Long orderId)
+    {
+        return orderRepository.findOrderStatusById(orderId);
+    }
 }

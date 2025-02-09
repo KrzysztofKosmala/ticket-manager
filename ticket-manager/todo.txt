@@ -1,10 +1,22 @@
-sprawdzenie wszystkich scenariuszy sagi(logi wszędzie)
-dodać opcje zarządzania orderem dla admina plus testy
+
+dla Admina
+Order
+        - zmiana statusu zamówienia (edycja danych)
+        - zwrot kosztów(za całość lub część)
+        - przeglądanie zamówień po statusie/id/emailu
+Event
+    usówanie tylko occurrence wraz ze zwrotek kosztow
+    zmiana godziny occurance
+    wprowadzenie nowej ceny
+
 validacja ceny na backendzie po przyjęciu koszyka
 dodanie ceny podstawowej oraz obecnej w produkcie
+zniżki
+
+
+
 rozne strategie wyswietlania strony glownej bazując na poprzednich zakupach lub ogladanych eventach
 dodać gdzies cashing
-zniżki
 naprawa routingu w apigw
 
 Kamil:

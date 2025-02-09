@@ -41,7 +41,6 @@ public class InternalOrderService
     public void changeStatusToCanceled(OrderEvent orderEvent)
     {
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
-        //TODO:do notification
 
         order.setOrderStatus(OrderStatus.CANCELED);
     }
@@ -68,7 +67,7 @@ public class InternalOrderService
     public void cancelOrder(OrderEvent orderEvent)
     {
         Order order = internalOrderRepository.findOrderById(orderEvent.getOrderId());
-        //TODO:do notification
+
         order.setOrderStatus(OrderStatus.CANCELED);
     }
 

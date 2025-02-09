@@ -3,10 +3,8 @@ package pl.ticket.customer.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pl.ticket.common.model.OrderStatus;
 import pl.ticket.common.model.dto.OrderDto;
 import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.customer.service.OrderService;
@@ -27,6 +25,12 @@ public class OrderController
         String userId = jwt.getSubject();
 
         return orderService.placeOrder(orderDto, userId);
+    }
+
+    @GetMapping("/{orderId}/status")
+    public OrderStatus checkStatus(@PathVariable Long orderId)
+    {
+        return orderService.getStatus(orderId);
     }
 
 }
