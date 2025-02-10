@@ -6,11 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.ticket.common.SagaOrderProcessService;
-import pl.ticket.common.mapper.EmailMessageGenerator;
 import pl.ticket.common.model.Order;
 import pl.ticket.common.model.OrderRow;
 import pl.ticket.common.model.OrderStatus;
-import pl.ticket.common.model.dto.OrderDto;
+import pl.ticket.common.model.dto.OrderCreationRequest;
 import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.customer.repository.OrderRepository;
 import pl.ticket.customer.repository.OrderRowRepository;
@@ -26,7 +25,6 @@ import pl.ticket.feign.event.EventClient;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,16 +41,16 @@ public class OrderService
 
 
     @Transactional
-    public OrderSummary placeOrder(OrderDto orderDto, String userId)
+    public OrderSummary placeOrder(OrderCreationRequest orderCreationRequest, String userId)
     {
-        log.trace("New order request from user: {} Order: {}", userId, orderDto.toString());
-        Long cartId = orderDto.getCartId();
+        log.trace("New order request from user: {} Order: {}", userId, orderCreationRequest.toString());
+        Long cartId = orderCreationRequest.getCartId();
 
         CartSummaryDto cart = cartClient.getCart(cartId);
 
         log.trace("Fetched cart from CART SERVICE: {}", cart.toString());
 
-        Order order = OrderMapper.createNewOrder(orderDto, cart, userId);
+        Order order = OrderMapper.createNewOrder(orderCreationRequest, cart, userId);
 
         orderRepository.save(order);
 
@@ -68,7 +66,7 @@ public class OrderService
         OrderEvent orderEvent = OrderMapper.toOrderEvent(order);
 
         sagaOrderProcessService.publishOrderCreated(orderEvent);
-        clearOrderCart(orderDto);
+        clearOrderCart(orderCreationRequest);
         return OrderMapper.createOrderSummary(order, "/api/v1/orders/" + order.getId() + "/status");
     }
 
@@ -87,10 +85,10 @@ public class OrderService
 
     }
 
-    private void clearOrderCart(OrderDto orderDto) {
-        log.trace("Deleting cart from CART SERVICE: {}", orderDto.getCartId());
-        cartClient.deleteItemsByCartId(orderDto.getCartId());
-        cartClient.deleteCart(orderDto.getCartId());
+    private void clearOrderCart(OrderCreationRequest orderCreationRequest) {
+        log.trace("Deleting cart from CART SERVICE: {}", orderCreationRequest.getCartId());
+        cartClient.deleteItemsByCartId(orderCreationRequest.getCartId());
+        cartClient.deleteCart(orderCreationRequest.getCartId());
     }
 
 

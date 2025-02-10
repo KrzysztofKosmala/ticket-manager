@@ -5,7 +5,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import pl.ticket.common.model.OrderStatus;
-import pl.ticket.common.model.dto.OrderDto;
+import pl.ticket.common.model.dto.OrderCreationRequest;
 import pl.ticket.common.model.dto.OrderSummary;
 import pl.ticket.customer.service.OrderService;
 
@@ -18,13 +18,13 @@ public class OrderController
     private final OrderService orderService;
 
     @PostMapping
-    public OrderSummary placeOrder(@RequestBody OrderDto orderDto, @AuthenticationPrincipal Jwt jwt)
+    public OrderSummary placeOrder(@RequestBody OrderCreationRequest orderCreationRequest, @AuthenticationPrincipal Jwt jwt)
     {
 
         //sprawdzić dostępność
         String userId = jwt.getSubject();
 
-        return orderService.placeOrder(orderDto, userId);
+        return orderService.placeOrder(orderCreationRequest, userId);
     }
 
     @GetMapping("/{orderId}/status")

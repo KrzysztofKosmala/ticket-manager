@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class OrderDto
+public class OrderCreationRequest
 {
     private String firstname;
     private String lastname;
@@ -32,7 +32,7 @@ public class OrderDto
 
     @Override
     public String toString() {
-        return "OrderDto {\n" +
+        return "OrderCreationRequest {\n" +
                 "  firstname='" + firstname + '\'' + "\n" +
                 "  lastname='" + lastname + '\'' + "\n" +
                 "  street='" + street + '\'' + "\n" +
