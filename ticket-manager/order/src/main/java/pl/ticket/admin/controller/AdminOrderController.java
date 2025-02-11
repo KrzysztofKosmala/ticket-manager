@@ -34,29 +34,17 @@ public class AdminOrderController
 
 
 
-    @GetMapping("/{orderId}")
-    public OrderDto getOrderById(@PathVariable Long orderId) {
-        return orderService.getOrderById(orderId);
-    }
 
-/*    @GetMapping("/{email}")
-    public OrderDto getOrderByEmail(@PathVariable String email) {
-        return orderService.getOrderByEmail(email);
-    }
-
-    @GetMapping
+    @GetMapping("/find")
     public OrderDto getOrderByParam(@RequestParam(required = false) Long id,
                                     @RequestParam(required = false) String email)
     {
-        return switch (String.valueOf(id != null ? "ID" : email != null ? "EMAIL" : "INVALID")) {
-            case "ID" -> return orderService.getOrderById(orderId);
+        return switch (id != null ? "ID" : email != null ? "EMAIL" : "INVALID") {
+            case "ID" -> orderService.getOrderById(id);
 
-            case "EMAIL" -> OrderMapper.mapToDto(
-                    orderService.findOrderByEmail(email)
-                            .orElseThrow(() -> new OrderNotFoundException("Order with email " + email + " not found"))
-            );
+            case "EMAIL" -> orderService.getOrderByEmail(email);
             default -> throw new IllegalArgumentException("Either id or email must be provided");
         };
-    }*/
+    }
 
 }
