@@ -1,9 +1,5 @@
 
 dla Admina
-Order
-        - zmiana statusu zamówienia (edycja danych)
-        - zwrot kosztów(za całość lub część)
-        - przeglądanie zamówień po emailu
 Event
     usówanie tylko occurrence wraz ze zwrotek kosztow
     zmiana godziny occurance

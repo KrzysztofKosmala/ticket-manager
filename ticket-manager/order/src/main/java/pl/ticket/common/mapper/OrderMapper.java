@@ -56,6 +56,17 @@ public class OrderMapper
         return orderDto;
     }
 
+
+    public static OrderRow mapDtoToOrderRow(OrderRowDto orderRowDto) {
+        OrderRow orderRow = new OrderRow();
+        orderRow.setId(orderRowDto.getId());
+        orderRow.setProductId(orderRowDto.getProductId());
+        orderRow.setProductName(orderRowDto.getProductName());
+        orderRow.setDescription(orderRowDto.getDescription());
+        orderRow.setPrice(orderRowDto.getPrice());
+        orderRow.setShipmentId(orderRowDto.getShipmentId());
+        return orderRow;
+    }
 /*    public static OrderRow toOrderRow(CartSummaryItemDto cartSummaryItemDto)
     {
         return OrderRow.builder()

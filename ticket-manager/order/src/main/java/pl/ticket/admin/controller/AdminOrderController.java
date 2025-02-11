@@ -32,9 +32,6 @@ public class AdminOrderController
         return orderService.getOrders(PageRequest.of(page, size, sort));
     }
 
-
-
-
     @GetMapping("/find")
     public OrderDto getOrderByParam(@RequestParam(required = false) Long id,
                                     @RequestParam(required = false) String email)
@@ -45,6 +42,11 @@ public class AdminOrderController
             case "EMAIL" -> orderService.getOrderByEmail(email);
             default -> throw new IllegalArgumentException("Either id or email must be provided");
         };
+    }
+
+    @PutMapping("/{orderId}")
+    public OrderDto updateOrder(@PathVariable Long orderId, @RequestBody OrderDto orderDto){
+        return orderService.updateOrder(orderId, orderDto);
     }
 
 }

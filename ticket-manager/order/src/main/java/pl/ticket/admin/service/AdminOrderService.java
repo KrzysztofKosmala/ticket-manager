@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import pl.ticket.admin.repository.AdminOrderRepository;
 import pl.ticket.common.mapper.OrderMapper;
 import pl.ticket.common.model.Order;
+import pl.ticket.common.model.OrderStatus;
 import pl.ticket.customer.repository.OrderRepository;
 import pl.ticket.dto.OrderDto;
 
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 public class AdminOrderService
 {
     private final AdminOrderRepository adminOrderRepository;
+    private final OrderRepository orderRepository;
+
     public Page<OrderDto> getOrders(Pageable pageable)
     {
         Page<Order> orderPage = adminOrderRepository.findAll(pageable);
@@ -42,5 +45,28 @@ public class AdminOrderService
     public OrderDto getOrderByEmail(String email)
     {
         return OrderMapper.mapToDto(adminOrderRepository.findOrderByEmail(email).orElseThrow(() -> new NoSuchElementException("Order with email " + email + " not found")));
+    }
+
+    public OrderDto updateOrder(Long orderId, OrderDto orderDto)
+    {
+        Order existingOrder = adminOrderRepository.findOrderById(orderId)
+                .orElseThrow(() -> new NoSuchElementException("Order with ID " + orderId + " not found"));
+
+        existingOrder.setPlaceDate(orderDto.getPlaceDate());
+        existingOrder.setOrderStatus(OrderStatus.valueOf(orderDto.getOrderStatus()));
+        existingOrder.setGrossValue(orderDto.getGrossValue());
+        existingOrder.setFirstname(orderDto.getFirstname());
+        existingOrder.setLastname(orderDto.getLastname());
+        existingOrder.setEmail(orderDto.getEmail());
+        existingOrder.setPhone(orderDto.getPhone());
+        existingOrder.setPaymentId(orderDto.getPaymentId());
+        existingOrder.setUserId(orderDto.getUserId());
+        existingOrder.setOrderHash(orderDto.getOrderHash());
+        existingOrder.setOrderRows(orderDto.getOrderRows().stream()
+                .map(OrderMapper::mapDtoToOrderRow)
+                .collect(Collectors.toList()));
+
+        Order updatedOrder = orderRepository.save(existingOrder);
+        return OrderMapper.mapToDto(updatedOrder);
     }
 }
