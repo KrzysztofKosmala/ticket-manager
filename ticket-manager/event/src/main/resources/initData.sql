@@ -27,8 +27,12 @@ INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (
 INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (8, 5, '2024-11-18', '16:00:00', true);
 INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (9, 5, '2024-12-17', '20:00:00', true);
 
-INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (10, 1, '2025-02-03', '15:00:00', true);
-INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (11, 1, '2025-02-03', '20:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (10, 1, '2025-02-15', '15:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (11, 1, '2025-02-15', '20:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (12, 1, '2025-02-20', '15:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (13, 1, '2025-02-20', '20:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (14, 1, '2025-02-22', '15:00:00', true);
+INSERT INTO event_occurrence (id, event_id, date, time, is_common_pool) VALUES (15, 1, '2025-02-22', '20:00:00', true);
 
 -- insert sample data for ticket - Dziady '2024-10-20', '15:00:00'
 INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (1, 1, 1, 'FULL_PRICE', 50, 60, 0);
@@ -43,6 +47,14 @@ INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, vers
 -- insert sample data for ticket - Dziady '2024-10-21', '20:00:00'
 INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (21, 11, 1, 'FULL_PRICE', 50, 60, 0);
 INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (22, 11, 1, 'HALF_PRICE', 25, 40, 0);
+INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (23, 12, 1, 'FULL_PRICE', 50, 60, 0);
+INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (24, 12, 1, 'HALF_PRICE', 25, 40, 0);
+INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (25, 13, 1, 'FULL_PRICE', 50, 60, 0);
+INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (26, 13, 1, 'HALF_PRICE', 25, 40, 0);
+INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (27, 14, 1, 'FULL_PRICE', 50, 60, 0);
+INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (28, 14, 1, 'HALF_PRICE', 25, 40, 0);
+INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (29, 15, 1, 'FULL_PRICE', 50, 60, 0);
+INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (30, 15, 1, 'HALF_PRICE', 25, 40, 0);
 
 -- insert sample data for ticket - Wujaszek Wania '2024-11-08', '16:00:00'
 INSERT INTO ticket (id, event_occurrence_id, event_id, type, price, amount, version) VALUES (5, 3, 2, 'FULL_PRICE', 40, 40, 0);

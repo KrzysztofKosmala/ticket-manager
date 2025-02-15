@@ -5,7 +5,6 @@ import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.ticket.dto.EventDto;
@@ -16,7 +15,6 @@ import pl.ticket.event.admin.event.utils.AdminEventUtils;
 import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceOccasionalCreationDto;
 import pl.ticket.event.admin.event.model.AdminEvent;
 import pl.ticket.event.admin.event.repository.AdminEventRepository;
-import pl.ticket.event.admin.event_occurrence.dto.AdminEventOccurrenceRegularCreationDto;
 import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.admin.event_occurrence.service.AdminEventOccurrenceService;
 import pl.ticket.event.admin.image.model.AdminImage;
@@ -24,14 +22,9 @@ import pl.ticket.event.admin.image.service.AdminImageService;
 import pl.ticket.event.admin.ticket.model.AdminTicket;
 import pl.ticket.event.admin.ticket.service.AdminTicketService;
 import pl.ticket.event.common.mapper.EventMapper;
-import pl.ticket.event.customer.event.model.Event;
 
 import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +41,6 @@ public class AdminEventService {
 
     public void createEventOccasional(AdminEventOccasionalCreationDto adminEventOccasionalCreationDto)
     {
-        /*TODO: dodać obrazki*/
         if (!adminEventOccasionalCreationDto.getEventType().equals(EventType.OCCASIONAL)) {
             throw new NoSuchElementException("Wrong event type!");
         }
@@ -81,7 +73,7 @@ public class AdminEventService {
     {
         adminEventServiceValidator.validateAdminEventRegularCreationDto(adminEventRegularCreationDto);
 
-        AdminImage image = imageService.findById(adminEventRegularCreationDto.getImageId());
+        AdminImage image = imageService.findById(adminEventRegularCreationDto.getImageId()).orElseThrow(() -> new NotFoundException("Nie ma takiego Obrazu"));
 
         List<LocalDate> datesFromRange = adminEventUtils.datesFromRange(adminEventRegularCreationDto.getStartDate(), adminEventRegularCreationDto.getEndDate());
 
@@ -101,10 +93,7 @@ public class AdminEventService {
     {
         List<AdminEventOccurrence> eventOccurrences = adminEventOccurrenceService.findByEventId(id);
 
-        eventOccurrences.forEach(occurrence -> {
-
-            adminTicketService.deleteTickets(occurrence);
-        });
+        eventOccurrences.forEach(adminTicketService::deleteTickets);
 
         adminEventOccurrenceService.deleteOccurrences(eventOccurrences);
 
@@ -121,8 +110,13 @@ public class AdminEventService {
         adminEvent.setCategoryId(adminEventUpdateDto.getCategoryId());
         adminEvent.setSlug(adminEventUpdateDto.getSlug());
 
-        AdminImage image = imageService.findById(adminEventUpdateDto.getImageId());
-        adminEvent.setImage(image);
+        adminEventUpdateDto.getTickets().forEach(ticket -> {adminTicketService.updateTicketsByEventId(id, ticket);});
+
+        if(adminEventUpdateDto.getImageId() != null
+                && !adminEventUpdateDto.getImageId().equals(adminEvent.getImage().getId())) {
+            Optional<AdminImage> byId = imageService.findById(adminEventUpdateDto.getImageId());
+            byId.ifPresent(adminEvent::setImage);
+        }
 
         adminEventRepository.save(adminEvent);
     }

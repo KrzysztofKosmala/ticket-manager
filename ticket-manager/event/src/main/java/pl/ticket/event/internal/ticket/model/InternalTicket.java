@@ -36,6 +36,7 @@ public class InternalTicket
     @Enumerated(EnumType.STRING)
     private TicketType type;
     private BigDecimal price;
+    private BigDecimal oldPrice;
     private int amount;
 
     @ManyToOne
@@ -53,6 +54,7 @@ public class InternalTicket
                 "  id=" + id + "\n" +
                 "  type=" + type + "\n" +
                 "  price=" + price + "\n" +
+                "  old price=" + oldPrice + "\n" +
                 "  amount=" + amount + "\n" +
                 "  eventOccurrence=" + (eventOccurrence != null ? eventOccurrence.getId() : "null") + "\n" +
                 "  version=" + version + "\n" +

@@ -31,7 +31,7 @@ public class AdminEventController
     @PostMapping("/regular")
     public void createEventWithRange(@RequestBody @Valid AdminEventRegularCreationDto adminEventRegularCreationDto)
     {
-        log.info("Event created {}", adminEventRegularCreationDto);
+        log.trace("Event created {}", adminEventRegularCreationDto);
         eventService.createEventRegular(adminEventRegularCreationDto);
     }
 
@@ -41,7 +41,6 @@ public class AdminEventController
         eventService.deleteEventById(id);
     }
 
-    //get admin event - skopiuje od kamila
 
     @PutMapping("{id}")
     public void updateRegularEventById(@RequestBody @Valid AdminEventUpdateDto adminEventUpdateDto, @PathVariable("id") Long id)

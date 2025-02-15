@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.ticket.event.admin.ticket.dto.AdminTicketUpdateDto;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -27,5 +30,10 @@ public class AdminEventUpdateDto
     private Long categoryId;
 
     @NotNull
+    private EventType eventType;
+
+    @NotNull
     private Long imageId;
+
+    private List<AdminTicketUpdateDto> tickets;
 }

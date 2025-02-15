@@ -63,8 +63,8 @@ public class AdminImageService
         imageRepository.deleteById(id);
     }
 
-    public AdminImage findById(Long id)
+    public Optional<AdminImage> findById(Long id)
     {
-        return imageRepository.findById(id).orElseThrow();
+        return imageRepository.findById(id);
     }
 }

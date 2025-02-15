@@ -34,6 +34,7 @@ public class Ticket
     @Enumerated(EnumType.STRING)
     private TicketType type;
     private BigDecimal price;
+    private BigDecimal oldPrice;
     private int amount;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -43,5 +43,6 @@ public class AdminTicket
     @Enumerated(EnumType.STRING)
     private AdminTicketType type;
     private BigDecimal price;
+    private BigDecimal oldPrice;
     private int amount;
 }
