@@ -1,5 +1,6 @@
 package pl.ticket.event.admin.event.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,14 @@ import pl.ticket.event.admin.event_occurrence.model.AdminEventOccurrence;
 import pl.ticket.event.admin.event_occurrence.service.AdminEventOccurrenceService;
 import pl.ticket.event.admin.image.model.AdminImage;
 import pl.ticket.event.admin.image.service.AdminImageService;
+import pl.ticket.event.admin.ticket.dto.AdminTicketInitUpdateDto;
+import pl.ticket.event.admin.ticket.dto.AdminTicketUpdateDto;
 import pl.ticket.event.admin.ticket.model.AdminTicket;
+import pl.ticket.event.admin.ticket.model.AdminTicketType;
 import pl.ticket.event.admin.ticket.service.AdminTicketService;
 import pl.ticket.event.common.mapper.EventMapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -120,6 +125,39 @@ public class AdminEventService {
 
         adminEventRepository.save(adminEvent);
     }
+
+    public AdminEventInitUpdateDto getEventForUpdate(Long id)
+    {
+        AdminEvent event = adminEventRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found"));
+
+        List<AdminTicketUpdateDto> tickets = adminTicketService.findTicketsByEventId(id);
+
+        Map<AdminTicketType, List<BigDecimal>> ticketPrices = tickets.stream()
+                .collect(Collectors.groupingBy(
+                        AdminTicketUpdateDto::type,
+                        Collectors.mapping(AdminTicketUpdateDto::price,
+                                Collectors.collectingAndThen(Collectors.toSet(),
+                                        set -> set.stream()
+                                                .sorted(Comparator.reverseOrder())
+                                                .toList()))
+                ));
+        List<AdminTicketInitUpdateDto> list = ticketPrices.entrySet().stream()
+                .map(entry -> new AdminTicketInitUpdateDto(entry.getKey(), entry.getValue()))
+                .toList();
+
+        return AdminEventInitUpdateDto.builder()
+                .title(event.getTitle())
+                .description(event.getDescription())
+                .image(event.getImage().getThumbImage())
+                .slug(event.getSlug())
+                .tickets(list)
+                .categoryId(event.getCategoryId())
+                .capacity(event.getCapacity())
+                .build();
+
+    }
+
 
     public Page<EventDto> getEventsWithoutOccurrences(Pageable pageable) {
         List<AdminEvent> allPaged = adminEventRepository.findAllPaged(pageable);

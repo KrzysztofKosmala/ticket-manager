@@ -45,18 +45,20 @@ public class AdminTicketService
         LocalTime nowTime = LocalTime.now(clock);
 
 
-        List<AdminTicket> ticketsByEventIdAndFutureDate = adminTicketRepository.findTicketsByEventIdTypeAndFutureDate(eventId, nowDate, nowTime, adminTicketUpdateDto.type());
+        int updatedRows = adminTicketRepository.updateTicketsByEventId(
+                eventId,
+                adminTicketUpdateDto.type(),
+                adminTicketUpdateDto.price(),
+                nowDate,
+                nowTime
+        );
 
-        ticketsByEventIdAndFutureDate.forEach(adminTicket ->
-        {
-            if (!adminTicket.getPrice().equals(adminTicketUpdateDto.price())) {
-                adminTicket.setOldPrice(adminTicket.getPrice());
-                adminTicket.setPrice(adminTicketUpdateDto.price());
-            }
-        });
+        log.trace("updateTicketsByEventId updatedRows: {}", updatedRows);
 
+    }
 
-        //jesli wystąpi jakis blad to obslużyć i zwrocic wyjatek
-
+    public List<AdminTicketUpdateDto> findTicketsByEventId(Long eventId)
+    {
+        return adminTicketRepository.findTicketsByEventId(eventId);
     }
 }

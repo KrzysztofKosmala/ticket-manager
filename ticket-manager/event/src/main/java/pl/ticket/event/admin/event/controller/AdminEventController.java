@@ -7,10 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import pl.ticket.dto.EventDto;
-import pl.ticket.event.admin.event.dto.AdminEventCreationDto;
-import pl.ticket.event.admin.event.dto.AdminEventOccasionalCreationDto;
-import pl.ticket.event.admin.event.dto.AdminEventRegularCreationDto;
-import pl.ticket.event.admin.event.dto.AdminEventUpdateDto;
+import pl.ticket.event.admin.event.dto.*;
 import pl.ticket.event.admin.event.service.AdminEventService;
 @Slf4j
 @RestController
@@ -54,5 +51,11 @@ public class AdminEventController
                                     @RequestParam(defaultValue = "5") int size){
         log.info("Getting all events");
         return eventService.getEventsWithoutOccurrences(PageRequest.of(page,size));
+    }
+
+    @GetMapping("/event-for-update")
+    public AdminEventInitUpdateDto getEventForUpdate(@RequestParam("id") Long id)
+    {
+        return eventService.getEventForUpdate(id);
     }
 }
