@@ -58,6 +58,8 @@ public class OrderService
         List<Long> cartItemIds = cart.getItems().stream().map(cartItem -> cartItem.getProduct().getId()).toList();
         List<TicketWithDetailsDto> ticketsWithDetailsByTicketIds = eventClient.getTicketsWithDetailsByTicketIds(cartItemIds);
 
+        //porównać ceny z tymi z koszyka
+
         List<OrderRow> orderRows = saveProductRows(cart, order.getId(), ticketsWithDetailsByTicketIds);
 
         order.setOrderRows(orderRows);

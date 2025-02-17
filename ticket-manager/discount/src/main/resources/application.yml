@@ -1,0 +1,87 @@
+server:
+  port: 8099
+spring:
+  application:
+    name: discount
+  zipkin:
+    base-url: http://localhost:9411
+  rabbitmq:
+    addresses: localhost:5672
+  datasource:
+    password: password
+    url: jdbc:postgresql://localhost:51/discount
+    username: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:initData.sql
+  liquibase:
+    change-log: classpath:liquibase-changelog.xml
+    drop-first: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8085/realms/ticket-manager-realm
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+openapi:
+  info:
+    title: Order Doc
+    version: 1.0.0
+  service:
+    description: Order APIs
+    url: http://localhost:8099
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://localhost/:9411/api/v2/spans
+
+rabbitmq:
+  exchanges:
+    internal: internal.exchange
+  order-queue:
+    orderCreated: orderCreated.queue
+    orderReserved: orderReserved.queue
+    orderChangeStatus: orderChangeStatus.queue
+    reservationCompleted: reservationCompleted.queue
+    reservationRejected: reservationRejected.queue
+    paymentCompleted: paymentCompleted.queue
+    paymentRejected: paymentRejected.queue
+    unbookOrder: unbookOrder.queue
+    orderUnbooked: orderUnbooked.queue
+    prepareConcreteTickets: prepareConcreteTickets.queue
+    preparedConcreteTickets: preparedConcreteTickets.queue
+  order-routing-keys:
+    internal-orderCreated: internal.orderCreated.routing-key
+    internal-orderReserved: internal.orderReserved.routing-key
+    internal-orderChangeStatus: internal.orderChangeStatus.routing-key
+    internal-reservationCompleted: internal.reservationCompleted.routing-key
+    internal-reservationRejected: internal.reservationRejected.routing-key
+    internal-paymentCompleted: internal.paymentCompleted.routing-key
+    internal-paymentRejected: internal.paymentRejected.routing-key
+    internal-unbookOrder: internal.unbookOrder.routing-key
+    internal-orderUnbooked: internal.orderUnbooked.routing-key
+    internal-prepareConcreteTickets: internal.prepareConcreteTickets.routing-key
+    internal-preparedConcreteTickets: internal.preparedConcreteTickets.routing-key
+  email-queue:
+    email: email.queue
+  email-routing-keys:
+    internal-email: internal.email.routing-key

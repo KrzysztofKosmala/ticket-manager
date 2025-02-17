@@ -24,6 +24,7 @@
         <module>common</module>
         <module>payment</module>
         <module>notification-client</module>
+        <module>discount</module>
     </modules>
     <!-- update versions -->
     <properties>

@@ -13,6 +13,8 @@
     <file url="file://$PROJECT_DIR$/common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/custumer/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/custumer/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discount/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discount/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eureka-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eureka-server/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/event/src/main/java" charset="UTF-8" />
