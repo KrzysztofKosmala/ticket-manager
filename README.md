@@ -66,7 +66,26 @@ Każdy mikroserwis automatycznie generuje dokumentację swojego REST API przy u�
 
 placing order
 
-🧩 Opis mikroserwisów (z wzorcami i rozwiązaniami)
+🧩 Opis mikroserwisów 
+
+🧑‍💼 Customer Service
+🎯 Rola
+Customer Service odpowiada za:
+
+pobieranie informacji o użytkowniku na podstawie jwt,
+
+komunikacja z keycloack aby uwierzytelnić lub zarejestrować użytkownika.
+
+Event Service
+🎯 Rola
+Event Service odpowiada za zarządzanie wydarzeniami, na które użytkownicy mogą kupować bilety
+Najważniejsze funkcjonalności:
+- dla Admina
+  tworzenie wydarzenia okazjonalnego. występujące tylko w określnych datach
+  twierzenie wydarzeń regularnych, powtarzających sie w określone dni i godziny w zadanym przedziale czasowym.
+  edycja wydarzeń
+- dla użytkownika
+  
 
 🧪 Testowanie i jakość kodu
 
