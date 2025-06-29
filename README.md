@@ -1,96 +1,56 @@
 # ticket-manager
 
-Ticket Manager to rozproszony system mikroserwisowy służący do zarządzania wydarzeniami i sprzedażą biletów. Każdy mikroserwis działa jako niezależna aplikacja zbudowana w oparciu o Java 17 oraz Spring Boot, co pozwala na przejrzyste wydzielenie odpowiedzialności, niezależne wdrażanie oraz łatwe skalowanie w zależności od potrzeb.
+Ticket Manager is a distributed microservice system for managing events and ticketing. Each microservice runs as an independent application built on Java 17 and Spring Boot, which allows for clear separation of responsibilities, independent implementation, and easy scaling depending on needs.
 
-Architektura systemu opiera się na kilku kluczowych filarach:
+The system architecture is based on several key pillars:
 
-🌐 Komunikacja i integracja
-System wykorzystuje architekturę hybrydową, łączącą synchroniczną komunikację REST z asynchroniczną wymianą wiadomości.
+🌐 **Communication** and integration The system uses a hybrid architecture, combining synchronous REST communication with asynchronous message exchange.
 
-Spring Web służy do udostępniania i konsumowania REST API między mikroserwisami. Do tworzenia klienta HTTP pomiędzy serwisami używany jest OpenFeign, który pozwala deklaratywnie definiować wywołania do innych usług.
+Spring Web is used to share and consume REST APIs between microservices. OpenFeign is used to create an HTTP client between services, which allows declaratively defining calls to other services.
 
-W przypadkach, gdzie wymagana jest luźna zależność oraz odporność na błędy i opóźnienia, zastosowano RabbitMQ jako brokera wiadomości. Wydarzenia takie jak rezerwacja biletu są przesyłane do innych usług (np. Notification Service) przez kolejki wiadomości.
+In cases where loose dependency and tolerance to errors and delays are required, RabbitMQ is used as a message broker. Events such as ticket reservations are sent to other services (e.g. Notification Service) via message queues.
 
-🚪 API Gateway i bezpieczeństwo
-Wszystkie zewnętrzne żądania trafiają najpierw do API Gateway, zbudowanego na bazie Spring Cloud Gateway. Odpowiada on za:
+🚪 **API Gateway** and security All external requests first go to the API Gateway, built on the Spring Cloud Gateway. It is responsible for:
 
-routowanie żądań do odpowiednich mikroserwisów,
+routing requests to the appropriate microservices,
 
-walidację i weryfikację tokenów JWT,
+validating and verifying JWT tokens,
 
-uproszczenie komunikacji z frontendem (jeden punkt wejścia do wielu usług).
+simplifying communication with the frontend (one entry point to many services).
 
-Za uwierzytelnianie i autoryzację odpowiada Keycloak – zewnętrzny serwer tożsamości, który obsługuje logowanie użytkowników, zarządzanie kontami oraz przydzielanie ról (USER, ADMIN). Uwierzytelnianie odbywa się na podstawie tokenów JWT, które są sprawdzane przez gateway i mikroserwisy przy użyciu Spring Security.
+Keycloak is responsible for authentication and authorization - an external identity server that supports user login, account management and role assignment (USER, ADMIN). Authentication is based on JWT tokens, which are checked by the gateway and microservices using Spring Security.
 
-Model zabezpieczeń oparty jest na RBAC – Role-Based Access Control – co pozwala precyzyjnie kontrolować dostęp do zasobów w zależności od uprawnień użytkownika.
+The security model is based on RBAC - Role-Based Access Control - which allows for precise control of access to resources depending on the user's permissions.
 
-🗄️ Warstwa danych i wersjonowanie
-Każdy mikroserwis posiada własną, odizolowaną bazę danych, zgodnie z zasadą Database per service. System korzysta z PostgreSQL jako relacyjnego silnika bazy danych, a dostęp do danych realizowany jest przy użyciu Spring Data JPA (ORM).
+🗄️ **Data layer** and versioning Each microservice has its own, isolated database, in accordance with the Database per service principle. The system uses PostgreSQL as a relational database engine, and access to data is provided using Spring Data JPA (ORM).
 
-Zmiany w strukturze bazy danych zarządzane są za pomocą Flyway, który umożliwia:
+Changes to the database structure are managed using Flyway, which enables:
 
-automatyczne wersjonowanie schematu bazy,
+automatic versioning of the database schema,
 
-wykonywanie migracji przy starcie serwisu,
+performing migrations at service startup,
 
-spójną kontrolę historii zmian w bazie.
+consistent control of the history of changes in the database.
 
-📦 Konteneryzacja i uruchamianie
-Wszystkie komponenty systemu – mikroserwisy, RabbitMQ, Keycloak, bazy danych – są uruchamiane i zarządzane w kontenerach Docker, co zapewnia powtarzalne i łatwe w konfiguracji środowisko uruchomieniowe. Ułatwia to lokalne uruchamianie, testowanie i wdrażanie systemu w różnych środowiskach.
+📦 **Containerization** and launching All system components - microservices, RabbitMQ, Keycloak, databases - are launched and managed in Docker containers, which provides a repeatable and easy-to-configure runtime environment. This facilitates local launch, testing and implementation of the system in various environments.
 
-🔍 Obserwowalność i monitoring
-Do monitorowania działania systemu i śledzenia przepływu żądań zastosowano:
+🔍 **Observability** and monitoring To monitor system operation and track request flow, the following were used:
 
-Spring Cloud Sleuth – automatyczne znakowanie żądań unikalnymi identyfikatorami (traceId, spanId),
+Spring Cloud Sleuth – automatic labeling of requests with unique identifiers (traceId, spanId),
 
-Zipkin – śledzenie rozproszone (distributed tracing) umożliwiające analizę czasu przetwarzania i lokalizację problemów w łańcuchu usług.
+Zipkin – distributed tracing enabling analysis of processing time and localization of problems in the service chain.
 
-Logi z mikroserwisów są również przygotowane do integracji z narzędziami typu ELK Stack, co umożliwia ich centralną analizę i przeszukiwanie.
+Microservice logs are also prepared for integration with tools such as ELK Stack, which allows for their central analysis and searching.
 
-✅ Testowanie
-Projekt został pokryty testami jednostkowymi i integracyjnymi z użyciem:
+✅ **Testing** The project has been covered with unit and integration tests using:
 
-JUnit 5 oraz Spring Test – do testowania komponentów w obrębie aplikacji,
+JUnit 5 and Spring Test – for testing components within the application,
 
-Testcontainers – do uruchamiania tymczasowych kontenerów z PostgreSQL lub RabbitMQ w testach integracyjnych, co pozwala testować mikroserwisy w izolowanym i realistycznym środowisku.
+Testcontainers – for running temporary containers with PostgreSQL or RabbitMQ in integration tests, which allows testing microservices in an isolated and realistic environment.
 
-📚 Dokumentacja API
-Każdy mikroserwis automatycznie generuje dokumentację swojego REST API przy użyciu Swagger / OpenAPI (Springdoc). Interfejs dostępny jest pod endpointem /swagger-ui.html i umożliwia łatwe testowanie oraz podgląd struktury API.
+📚 **API documentation** Each microservice automatically generates documentation for its REST API using Swagger / OpenAPI (Springdoc). The interface is available at the endpoint /swagger-ui.html and allows for easy testing and viewing of the API structure.
 
-👤 Przykładowy proces zamówienia
-
+👤 Sample order process
 ![image](https://github.com/user-attachments/assets/b5372393-d368-4d25-86d0-b38ad562fb08)
 
 ![image](https://github.com/user-attachments/assets/291a0177-e75a-46e3-9326-4b36e691990a)
-
-
-placing order
-
-🧩 Opis mikroserwisów 
-
-🧑‍💼 Customer Service
-🎯 Rola
-Customer Service odpowiada za:
-
-pobieranie informacji o użytkowniku na podstawie jwt,
-
-komunikacja z keycloack aby uwierzytelnić lub zarejestrować użytkownika.
-
-Event Service
-🎯 Rola
-Event Service odpowiada za zarządzanie wydarzeniami, na które użytkownicy mogą kupować bilety
-Najważniejsze funkcjonalności:
-- dla Admina
-  tworzenie wydarzenia okazjonalnego. występujące tylko w określnych datach
-  twierzenie wydarzeń regularnych, powtarzających sie w określone dni i godziny w zadanym przedziale czasowym.
-  edycja wydarzeń
-- dla użytkownika
-  
-
-🧪 Testowanie i jakość kodu
-
-📚 Dokumentacja API (Swagger)
-
-🐳 Uruchamianie aplikacji (Docker / Docker Compose)
-
-📌 Plany rozwoju / TODO
