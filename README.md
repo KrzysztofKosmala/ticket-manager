@@ -24,7 +24,7 @@ The security model is based on RBAC - Role-Based Access Control - which allows f
 
 🗄️ **Data layer** and versioning Each microservice has its own, isolated database, in accordance with the Database per service principle. The system uses PostgreSQL as a relational database engine, and access to data is provided using Spring Data JPA (ORM).
 
-Changes to the database structure are managed using Flyway, which enables:
+Changes to the database structure are managed using liquibase, which enables:
 
 automatic versioning of the database schema,
 
