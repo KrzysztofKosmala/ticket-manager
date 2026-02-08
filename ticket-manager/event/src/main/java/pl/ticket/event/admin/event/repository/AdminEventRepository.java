@@ -2,6 +2,7 @@ package pl.ticket.event.admin.event.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,9 +20,8 @@ public interface AdminEventRepository extends JpaRepository<AdminEvent, Long>
     List<AdminEvent> findAllPaged(Pageable pageable);
 
 
-
-
-
-
+    @Modifying
+    @Query("UPDATE AdminEvent e SET e.discountTag = :discountTag WHERE e.id IN :eventIds")
+    void updateDiscountTagForEvents(@Param("eventIds") List<Long> eventIds, @Param("discountTag") String discountTag);
 
 }

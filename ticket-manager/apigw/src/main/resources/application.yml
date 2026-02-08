@@ -29,7 +29,10 @@ spring:
           uri: lb://CART
           predicates:
             - Path=/api/v1/carts/**, /api/v1/admin/carts/**
-
+        - id: aiagent
+          uri: lb://AIAGENT
+          predicates:
+            - Path=/api/v1/aiagents/**, /api/v1/admin/aiagnets/**
   security:
     oauth2:
       resourceserver:

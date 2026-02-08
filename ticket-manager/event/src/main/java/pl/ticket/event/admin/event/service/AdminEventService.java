@@ -114,6 +114,7 @@ public class AdminEventService {
         adminEvent.setDescription(adminEventUpdateDto.getDescription());
         adminEvent.setCategoryId(adminEventUpdateDto.getCategoryId());
         adminEvent.setSlug(adminEventUpdateDto.getSlug());
+        adminEvent.setDiscountTag(adminEventUpdateDto.getDiscountTag());
 
         adminEventUpdateDto.getTickets().forEach(ticket -> {adminTicketService.updateTicketsByEventId(id, ticket);});
 
@@ -163,5 +164,14 @@ public class AdminEventService {
         List<AdminEvent> allPaged = adminEventRepository.findAllPaged(pageable);
         List<EventDto> pagedEventsDto = allPaged.stream().map(eventMapper::mapToEventDtoWithoutOccurrences).collect(Collectors.toList());
         return new PageImpl<>(pagedEventsDto, pageable, pagedEventsDto.size());
+    }
+
+    @Transactional
+    public void updateDiscountTagForEvents(List<Long> eventIds, String discountTag) {
+        if (eventIds.isEmpty()) {
+            throw new IllegalArgumentException("Lista eventów nie może być pusta");
+        }
+
+        adminEventRepository.updateDiscountTagForEvents(eventIds, discountTag);
     }
 }

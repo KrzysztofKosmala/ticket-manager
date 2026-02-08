@@ -1,0 +1,35 @@
+package pl.ticket.aiagent;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.*;
+import pl.ticket.aiagent.planner.Plan;
+
+@Slf4j
+@RestController
+@RequestMapping("api/v1/aiagent")
+@RequiredArgsConstructor
+public class AiAgentController
+{
+
+    private final AiAgentService aiAgentService;
+    @GetMapping("/check")
+    public String registerCustomer()
+    {
+        return aiAgentService.testPrompt("Cześć, jak się masz?");
+
+    }
+
+    @PostMapping("/plan")
+    public ResponseEntity<Plan> plan(@RequestBody PlanRequest request) {
+        Plan plan = aiAgentService.plan(request.message());
+        return ResponseEntity.ok(plan);
+    }
+
+    public record PlanRequest(@NotBlank String message) {}
+}

@@ -36,7 +36,8 @@ public class AdminEvent
     private String description;
     private String slug;
     private Long categoryId;
-
+    @Column(name = "discount_tag", length = 50)
+    private String discountTag;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private AdminImage image;

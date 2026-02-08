@@ -42,7 +42,7 @@ rabbitmq:
 
 email:
     sender:
-      strategy: simpleMailService #simpleMailService #fakeEmailService
+      strategy: fakeEmailService #simpleMailService #fakeEmailService
 
 
 openapi:

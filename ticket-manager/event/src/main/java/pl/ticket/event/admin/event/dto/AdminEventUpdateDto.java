@@ -32,6 +32,8 @@ public class AdminEventUpdateDto
     @NotNull
     private Long imageId;
 
+    private String discountTag;
+
     private List<AdminTicketUpdateDto> tickets;
 
     public AdminEventUpdateDto(String title, String description, Integer capacity, String slug, Long categoryId, Long imageId) {

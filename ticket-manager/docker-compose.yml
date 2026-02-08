@@ -93,6 +93,21 @@ services:
     depends_on:
       - elasticsearch
 
+  ollama:
+    image: docker.io/ollama/ollama:latest
+    ports:
+      - 7869:11434
+    volumes:
+      - .:/code
+      - ./ollama/ollama:/root/.ollama
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: always
+    networks:
+      - postgres
+
+
 
 networks:
   postgres:

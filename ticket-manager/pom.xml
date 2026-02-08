@@ -25,6 +25,7 @@
         <module>payment</module>
         <module>notification-client</module>
         <module>discount</module>
+        <module>ai-agent</module>
     </modules>
     <!-- update versions -->
     <properties>
