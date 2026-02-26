@@ -1,0 +1,10 @@
+spring:
+  ai:
+    mcp:
+      client:
+        enabled: true
+        streamable-http:
+          connections:
+            company-gateway:
+              url: http://ai-tools-gateway:8105
+              endpoint: /mcp
