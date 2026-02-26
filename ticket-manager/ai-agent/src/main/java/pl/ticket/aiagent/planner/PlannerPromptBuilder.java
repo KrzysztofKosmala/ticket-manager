@@ -31,8 +31,11 @@ public class PlannerPromptBuilder {
         - ASK_CLARIFY: dopytanie użytkownika (po polsku)
 
         Dostępne narzędzia:
-        - order-service.getOrders(userId)
-        - order-service.getOrderById(orderId)
+        - order-service.searchOrders(filters, sort, limit, offset, includeRows)
+          gdzie filters może zawierać: orderId, statuses, dateFrom, dateTo, minGrossValue, maxGrossValue
+          sort: field (placeDate, grossValue, orderStatus) i direction (ASC/DESC)
+          limit/offset do stronicowania
+          includeRows = true gdy trzeba szczegóły pozycji
 
         Zasady:
         - Jeśli pytanie dotyczy zamówień → TOOL

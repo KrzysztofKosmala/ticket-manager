@@ -1,13 +1,14 @@
 package pl.ticket.internal.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.ticket.common.model.Order;
 
 @Repository
-public interface InternalOrderRepository extends JpaRepository<Order, Long>
+public interface InternalOrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order>
 {
     @Query("SELECT o FROM Order o WHERE o.id = :id")
     Order findOrderById(@Param("id") Long id);

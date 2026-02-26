@@ -31,5 +31,12 @@ public class AiAgentController
         return ResponseEntity.ok(plan);
     }
 
+    @PostMapping("/ask")
+    public ResponseEntity<PlanExecutionResult> execute(@RequestBody PlanRequest request) {
+
+        PlanExecutionResult result = aiAgentService.executePlan(request.message());
+        return ResponseEntity.ok(result);
+    }
+
     public record PlanRequest(@NotBlank String message) {}
 }
