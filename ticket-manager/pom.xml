@@ -26,6 +26,7 @@
         <module>notification-client</module>
         <module>discount</module>
         <module>ai-agent</module>
+        <module>ai-tools-gateway</module>
     </modules>
     <!-- update versions -->
     <properties>
