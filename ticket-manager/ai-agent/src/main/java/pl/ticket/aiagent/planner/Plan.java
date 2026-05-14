@@ -1,45 +1,43 @@
-
 package pl.ticket.aiagent.planner;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Plan {
-    public Intent intent;
-    public List<Step> steps;
-    public List<String> constraints;
-    public String fallback;
+public record Plan(
+        String schemaVersion,
+        Intent intent,
+        List<Step> steps,
+        List<String> constraints,
+        String fallback
+) {
+
+    public static final String CURRENT_SCHEMA_VERSION = "1.0";
 
     public enum Intent {
-        GET_USER_ORDERS,
-        GET_PROMO_TERMS,
-        QNA_KNOWLEDGE,
+        ORDER_INQUIRY,
+        PROMOTION_INQUIRY,
+        KNOWLEDGE_INQUIRY,
         UNKNOWN
     }
 
-    public static class Step {
-        public StepType type;
-        public String name;
-        public Map<String, Object> args;
-        public List<String> constraints;
-
-        public Step() {}
-
-        public Step(StepType type, String name, Map<String,Object> args) {
-            this.type = type;
-            this.name = name;
-            this.args = args;
-        }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record Step(
+            String id,
+            StepType type,
+            String name,
+            Map<String, Object> args,
+            List<String> constraints,
+            Boolean requiresConfirmation
+    ) {
     }
 
     public enum StepType {
         TOOL,
-        RAG,
+        KNOWLEDGE_SEARCH,
         ANSWER,
-        ASK_CLARIFY,
-        ASYNC_JOB
+        ASK_CLARIFY
     }
 }

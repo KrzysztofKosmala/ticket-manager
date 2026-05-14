@@ -106,6 +106,24 @@ services:
     restart: always
     networks:
       - postgres
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  ollama-model-init:
+    image: docker.io/ollama/ollama:latest
+    container_name: ollama-model-init
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    command: pull qwen3:8b
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - postgres
+    restart: "no"
 
 
 

@@ -1,70 +1,80 @@
 package pl.ticket.aiagent.planner;
 
 import org.springframework.stereotype.Component;
+import pl.ticket.aiagent.tool.ToolContract;
+import pl.ticket.aiagent.tool.ToolRegistry;
 
 @Component
 public class PlannerPromptBuilder {
 
+    private final ToolRegistry toolRegistry;
+
+    public PlannerPromptBuilder(ToolRegistry toolRegistry) {
+        this.toolRegistry = toolRegistry;
+    }
 
     public String system() {
         return """
-        Jesteś plannerem AI dla asystenta obsługi klienta.
+        Jestes plannerem AI dla asystenta obslugi klienta.
 
-        Twoim zadaniem jest wygenerowanie PLANU DZIAŁANIA w formacie JSON.
-        NIE ODPOWIADAJ użytkownikowi.
-        NIE TŁUMACZ niczego.
-        ZWRÓĆ WYŁĄCZNIE POPRAWNY JSON (bez markdown, bez komentarzy).
+        Twoim zadaniem jest wygenerowanie PLANU DZIALANIA w formacie JSON.
+        NIE ODPOWIADAJ uzytkownikowi.
+        NIE TLUMACZ niczego.
+        ZWROC WYLACZNIE POPRAWNY JSON (bez markdown, bez komentarzy).
 
-        Komunikacja z użytkownikiem odbywa się WYŁĄCZNIE PO POLSKU
-        (dotyczy pól: fallback oraz treści kroków ASK_CLARIFY/ANSWER w args).
+        Komunikacja z uzytkownikiem odbywa sie wylacznie po polsku
+        (dotyczy pol: fallback oraz tresci krokow ASK_CLARIFY/ANSWER w args).
 
-        Dostępne intencje:
-        - GET_USER_ORDERS: pytania o zamówienia, status, dostawę
-        - GET_PROMO_TERMS: pytania o promocje, rabaty, regulaminy konkursów
-        - QNA_KNOWLEDGE: pytania ogólne możliwe do odpowiedzi z bazy wiedzy
+        Dostepne intencje:
+        - ORDER_INQUIRY: pytania o zamowienia, status, dostawe, platnosc lub pozycje zamowienia
+        - PROMOTION_INQUIRY: pytania o promocje, rabaty, regulaminy konkursow
+        - KNOWLEDGE_INQUIRY: pytania ogolne mozliwe do odpowiedzi z bazy wiedzy
         - UNKNOWN: gdy intencja jest niejasna
 
-        Typy kroków:
-        - TOOL: wywołanie zewnętrznego mikrousługi
-        - RAG: pobranie informacji z bazy wiedzy
-        - ANSWER: odpowiedź końcowa dla użytkownika (po polsku)
-        - ASK_CLARIFY: dopytanie użytkownika (po polsku)
+        Typy krokow:
+        - TOOL: wywolanie narzedzia biznesowego z registry
+        - KNOWLEDGE_SEARCH: pobranie informacji z bazy wiedzy
+        - ANSWER: odpowiedz koncowa dla uzytkownika (po polsku)
+        - ASK_CLARIFY: dopytanie uzytkownika (po polsku)
 
-        Dostępne narzędzia:
-        - order-service.searchOrders(filters, sort, limit, offset, includeRows)
-          gdzie filters może zawierać: orderId, statuses, dateFrom, dateTo, minGrossValue, maxGrossValue
-          sort: field (placeDate, grossValue, orderStatus) i direction (ASC/DESC)
-          limit/offset do stronicowania
-          includeRows = true gdy trzeba szczegóły pozycji
+        Dostepne narzedzia:
+        %s
 
         Zasady:
-        - Jeśli pytanie dotyczy zamówień → TOOL
-        - Jeśli dotyczy promocji/regulaminów → RAG
-        - Jeśli brakuje danych → ASK_CLARIFY
-        - Plan zwykle kończy się ANSWER (wyjątek: ASK_CLARIFY może być ostatni)
+        - Jesli pytanie dotyczy zamowien -> TOOL z name="tm.orders.search"
+        - KNOWLEDGE_SEARCH nie jest jeszcze dostepny wykonawczo; dla promocji/regulaminow zwroc ANSWER z informacja, ze ta funkcja nie jest jeszcze obslugiwana
+        - Jesli brakuje danych -> ASK_CLARIFY
+        - Plan zwykle konczy sie ANSWER (wyjatek: ASK_CLARIFY moze byc ostatni)
         - fallback zawsze po polsku
-        - args muszą być JSON-serializable
+        - args musza byc JSON-serializable
+        - uzywaj tylko narzedzi z listy "Dostepne narzedzia"
+        - schemaVersion zawsze ustaw na "1.0"
+        - kazdy krok musi miec unikalne id, np. "step-1"
+        - requiresConfirmation ustaw na true tylko dla akcji zmieniajacych stan; dla tm.orders.search ustaw false
 
         Format JSON:
         {
+          "schemaVersion": "1.0",
           "intent": "...",
           "steps": [
             {
+              "id": "step-1",
               "type": "...",
               "name": "...",
               "args": {},
-              "constraints": []
+              "constraints": [],
+              "requiresConfirmation": false
             }
           ],
           "constraints": [],
           "fallback": "..."
         }
-        """;
+        """.formatted(availableTools());
     }
 
     public String user(String userMessage) {
         return """
-        Wiadomość użytkownika:
+        Wiadomosc uzytkownika:
         "%s"
 
         Wygeneruj plan w JSON.
@@ -73,18 +83,33 @@ public class PlannerPromptBuilder {
 
     public String repair(String userMessage, String invalidJson, String errorMsg) {
         return """
-        Poprzednia odpowiedź nie przeszła walidacji. Popraw ją.
+        Poprzednia odpowiedz nie przeszla walidacji. Popraw ja.
 
-        Wiadomość użytkownika:
+        Wiadomosc uzytkownika:
         "%s"
 
-        Błędny JSON:
+        Bledny JSON:
         %s
 
-        Błąd walidacji/parsing:
+        Blad walidacji/parsing:
         %s
 
-        Zwróć WYŁĄCZNIE POPRAWNY JSON zgodny z formatem.
+        Zwroc WYLACZNIE POPRAWNY JSON zgodny z formatem i dostepnymi narzedziami.
         """.formatted(userMessage, invalidJson, errorMsg);
+    }
+
+    private String availableTools() {
+        return toolRegistry.plannerTools().stream()
+                .map(this::toPlannerDescription)
+                .reduce((left, right) -> left + "\n" + right)
+                .orElse("- brak dostepnych narzedzi");
+    }
+
+    private String toPlannerDescription(ToolContract contract) {
+        return "- %s\n  %s\n  %s".formatted(
+                contract.name(),
+                contract.description(),
+                contract.argumentDescription()
+        );
     }
 }

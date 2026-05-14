@@ -3,16 +3,16 @@ package pl.ticket.aiagent;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import pl.ticket.aiagent.tool.CallerContext;
 import pl.ticket.aiagent.planner.Plan;
 
 @Slf4j
 @RestController
-@RequestMapping("api/v1/aiagent")
+@RequestMapping("/api/v1/ai-agents")
 @RequiredArgsConstructor
 public class AiAgentController
 {
@@ -32,9 +32,10 @@ public class AiAgentController
     }
 
     @PostMapping("/ask")
-    public ResponseEntity<PlanExecutionResult> execute(@RequestBody PlanRequest request) {
+    public ResponseEntity<PlanExecutionResult> execute(@RequestBody PlanRequest request,
+                                                       @AuthenticationPrincipal Jwt jwt) {
 
-        PlanExecutionResult result = aiAgentService.executePlan(request.message());
+        PlanExecutionResult result = aiAgentService.executePlan(request.message(), CallerContext.from(jwt));
         return ResponseEntity.ok(result);
     }
 

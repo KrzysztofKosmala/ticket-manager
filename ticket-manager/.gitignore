@@ -8,6 +8,7 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/db-forest-config.xml
 *.iws
 *.iml
 *.ipr
@@ -36,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Local AI model/runtime data ###
+ollama/

@@ -29,10 +29,10 @@ spring:
           uri: lb://CART
           predicates:
             - Path=/api/v1/carts/**, /api/v1/admin/carts/**
-        - id: aiagent
-          uri: lb://AIAGENT
+        - id: ai-agent
+          uri: lb://AI-AGENT
           predicates:
-            - Path=/api/v1/aiagents/**, /api/v1/admin/aiagnets/**
+            - Path=/api/v1/ai-agents/**, /api/v1/admin/ai-agents/**
   security:
     oauth2:
       resourceserver:
@@ -53,6 +53,5 @@ management:
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
-
 
 

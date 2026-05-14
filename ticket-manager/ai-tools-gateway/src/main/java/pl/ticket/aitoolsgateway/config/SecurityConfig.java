@@ -23,6 +23,13 @@ public class SecurityConfig {
             "/swagger-resources"
     };
 
+    private final String[] mcpTransportEndpoints = {
+            "/sse",
+            "/sse/**",
+            "/mcp/message",
+            "/mcp/message/**"
+    };
+
     @Bean
     public SecurityFilterChain securityWebFilterChain(HttpSecurity http) throws Exception {
         http
@@ -30,6 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers(swaggerApis).permitAll()
+                        .requestMatchers(mcpTransportEndpoints).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();

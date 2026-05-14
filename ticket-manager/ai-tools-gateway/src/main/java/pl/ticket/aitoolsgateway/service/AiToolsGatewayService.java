@@ -16,7 +16,7 @@ public class AiToolsGatewayService {
         this.orderClient = orderClient;
     }
 
-    @Tool(name = "order-service.searchOrders", description = "Wyszukuje zamówienia użytkownika po filtrach, sortowaniu i paginacji.")
+    @Tool(name = "tm.orders.search", description = "Wyszukuje zamówienia użytkownika po filtrach, sortowaniu i paginacji.")
     public OrderSearchResponse searchOrders(
             @ToolParam(description = "Parametry wyszukiwania zamówień", required = false)
             OrderSearchRequest request) {
