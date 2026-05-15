@@ -40,3 +40,6 @@ build/
 
 ### Local AI model/runtime data ###
 ollama/
+
+### Local AI development notes ###
+.ai-dev/
