@@ -3,7 +3,11 @@ package pl.ticket.aiagent.planner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import pl.ticket.aiagent.tool.ToolContract;
+import pl.ticket.aiagent.tool.ToolExecutionException;
 import pl.ticket.aiagent.tool.ToolRegistry;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class PlanSemanticValidator {
@@ -29,8 +33,22 @@ public class PlanSemanticValidator {
         if (plan.steps() == null || plan.steps().isEmpty()) {
             throw new InvalidPlanException("steps must not be empty");
         }
+        validateUniqueStepIds(plan);
         for (int i = 0; i < plan.steps().size(); i++) {
             validateStep(plan.steps().get(i), i);
+        }
+    }
+
+    private void validateUniqueStepIds(Plan plan) {
+        Set<String> stepIds = new HashSet<>();
+        for (int i = 0; i < plan.steps().size(); i++) {
+            Plan.Step step = plan.steps().get(i);
+            if (step == null || step.id() == null || step.id().isBlank()) {
+                continue;
+            }
+            if (!stepIds.add(step.id())) {
+                throw new InvalidPlanException("step[%d].id is duplicated: %s".formatted(i, step.id()));
+            }
         }
     }
 
@@ -60,7 +78,15 @@ public class PlanSemanticValidator {
         if (step.name() == null || step.name().isBlank()) {
             throw new InvalidPlanException("step[%d].name is required for TOOL".formatted(index));
         }
-        ToolContract contract = toolRegistry.getRequired(step.name());
+        ToolContract contract;
+        try {
+            contract = toolRegistry.getRequired(step.name());
+        } catch (ToolExecutionException ex) {
+            throw new InvalidPlanException(
+                    "step[%d].name is not a supported tool: %s".formatted(index, step.name()),
+                    ex
+            );
+        }
         try {
             if (step.args() != null) {
                 objectMapper.convertValue(step.args(), contract.inputType());

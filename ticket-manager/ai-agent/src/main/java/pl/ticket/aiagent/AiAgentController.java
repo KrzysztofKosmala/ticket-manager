@@ -1,5 +1,6 @@
 package pl.ticket.aiagent;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +27,13 @@ public class AiAgentController
     }
 
     @PostMapping("/plan")
-    public ResponseEntity<Plan> plan(@RequestBody PlanRequest request) {
+    public ResponseEntity<Plan> plan(@Valid @RequestBody PlanRequest request) {
         Plan plan = aiAgentService.plan(request.message());
         return ResponseEntity.ok(plan);
     }
 
     @PostMapping("/ask")
-    public ResponseEntity<PlanExecutionResult> execute(@RequestBody PlanRequest request,
+    public ResponseEntity<PlanExecutionResult> execute(@Valid @RequestBody PlanRequest request,
                                                        @AuthenticationPrincipal Jwt jwt) {
 
         PlanExecutionResult result = aiAgentService.executePlan(request.message(), CallerContext.from(jwt));
