@@ -62,6 +62,8 @@ openapi:
     url: http://localhost:8099
 
 ai-agent:
+  answer:
+    synthesizer: fake
   tools:
     allow-list:
       - tm.orders.search
