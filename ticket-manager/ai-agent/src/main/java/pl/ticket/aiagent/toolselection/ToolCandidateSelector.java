@@ -2,6 +2,9 @@ package pl.ticket.aiagent.toolselection;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import pl.ticket.aiagent.caller.CallerContext;
+import pl.ticket.aiagent.toolpolicy.ToolPolicy;
+import pl.ticket.aiagent.toolpolicy.ToolPolicyDecision;
 
 import java.util.List;
 import java.util.Locale;
@@ -26,22 +29,27 @@ public class ToolCandidateSelector {
             "kupione"
     );
 
-    private final ToolSelectionProperties properties;
+    private final ToolPolicy toolPolicy;
 
-    public ToolCandidateSelector(ToolSelectionProperties properties) {
-        this.properties = properties;
+    public ToolCandidateSelector(ToolPolicy toolPolicy) {
+        this.toolPolicy = toolPolicy;
     }
 
     public List<ToolCandidate> selectFor(String userMessage) {
+        return selectFor(userMessage, CallerContext.anonymous());
+    }
+
+    public List<ToolCandidate> selectFor(String userMessage, CallerContext callerContext) {
         if (!StringUtils.hasText(userMessage)) {
             return List.of();
         }
 
-        if (!properties.getAllowList().contains(ORDER_SEARCH_TOOL)) {
+        if (!hasOrderIntent(userMessage)) {
             return List.of();
         }
 
-        if (!hasOrderIntent(userMessage)) {
+        ToolPolicyDecision decision = toolPolicy.evaluate(ORDER_SEARCH_CANDIDATE, callerContext);
+        if (!decision.allowed()) {
             return List.of();
         }
 

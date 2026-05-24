@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.tool.ToolCallback;
 import pl.ticket.aiagent.api.AiAgentResponse;
+import pl.ticket.aiagent.caller.CallerContext;
+import pl.ticket.aiagent.caller.CallerContextProvider;
 import pl.ticket.aiagent.toolcallback.SelectedToolCallbackResolver;
 import pl.ticket.aiagent.toolcallback.ToolCallbackResolution;
 import pl.ticket.aiagent.toolselection.ToolCandidate;
@@ -20,196 +22,148 @@ import static org.mockito.Mockito.when;
 
 class AiAgentServiceTest {
 
+    private static final String MESSAGE = "Pokaz moje zamowienia";
+    private static final String FALLBACK_ANSWER =
+            "Nie udalo mi sie teraz przygotowac odpowiedzi. Sprobuj ponownie za chwile.";
+
     @Test
     void shouldAskModelWithSystemInstructions() {
-        AiAgentInstructions instructions = new AiAgentInstructions();
-        ChatClient.Builder builder = mock(ChatClient.Builder.class);
-        ChatClient chatClient = mock(ChatClient.class);
-        ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
-        ChatClient.CallResponseSpec callResponseSpec = mock(ChatClient.CallResponseSpec.class);
-        ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
-        SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+        Fixture fixture = new Fixture();
+        fixture.noSelectedTools();
+        fixture.modelAnswers("Masz 2 zamowienia.");
 
-        when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
-        when(builder.build()).thenReturn(chatClient);
-        when(toolCandidateSelector.selectFor("Pokaz moje zamowienia")).thenReturn(List.of());
-        when(toolCallbackResolver.resolve(List.of())).thenReturn(ToolCallbackResolution.empty());
-        when(chatClient.prompt()).thenReturn(requestSpec);
-        when(requestSpec.user("Pokaz moje zamowienia")).thenReturn(requestSpec);
-        when(requestSpec.call()).thenReturn(callResponseSpec);
-        when(callResponseSpec.content()).thenReturn("Masz 2 zamowienia.");
-
-        AiAgentService service = new AiAgentService(builder, instructions, toolCandidateSelector, toolCallbackResolver);
-
-        AiAgentResponse response = service.ask("Pokaz moje zamowienia");
+        AiAgentResponse response = fixture.service().ask(MESSAGE);
 
         assertThat(response.status()).isEqualTo(AiAgentResponse.Status.COMPLETED);
         assertThat(response.answer()).isEqualTo("Masz 2 zamowienia.");
-        verify(builder).defaultSystem(instructions.systemPrompt());
-        verify(toolCandidateSelector).selectFor("Pokaz moje zamowienia");
-        verify(toolCallbackResolver).resolve(List.of());
-        verify(requestSpec).user("Pokaz moje zamowienia");
+        verify(fixture.builder).defaultSystem(fixture.instructions.systemPrompt());
+        verify(fixture.requestSpec).user(MESSAGE);
     }
 
     @Test
-    void shouldSelectToolCandidatesBeforeAskingModel() {
-        AiAgentInstructions instructions = new AiAgentInstructions();
-        ChatClient.Builder builder = mock(ChatClient.Builder.class);
-        ChatClient chatClient = mock(ChatClient.class);
-        ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
-        ChatClient.CallResponseSpec callResponseSpec = mock(ChatClient.CallResponseSpec.class);
-        ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
-        SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+    void shouldSelectToolCandidatesForCurrentCallerBeforeAskingModel() {
+        Fixture fixture = new Fixture();
+        fixture.noSelectedTools();
+        fixture.modelAnswers("Masz 2 zamowienia.");
 
-        when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
-        when(builder.build()).thenReturn(chatClient);
-        when(toolCandidateSelector.selectFor("Pokaz moje zamowienia")).thenReturn(List.of());
-        when(toolCallbackResolver.resolve(List.of())).thenReturn(ToolCallbackResolution.empty());
-        when(chatClient.prompt()).thenReturn(requestSpec);
-        when(requestSpec.user("Pokaz moje zamowienia")).thenReturn(requestSpec);
-        when(requestSpec.call()).thenReturn(callResponseSpec);
-        when(callResponseSpec.content()).thenReturn("Masz 2 zamowienia.");
+        fixture.service().ask(MESSAGE);
 
-        AiAgentService service = new AiAgentService(builder, instructions, toolCandidateSelector, toolCallbackResolver);
-
-        service.ask("Pokaz moje zamowienia");
-
-        verify(toolCandidateSelector).selectFor("Pokaz moje zamowienia");
+        verify(fixture.callerContextProvider).current();
+        verify(fixture.toolCandidateSelector).selectFor(MESSAGE, fixture.callerContext);
     }
 
     @Test
     void shouldPassResolvedToolCallbacksToChatClientRequest() {
-        AiAgentInstructions instructions = new AiAgentInstructions();
-        ChatClient.Builder builder = mock(ChatClient.Builder.class);
-        ChatClient chatClient = mock(ChatClient.class);
-        ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
-        ChatClient.CallResponseSpec callResponseSpec = mock(ChatClient.CallResponseSpec.class);
-        ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
-        SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+        Fixture fixture = new Fixture();
         ToolCandidate candidate = new ToolCandidate("tm.orders.search", "Search orders");
         ToolCallback toolCallback = mock(ToolCallback.class);
         List<ToolCandidate> candidates = List.of(candidate);
         List<ToolCallback> callbacks = List.of(toolCallback);
+        fixture.selectedTools(candidates, ToolCallbackResolution.of(callbacks));
+        fixture.modelAnswers("Masz 2 zamowienia.");
+        when(fixture.requestSpec.toolCallbacks(callbacks)).thenReturn(fixture.requestSpec);
 
-        when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
-        when(builder.build()).thenReturn(chatClient);
-        when(toolCandidateSelector.selectFor("Pokaz moje zamowienia")).thenReturn(candidates);
-        when(toolCallbackResolver.resolve(candidates)).thenReturn(ToolCallbackResolution.of(callbacks));
-        when(chatClient.prompt()).thenReturn(requestSpec);
-        when(requestSpec.user("Pokaz moje zamowienia")).thenReturn(requestSpec);
-        when(requestSpec.toolCallbacks(callbacks)).thenReturn(requestSpec);
-        when(requestSpec.call()).thenReturn(callResponseSpec);
-        when(callResponseSpec.content()).thenReturn("Masz 2 zamowienia.");
-
-        AiAgentService service = new AiAgentService(builder, instructions, toolCandidateSelector, toolCallbackResolver);
-
-        AiAgentResponse response = service.ask("Pokaz moje zamowienia");
+        AiAgentResponse response = fixture.service().ask(MESSAGE);
 
         assertThat(response.status()).isEqualTo(AiAgentResponse.Status.COMPLETED);
-        verify(requestSpec).toolCallbacks(callbacks);
+        verify(fixture.requestSpec).toolCallbacks(callbacks);
     }
 
     @Test
     void shouldNotAttachToolCallbacksWhenResolverReturnsNone() {
-        AiAgentInstructions instructions = new AiAgentInstructions();
-        ChatClient.Builder builder = mock(ChatClient.Builder.class);
-        ChatClient chatClient = mock(ChatClient.class);
-        ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
-        ChatClient.CallResponseSpec callResponseSpec = mock(ChatClient.CallResponseSpec.class);
-        ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
-        SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+        Fixture fixture = new Fixture();
         ToolCandidate candidate = new ToolCandidate("tm.orders.search", "Search orders");
         List<ToolCandidate> candidates = List.of(candidate);
+        fixture.selectedTools(candidates, ToolCallbackResolution.empty());
+        fixture.modelAnswers("Masz 2 zamowienia.");
 
-        when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
-        when(builder.build()).thenReturn(chatClient);
-        when(toolCandidateSelector.selectFor("Pokaz moje zamowienia")).thenReturn(candidates);
-        when(toolCallbackResolver.resolve(candidates)).thenReturn(ToolCallbackResolution.empty());
-        when(chatClient.prompt()).thenReturn(requestSpec);
-        when(requestSpec.user("Pokaz moje zamowienia")).thenReturn(requestSpec);
-        when(requestSpec.call()).thenReturn(callResponseSpec);
-        when(callResponseSpec.content()).thenReturn("Masz 2 zamowienia.");
+        fixture.service().ask(MESSAGE);
 
-        AiAgentService service = new AiAgentService(builder, instructions, toolCandidateSelector, toolCallbackResolver);
-
-        service.ask("Pokaz moje zamowienia");
-
-        verify(requestSpec, never()).toolCallbacks(anyList());
+        verify(fixture.requestSpec, never()).toolCallbacks(anyList());
     }
 
     @Test
     void shouldReturnFallbackWhenSelectedToolCallbackIsMissing() {
-        AiAgentInstructions instructions = new AiAgentInstructions();
-        ChatClient.Builder builder = mock(ChatClient.Builder.class);
-        ChatClient chatClient = mock(ChatClient.class);
-        ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
-        SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+        Fixture fixture = new Fixture();
         ToolCandidate candidate = new ToolCandidate("tm.orders.search", "Search orders");
         List<ToolCandidate> candidates = List.of(candidate);
+        fixture.selectedTools(candidates, new ToolCallbackResolution(List.of(), candidates));
 
-        when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
-        when(builder.build()).thenReturn(chatClient);
-        when(toolCandidateSelector.selectFor("Pokaz moje zamowienia")).thenReturn(candidates);
-        when(toolCallbackResolver.resolve(candidates)).thenReturn(new ToolCallbackResolution(List.of(), candidates));
-
-        AiAgentService service = new AiAgentService(builder, instructions, toolCandidateSelector, toolCallbackResolver);
-
-        AiAgentResponse response = service.ask("Pokaz moje zamowienia");
+        AiAgentResponse response = fixture.service().ask(MESSAGE);
 
         assertThat(response.status()).isEqualTo(AiAgentResponse.Status.FALLBACK);
-        assertThat(response.answer()).isEqualTo("Nie udalo mi sie teraz przygotowac odpowiedzi. Sprobuj ponownie za chwile.");
-        verify(chatClient, never()).prompt();
+        assertThat(response.answer()).isEqualTo(FALLBACK_ANSWER);
+        verify(fixture.chatClient, never()).prompt();
     }
 
     @Test
     void shouldReturnFallbackWhenModelAnswerIsBlank() {
-        AiAgentInstructions instructions = new AiAgentInstructions();
-        ChatClient.Builder builder = mock(ChatClient.Builder.class);
-        ChatClient chatClient = mock(ChatClient.class);
-        ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
-        ChatClient.CallResponseSpec callResponseSpec = mock(ChatClient.CallResponseSpec.class);
-        ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
-        SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+        Fixture fixture = new Fixture();
+        fixture.noSelectedTools();
+        fixture.modelAnswers("   ");
 
-        when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
-        when(builder.build()).thenReturn(chatClient);
-        when(toolCandidateSelector.selectFor("Pokaz moje zamowienia")).thenReturn(List.of());
-        when(toolCallbackResolver.resolve(List.of())).thenReturn(ToolCallbackResolution.empty());
-        when(chatClient.prompt()).thenReturn(requestSpec);
-        when(requestSpec.user("Pokaz moje zamowienia")).thenReturn(requestSpec);
-        when(requestSpec.call()).thenReturn(callResponseSpec);
-        when(callResponseSpec.content()).thenReturn("   ");
-
-        AiAgentService service = new AiAgentService(builder, instructions, toolCandidateSelector, toolCallbackResolver);
-
-        AiAgentResponse response = service.ask("Pokaz moje zamowienia");
+        AiAgentResponse response = fixture.service().ask(MESSAGE);
 
         assertThat(response.status()).isEqualTo(AiAgentResponse.Status.FALLBACK);
-        assertThat(response.answer()).isEqualTo("Nie udalo mi sie teraz przygotowac odpowiedzi. Sprobuj ponownie za chwile.");
+        assertThat(response.answer()).isEqualTo(FALLBACK_ANSWER);
     }
 
     @Test
     void shouldReturnFallbackWhenChatClientFails() {
-        AiAgentInstructions instructions = new AiAgentInstructions();
-        ChatClient.Builder builder = mock(ChatClient.Builder.class);
-        ChatClient chatClient = mock(ChatClient.class);
-        ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
-        ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
-        SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+        Fixture fixture = new Fixture();
+        fixture.noSelectedTools();
+        when(fixture.chatClient.prompt()).thenReturn(fixture.requestSpec);
+        when(fixture.requestSpec.user(MESSAGE)).thenReturn(fixture.requestSpec);
+        when(fixture.requestSpec.call()).thenThrow(new IllegalStateException("provider unavailable"));
 
-        when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
-        when(builder.build()).thenReturn(chatClient);
-        when(toolCandidateSelector.selectFor("Pokaz moje zamowienia")).thenReturn(List.of());
-        when(toolCallbackResolver.resolve(List.of())).thenReturn(ToolCallbackResolution.empty());
-        when(chatClient.prompt()).thenReturn(requestSpec);
-        when(requestSpec.user("Pokaz moje zamowienia")).thenReturn(requestSpec);
-        when(requestSpec.call()).thenThrow(new IllegalStateException("provider unavailable"));
-
-        AiAgentService service = new AiAgentService(builder, instructions, toolCandidateSelector, toolCallbackResolver);
-
-        AiAgentResponse response = service.ask("Pokaz moje zamowienia");
+        AiAgentResponse response = fixture.service().ask(MESSAGE);
 
         assertThat(response.status()).isEqualTo(AiAgentResponse.Status.FALLBACK);
-        assertThat(response.answer()).isEqualTo("Nie udalo mi sie teraz przygotowac odpowiedzi. Sprobuj ponownie za chwile.");
+        assertThat(response.answer()).isEqualTo(FALLBACK_ANSWER);
+    }
+
+    private static class Fixture {
+
+        private final AiAgentInstructions instructions = new AiAgentInstructions();
+        private final ChatClient.Builder builder = mock(ChatClient.Builder.class);
+        private final ChatClient chatClient = mock(ChatClient.class);
+        private final ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
+        private final ChatClient.CallResponseSpec callResponseSpec = mock(ChatClient.CallResponseSpec.class);
+        private final ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
+        private final SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+        private final CallerContextProvider callerContextProvider = mock(CallerContextProvider.class);
+        private final CallerContext callerContext = CallerContext.anonymous();
+
+        private Fixture() {
+            when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
+            when(builder.build()).thenReturn(chatClient);
+            when(callerContextProvider.current()).thenReturn(callerContext);
+        }
+
+        private AiAgentService service() {
+            return new AiAgentService(
+                    builder,
+                    instructions,
+                    toolCandidateSelector,
+                    toolCallbackResolver,
+                    callerContextProvider
+            );
+        }
+
+        private void noSelectedTools() {
+            selectedTools(List.of(), ToolCallbackResolution.empty());
+        }
+
+        private void selectedTools(List<ToolCandidate> candidates, ToolCallbackResolution resolution) {
+            when(toolCandidateSelector.selectFor(MESSAGE, callerContext)).thenReturn(candidates);
+            when(toolCallbackResolver.resolve(candidates)).thenReturn(resolution);
+        }
+
+        private void modelAnswers(String answer) {
+            when(chatClient.prompt()).thenReturn(requestSpec);
+            when(requestSpec.user(MESSAGE)).thenReturn(requestSpec);
+            when(requestSpec.call()).thenReturn(callResponseSpec);
+            when(callResponseSpec.content()).thenReturn(answer);
+        }
     }
 }

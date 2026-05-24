@@ -68,6 +68,11 @@ ai-agent:
     allow-list:
       - tm.orders.search
     enforce-scopes: false
+    metadata:
+      "[tm.orders.search]":
+        access-mode: READ
+        required-scopes:
+          - tools:orders.read
 
 
 
