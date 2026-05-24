@@ -43,6 +43,51 @@ class ToolCatalogTest {
                 .isEmpty();
     }
 
+    @Test
+    void shouldReportConfiguredToolsMissingFromDiscovery() {
+        ToolPolicyProperties properties = new ToolPolicyProperties();
+        properties.setAllowList(List.of("tm.orders.search", "tm.knowledge.search"));
+        ToolCallbackProvider provider = providerReturning(callbackNamed("tm.orders.search"));
+        ToolCatalog catalog = new ToolCatalog(properties, List.of(provider));
+
+        ToolCatalogDiagnostics diagnostics = catalog.diagnostics();
+
+        assertThat(diagnostics.configuredButNotDiscoveredToolNames())
+                .containsExactly("tm.knowledge.search");
+    }
+
+    @Test
+    void shouldReportDiscoveredToolsMissingFromConfiguration() {
+        ToolPolicyProperties properties = new ToolPolicyProperties();
+        properties.setAllowList(List.of("tm.orders.search"));
+        ToolCallbackProvider provider = providerReturning(
+                callbackNamed("tm.orders.search"),
+                callbackNamed("tm.internal.unconfigured")
+        );
+        ToolCatalog catalog = new ToolCatalog(properties, List.of(provider));
+
+        ToolCatalogDiagnostics diagnostics = catalog.diagnostics();
+
+        assertThat(diagnostics.discoveredButNotConfiguredToolNames())
+                .containsExactly("tm.internal.unconfigured");
+    }
+
+    @Test
+    void shouldReportDuplicateDiscoveredToolNames() {
+        ToolCallbackProvider firstProvider = providerReturning(callbackNamed("tm.orders.search"));
+        ToolCallbackProvider secondProvider = providerReturning(
+                callbackNamed("tm.orders.search"),
+                callbackNamed("tm.orders.search"),
+                callbackNamed("tm.knowledge.search")
+        );
+        ToolCatalog catalog = new ToolCatalog(new ToolPolicyProperties(), List.of(firstProvider, secondProvider));
+
+        ToolCatalogDiagnostics diagnostics = catalog.diagnostics();
+
+        assertThat(diagnostics.duplicateDiscoveredToolNames())
+                .containsExactly("tm.orders.search");
+    }
+
     private ToolCallbackProvider providerReturning(ToolCallback... callbacks) {
         ToolCallbackProvider provider = mock(ToolCallbackProvider.class);
         when(provider.getToolCallbacks()).thenReturn(callbacks);
