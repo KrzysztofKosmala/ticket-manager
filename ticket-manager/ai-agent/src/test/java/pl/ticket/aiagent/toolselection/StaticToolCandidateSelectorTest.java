@@ -11,15 +11,15 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ToolCandidateSelectorTest {
+class StaticToolCandidateSelectorTest {
 
     @Test
-    void shouldSelectOrderSearchToolForOrderQuestionWhenAllowed() {
+    void shouldSelectConfiguredOrderSearchToolWhenPolicyAllowsIt() {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of("tm.orders.search"));
-        ToolCandidateSelector selector = new ToolCandidateSelector(new ToolPolicy(properties));
+        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties));
 
-        List<ToolCandidate> candidates = selector.selectFor("Pokaz moje ostatnie zamowienia", CallerContext.anonymous());
+        List<ToolCandidate> candidates = selector.selectFor("Jakikolwiek niepusty prompt", CallerContext.anonymous());
 
         assertThat(candidates)
                 .extracting(ToolCandidate::name)
@@ -27,21 +27,10 @@ class ToolCandidateSelectorTest {
     }
 
     @Test
-    void shouldReturnNoCandidatesForGeneralConversation() {
-        ToolPolicyProperties properties = properties();
-        properties.setAllowList(List.of("tm.orders.search"));
-        ToolCandidateSelector selector = new ToolCandidateSelector(new ToolPolicy(properties));
-
-        List<ToolCandidate> candidates = selector.selectFor("Jak dziala ten asystent?", CallerContext.anonymous());
-
-        assertThat(candidates).isEmpty();
-    }
-
-    @Test
-    void shouldNotSelectOrderSearchToolWhenItIsNotAllowed() {
+    void shouldReturnNoCandidatesWhenPolicyDeniesTool() {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of());
-        ToolCandidateSelector selector = new ToolCandidateSelector(new ToolPolicy(properties));
+        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties));
 
         List<ToolCandidate> candidates = selector.selectFor("Pokaz moje zamowienia", CallerContext.anonymous());
 
@@ -52,7 +41,7 @@ class ToolCandidateSelectorTest {
     void shouldReturnNoCandidatesForBlankMessage() {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of("tm.orders.search"));
-        ToolCandidateSelector selector = new ToolCandidateSelector(new ToolPolicy(properties));
+        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties));
 
         List<ToolCandidate> candidates = selector.selectFor("   ", CallerContext.anonymous());
 
@@ -60,11 +49,11 @@ class ToolCandidateSelectorTest {
     }
 
     @Test
-    void shouldNotSelectOrderSearchToolWhenRequiredScopeIsMissing() {
+    void shouldReturnNoCandidatesWhenRequiredScopeIsMissing() {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of("tm.orders.search"));
         properties.setEnforceScopes(true);
-        ToolCandidateSelector selector = new ToolCandidateSelector(new ToolPolicy(properties));
+        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties));
 
         List<ToolCandidate> candidates = selector.selectFor("Pokaz moje zamowienia", CallerContext.anonymous());
 
@@ -76,7 +65,7 @@ class ToolCandidateSelectorTest {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of("tm.orders.search"));
         properties.setEnforceScopes(true);
-        ToolCandidateSelector selector = new ToolCandidateSelector(new ToolPolicy(properties));
+        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties));
         CallerContext callerContext = new CallerContext("user-123", Set.of("tools:orders.read"), Set.of("CUSTOMER"));
 
         List<ToolCandidate> candidates = selector.selectFor("Pokaz moje zamowienia", callerContext);

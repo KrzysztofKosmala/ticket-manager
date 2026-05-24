@@ -1,0 +1,5 @@
+ai-agent:
+  tools:
+    allow-list:
+      - tm.orders.search
+    enforce-scopes: false
