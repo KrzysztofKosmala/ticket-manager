@@ -4,7 +4,12 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import pl.ticket.aiagent.api.AiAgentResponse;
+import pl.ticket.aiagent.toolcallback.SelectedToolCallbackResolver;
+import pl.ticket.aiagent.toolcallback.ToolCallbackResolution;
+import pl.ticket.aiagent.toolselection.ToolCandidate;
 import pl.ticket.aiagent.toolselection.ToolCandidateSelector;
+
+import java.util.List;
 
 @Service
 public class AiAgentService
@@ -14,27 +19,38 @@ public class AiAgentService
 
     private final ChatClient chatClient;
     private final ToolCandidateSelector toolCandidateSelector;
+    private final SelectedToolCallbackResolver toolCallbackResolver;
 
     public AiAgentService(
             ChatClient.Builder chatClientBuilder,
             AiAgentInstructions instructions,
-            ToolCandidateSelector toolCandidateSelector
+            ToolCandidateSelector toolCandidateSelector,
+            SelectedToolCallbackResolver toolCallbackResolver
     ) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(instructions.systemPrompt())
                 .build();
         this.toolCandidateSelector = toolCandidateSelector;
+        this.toolCallbackResolver = toolCallbackResolver;
     }
 
     public AiAgentResponse ask(String userMessage) {
-        toolCandidateSelector.selectFor(userMessage);
+        List<ToolCandidate> candidates = toolCandidateSelector.selectFor(userMessage);
+        ToolCallbackResolution callbackResolution = toolCallbackResolver.resolve(candidates);
+        if (!callbackResolution.missingCandidates().isEmpty()) {
+            return fallback();
+        }
 
         String answer;
         try {
-            answer = chatClient.prompt()
-                    .user(userMessage)
-                    .call()
-                    .content();
+            ChatClient.ChatClientRequestSpec request = chatClient.prompt()
+                    .user(userMessage);
+
+            if (callbackResolution.hasCallbacks()) {
+                request = request.toolCallbacks(callbackResolution.callbacks());
+            }
+
+            answer = request.call().content();
         } catch (RuntimeException exception) {
             return fallback();
         }
