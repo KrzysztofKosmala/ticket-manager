@@ -55,7 +55,7 @@ class AiAgentServiceTest {
     @Test
     void shouldPassResolvedToolCallbacksToChatClientRequest() {
         Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm.orders.search", "Search orders");
+        ToolCandidate candidate = new ToolCandidate("tm.orders.search");
         ToolCallback toolCallback = mock(ToolCallback.class);
         List<ToolCandidate> candidates = List.of(candidate);
         List<ToolCallback> callbacks = List.of(toolCallback);
@@ -72,7 +72,7 @@ class AiAgentServiceTest {
     @Test
     void shouldNotAttachToolCallbacksWhenResolverReturnsNone() {
         Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm.orders.search", "Search orders");
+        ToolCandidate candidate = new ToolCandidate("tm.orders.search");
         List<ToolCandidate> candidates = List.of(candidate);
         fixture.selectedTools(candidates, ToolCallbackResolution.empty());
         fixture.modelAnswers("Masz 2 zamowienia.");
@@ -85,7 +85,7 @@ class AiAgentServiceTest {
     @Test
     void shouldReturnFallbackWhenSelectedToolCallbackIsMissing() {
         Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm.orders.search", "Search orders");
+        ToolCandidate candidate = new ToolCandidate("tm.orders.search");
         List<ToolCandidate> candidates = List.of(candidate);
         fixture.selectedTools(candidates, new ToolCallbackResolution(List.of(), candidates));
 

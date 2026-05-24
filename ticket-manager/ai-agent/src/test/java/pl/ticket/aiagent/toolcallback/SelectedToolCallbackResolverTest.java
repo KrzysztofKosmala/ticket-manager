@@ -21,7 +21,7 @@ class SelectedToolCallbackResolverTest {
         SelectedToolCallbackResolver resolver = new SelectedToolCallbackResolver(List.of(provider));
 
         ToolCallbackResolution resolution = resolver.resolve(List.of(
-                new ToolCandidate("tm.orders.search", "Search orders")
+                new ToolCandidate("tm.orders.search")
         ));
 
         assertThat(resolution.callbacks()).containsExactly(orderSearchCallback);
@@ -36,8 +36,8 @@ class SelectedToolCallbackResolverTest {
         SelectedToolCallbackResolver resolver = new SelectedToolCallbackResolver(List.of(provider));
 
         ToolCallbackResolution resolution = resolver.resolve(List.of(
-                new ToolCandidate("first.tool", "First"),
-                new ToolCandidate("second.tool", "Second")
+                new ToolCandidate("first.tool"),
+                new ToolCandidate("second.tool")
         ));
 
         assertThat(resolution.callbacks()).containsExactly(firstCallback, secondCallback);
@@ -48,7 +48,7 @@ class SelectedToolCallbackResolverTest {
         ToolCallbackProvider provider = providerReturning(callbackNamed("tm.orders.search"));
         SelectedToolCallbackResolver resolver = new SelectedToolCallbackResolver(List.of(provider));
 
-        ToolCandidate missingCandidate = new ToolCandidate("missing.tool", "Missing");
+        ToolCandidate missingCandidate = new ToolCandidate("missing.tool");
         ToolCallbackResolution resolution = resolver.resolve(List.of(missingCandidate));
 
         assertThat(resolution.callbacks()).isEmpty();

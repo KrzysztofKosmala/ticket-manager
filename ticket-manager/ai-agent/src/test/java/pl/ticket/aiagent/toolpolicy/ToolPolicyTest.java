@@ -89,6 +89,6 @@ class ToolPolicyTest {
     }
 
     private ToolCandidate orderSearch() {
-        return new ToolCandidate("tm.orders.search", "Search orders");
+        return new ToolCandidate("tm.orders.search");
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 import pl.ticket.aiagent.caller.CallerContext;
 import pl.ticket.aiagent.toolpolicy.ToolPolicy;
 import pl.ticket.aiagent.toolpolicy.ToolPolicyDecision;
+import pl.ticket.aiagent.toolpolicy.ToolPolicyProperties;
 
 import java.util.List;
 
@@ -13,15 +14,12 @@ import java.util.List;
 @Profile({"local", "test", "smoke"})
 public class StaticToolCandidateSelector implements ToolCandidateSelector {
 
-    private static final ToolCandidate ORDER_SEARCH_CANDIDATE = new ToolCandidate(
-            "tm.orders.search",
-            "Wyszukuje zamowienia uzytkownika po filtrach, sortowaniu i paginacji."
-    );
-
     private final ToolPolicy toolPolicy;
+    private final ToolPolicyProperties toolPolicyProperties;
 
-    public StaticToolCandidateSelector(ToolPolicy toolPolicy) {
+    public StaticToolCandidateSelector(ToolPolicy toolPolicy, ToolPolicyProperties toolPolicyProperties) {
         this.toolPolicy = toolPolicy;
+        this.toolPolicyProperties = toolPolicyProperties;
     }
 
     @Override
@@ -30,11 +28,14 @@ public class StaticToolCandidateSelector implements ToolCandidateSelector {
             return List.of();
         }
 
-        ToolPolicyDecision decision = toolPolicy.evaluate(ORDER_SEARCH_CANDIDATE, callerContext);
-        if (!decision.allowed()) {
-            return List.of();
-        }
+        return toolPolicyProperties.getAllowList().stream()
+                .map(ToolCandidate::new)
+                .filter(candidate -> isAllowed(candidate, callerContext))
+                .toList();
+    }
 
-        return List.of(ORDER_SEARCH_CANDIDATE);
+    private boolean isAllowed(ToolCandidate candidate, CallerContext callerContext) {
+        ToolPolicyDecision decision = toolPolicy.evaluate(candidate, callerContext);
+        return decision.allowed();
     }
 }
