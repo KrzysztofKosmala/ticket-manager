@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.definition.ToolDefinition;
+import pl.ticket.aiagent.toolcatalog.ToolCatalog;
+import pl.ticket.aiagent.toolpolicy.ToolPolicyProperties;
 import pl.ticket.aiagent.toolselection.ToolCandidate;
 
 import java.util.List;
@@ -18,7 +20,7 @@ class SelectedToolCallbackResolverTest {
     void shouldResolveCallbacksForSelectedCandidates() {
         ToolCallback orderSearchCallback = callbackNamed("tm.orders.search");
         ToolCallbackProvider provider = providerReturning(orderSearchCallback);
-        SelectedToolCallbackResolver resolver = new SelectedToolCallbackResolver(List.of(provider));
+        SelectedToolCallbackResolver resolver = resolverWith(provider);
 
         ToolCallbackResolution resolution = resolver.resolve(List.of(
                 new ToolCandidate("tm.orders.search")
@@ -33,7 +35,7 @@ class SelectedToolCallbackResolverTest {
         ToolCallback firstCallback = callbackNamed("first.tool");
         ToolCallback secondCallback = callbackNamed("second.tool");
         ToolCallbackProvider provider = providerReturning(secondCallback, firstCallback);
-        SelectedToolCallbackResolver resolver = new SelectedToolCallbackResolver(List.of(provider));
+        SelectedToolCallbackResolver resolver = resolverWith(provider);
 
         ToolCallbackResolution resolution = resolver.resolve(List.of(
                 new ToolCandidate("first.tool"),
@@ -46,7 +48,7 @@ class SelectedToolCallbackResolverTest {
     @Test
     void shouldReportMissingCandidates() {
         ToolCallbackProvider provider = providerReturning(callbackNamed("tm.orders.search"));
-        SelectedToolCallbackResolver resolver = new SelectedToolCallbackResolver(List.of(provider));
+        SelectedToolCallbackResolver resolver = resolverWith(provider);
 
         ToolCandidate missingCandidate = new ToolCandidate("missing.tool");
         ToolCallbackResolution resolution = resolver.resolve(List.of(missingCandidate));
@@ -57,9 +59,7 @@ class SelectedToolCallbackResolverTest {
 
     @Test
     void shouldReturnEmptyResolutionWhenNoCandidatesWereSelected() {
-        SelectedToolCallbackResolver resolver = new SelectedToolCallbackResolver(List.of(
-                providerReturning(callbackNamed("tm.orders.search"))
-        ));
+        SelectedToolCallbackResolver resolver = resolverWith(providerReturning(callbackNamed("tm.orders.search")));
 
         ToolCallbackResolution resolution = resolver.resolve(List.of());
 
@@ -72,6 +72,10 @@ class SelectedToolCallbackResolverTest {
         ToolCallbackProvider provider = mock(ToolCallbackProvider.class);
         when(provider.getToolCallbacks()).thenReturn(callbacks);
         return provider;
+    }
+
+    private SelectedToolCallbackResolver resolverWith(ToolCallbackProvider provider) {
+        return new SelectedToolCallbackResolver(new ToolCatalog(new ToolPolicyProperties(), List.of(provider)));
     }
 
     private ToolCallback callbackNamed(String name) {

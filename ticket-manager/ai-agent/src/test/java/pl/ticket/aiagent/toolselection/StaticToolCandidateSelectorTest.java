@@ -2,6 +2,7 @@ package pl.ticket.aiagent.toolselection;
 
 import org.junit.jupiter.api.Test;
 import pl.ticket.aiagent.caller.CallerContext;
+import pl.ticket.aiagent.toolcatalog.ToolCatalog;
 import pl.ticket.aiagent.toolpolicy.ToolPolicy;
 import pl.ticket.aiagent.toolpolicy.ToolPolicyProperties;
 
@@ -17,7 +18,7 @@ class StaticToolCandidateSelectorTest {
     void shouldSelectConfiguredOrderSearchToolWhenPolicyAllowsIt() {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of("tm.orders.search"));
-        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties), properties);
+        StaticToolCandidateSelector selector = selector(properties);
 
         List<ToolCandidate> candidates = selector.selectFor("Jakikolwiek niepusty prompt", CallerContext.anonymous());
 
@@ -35,7 +36,7 @@ class StaticToolCandidateSelectorTest {
                 "tm.orders.search", metadataWithRequiredScope("tools:orders.read"),
                 "tm.knowledge.search", knowledgeMetadata
         ));
-        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties), properties);
+        StaticToolCandidateSelector selector = selector(properties);
 
         List<ToolCandidate> candidates = selector.selectFor("Pokaz moje dane i wiedze", CallerContext.anonymous());
 
@@ -48,7 +49,7 @@ class StaticToolCandidateSelectorTest {
     void shouldReturnNoCandidatesWhenPolicyDeniesTool() {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of());
-        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties), properties);
+        StaticToolCandidateSelector selector = selector(properties);
 
         List<ToolCandidate> candidates = selector.selectFor("Pokaz moje zamowienia", CallerContext.anonymous());
 
@@ -59,7 +60,7 @@ class StaticToolCandidateSelectorTest {
     void shouldReturnNoCandidatesForBlankMessage() {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of("tm.orders.search"));
-        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties), properties);
+        StaticToolCandidateSelector selector = selector(properties);
 
         List<ToolCandidate> candidates = selector.selectFor("   ", CallerContext.anonymous());
 
@@ -71,7 +72,7 @@ class StaticToolCandidateSelectorTest {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of("tm.orders.search"));
         properties.setEnforceScopes(true);
-        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties), properties);
+        StaticToolCandidateSelector selector = selector(properties);
 
         List<ToolCandidate> candidates = selector.selectFor("Pokaz moje zamowienia", CallerContext.anonymous());
 
@@ -83,7 +84,7 @@ class StaticToolCandidateSelectorTest {
         ToolPolicyProperties properties = properties();
         properties.setAllowList(List.of("tm.orders.search"));
         properties.setEnforceScopes(true);
-        StaticToolCandidateSelector selector = new StaticToolCandidateSelector(new ToolPolicy(properties), properties);
+        StaticToolCandidateSelector selector = selector(properties);
         CallerContext callerContext = new CallerContext("user-123", Set.of("tools:orders.read"), Set.of("CUSTOMER"));
 
         List<ToolCandidate> candidates = selector.selectFor("Pokaz moje zamowienia", callerContext);
@@ -98,6 +99,10 @@ class StaticToolCandidateSelectorTest {
         ToolPolicyProperties.ToolMetadata metadata = metadataWithRequiredScope("tools:orders.read");
         properties.setMetadata(Map.of("tm.orders.search", metadata));
         return properties;
+    }
+
+    private StaticToolCandidateSelector selector(ToolPolicyProperties properties) {
+        return new StaticToolCandidateSelector(new ToolPolicy(properties), new ToolCatalog(properties, List.of()));
     }
 
     private ToolPolicyProperties.ToolMetadata metadataWithRequiredScope(String requiredScope) {
