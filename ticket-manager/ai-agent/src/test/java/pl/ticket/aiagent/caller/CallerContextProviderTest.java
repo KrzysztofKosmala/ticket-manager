@@ -2,6 +2,7 @@ package pl.ticket.aiagent.caller;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,24 @@ class CallerContextProviderTest {
 
     @Test
     void shouldReturnAnonymousContextWhenUserIsNotAuthenticated() {
+        CallerContextProvider provider = new CallerContextProvider();
+
+        CallerContext context = provider.current();
+
+        assertThat(context.subject()).isEqualTo("anonymous");
+        assertThat(context.scopes()).isEmpty();
+        assertThat(context.roles()).isEmpty();
+    }
+
+    @Test
+    void shouldReturnAnonymousContextForSpringAnonymousAuthentication() {
+        SecurityContextHolder.getContext().setAuthentication(
+                new AnonymousAuthenticationToken(
+                        "anonymous-key",
+                        "anonymousUser",
+                        List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))
+                )
+        );
         CallerContextProvider provider = new CallerContextProvider();
 
         CallerContext context = provider.current();
