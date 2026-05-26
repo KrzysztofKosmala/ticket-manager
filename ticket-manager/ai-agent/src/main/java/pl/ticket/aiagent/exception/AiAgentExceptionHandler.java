@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import pl.ticket.aiagent.api.AiAgentResponse;
 
 import java.time.Instant;
 import java.util.Comparator;
@@ -13,6 +14,20 @@ import java.util.List;
 
 @RestControllerAdvice
 public class AiAgentExceptionHandler {
+
+    private static final String FALLBACK_ANSWER =
+            "Nie udalo mi sie teraz przygotowac odpowiedzi. Sprobuj ponownie za chwile.";
+
+    @ExceptionHandler({
+            AiModelUnavailableException.class,
+            AiModelEmptyResponseException.class
+    })
+    public ResponseEntity<AiAgentResponse> handleAiModelFallback(
+            RuntimeException exception,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.ok(new AiAgentResponse(FALLBACK_ANSWER, AiAgentResponse.Status.FALLBACK));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleMethodArgumentNotValid(

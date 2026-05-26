@@ -1,11 +1,16 @@
 package pl.ticket.aiagent;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.retry.NonTransientAiException;
+import org.springframework.ai.retry.TransientAiException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.ResourceAccessException;
 import pl.ticket.aiagent.api.AiAgentResponse;
 import pl.ticket.aiagent.caller.CallerContext;
 import pl.ticket.aiagent.caller.CallerContextProvider;
+import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
+import pl.ticket.aiagent.exception.AiModelUnavailableException;
 import pl.ticket.aiagent.toolcallback.SelectedToolCallbackResolver;
 import pl.ticket.aiagent.toolcallback.ToolCallbackResolution;
 import pl.ticket.aiagent.toolselection.ToolCandidate;
@@ -16,9 +21,6 @@ import java.util.List;
 @Service
 public class AiAgentService
 {
-    private static final String FALLBACK_ANSWER =
-            "Nie udalo mi sie teraz przygotowac odpowiedzi. Sprobuj ponownie za chwile.";
-
     private final ChatClient chatClient;
     private final ToolCandidateSelector toolCandidateSelector;
     private final SelectedToolCallbackResolver toolCallbackResolver;
@@ -46,24 +48,19 @@ public class AiAgentService
 
         String answer;
         try {
-            ChatClient.ChatClientRequestSpec request = chatClient.prompt()
-                    .user(userMessage);
-
-            request = request.toolCallbacks(callbackResolution.callbacks());
-
-            answer = request.call().content();
-        } catch (RuntimeException exception) {
-            return fallback();
+            answer = chatClient.prompt()
+                    .user(userMessage)
+                    .toolCallbacks(callbackResolution.callbacks())
+                    .call()
+                    .content();
+        } catch (TransientAiException | NonTransientAiException | ResourceAccessException exception) {
+            throw new AiModelUnavailableException(exception);
         }
 
         if (!StringUtils.hasText(answer)) {
-            return fallback();
+            throw new AiModelEmptyResponseException();
         }
 
         return new AiAgentResponse(answer, AiAgentResponse.Status.COMPLETED);
-    }
-
-    private AiAgentResponse fallback() {
-        return new AiAgentResponse(FALLBACK_ANSWER, AiAgentResponse.Status.FALLBACK);
     }
 }

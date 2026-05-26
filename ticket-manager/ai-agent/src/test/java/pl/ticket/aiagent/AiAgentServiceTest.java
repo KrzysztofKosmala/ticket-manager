@@ -2,10 +2,13 @@ package pl.ticket.aiagent;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.retry.TransientAiException;
 import org.springframework.ai.tool.ToolCallback;
 import pl.ticket.aiagent.api.AiAgentResponse;
 import pl.ticket.aiagent.caller.CallerContext;
 import pl.ticket.aiagent.caller.CallerContextProvider;
+import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
+import pl.ticket.aiagent.exception.AiModelUnavailableException;
 import pl.ticket.aiagent.toolcallback.SelectedToolCallbackResolver;
 import pl.ticket.aiagent.toolcallback.ToolCallbackResolution;
 import pl.ticket.aiagent.toolselection.ToolCandidate;
@@ -14,6 +17,7 @@ import pl.ticket.aiagent.toolselection.ToolCandidateSelector;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -96,29 +100,27 @@ class AiAgentServiceTest {
     }
 
     @Test
-    void shouldReturnFallbackWhenModelAnswerIsBlank() {
+    void shouldThrowWhenModelAnswerIsBlank() {
         Fixture fixture = new Fixture();
         fixture.noSelectedTools();
         fixture.modelAnswers("   ");
 
-        AiAgentResponse response = fixture.service().ask(MESSAGE);
-
-        assertThat(response.status()).isEqualTo(AiAgentResponse.Status.FALLBACK);
-        assertThat(response.answer()).isEqualTo(FALLBACK_ANSWER);
+        assertThatThrownBy(() -> fixture.service().ask(MESSAGE))
+                .isInstanceOf(AiModelEmptyResponseException.class);
     }
 
     @Test
-    void shouldReturnFallbackWhenChatClientFails() {
+    void shouldThrowAiModelUnavailableWhenChatClientFailsWithKnownAiException() {
         Fixture fixture = new Fixture();
         fixture.noSelectedTools();
         when(fixture.chatClient.prompt()).thenReturn(fixture.requestSpec);
         when(fixture.requestSpec.user(MESSAGE)).thenReturn(fixture.requestSpec);
-        when(fixture.requestSpec.call()).thenThrow(new IllegalStateException("provider unavailable"));
+        when(fixture.requestSpec.toolCallbacks(List.of())).thenReturn(fixture.requestSpec);
+        when(fixture.requestSpec.call()).thenThrow(new TransientAiException("provider unavailable"));
 
-        AiAgentResponse response = fixture.service().ask(MESSAGE);
-
-        assertThat(response.status()).isEqualTo(AiAgentResponse.Status.FALLBACK);
-        assertThat(response.answer()).isEqualTo(FALLBACK_ANSWER);
+        assertThatThrownBy(() -> fixture.service().ask(MESSAGE))
+                .isInstanceOf(AiModelUnavailableException.class)
+                .hasCauseInstanceOf(TransientAiException.class);
     }
 
     private static class Fixture {
