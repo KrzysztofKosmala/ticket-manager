@@ -55,7 +55,7 @@ class ToolPolicyTest {
     @Test
     void shouldDenyToolThatIsNotAllowListed() {
         ToolPolicyProperties properties = propertiesWithOrderTool();
-        properties.setAllowList(List.of());
+        properties.setRegistry(Map.of());
         ToolPolicy policy = new ToolPolicy(properties);
 
         ToolPolicyDecision decision = policy.evaluate(orderSearch(), CallerContext.anonymous());
@@ -67,9 +67,9 @@ class ToolPolicyTest {
     @Test
     void shouldDenyWriteSideToolInCallbackOnlyIteration() {
         ToolPolicyProperties properties = propertiesWithOrderTool();
-        ToolPolicyProperties.ToolMetadata metadata = new ToolPolicyProperties.ToolMetadata();
+        ToolPolicyProperties.ToolMetadata metadata = metadata();
         metadata.setAccessMode(ToolAccessMode.WRITE);
-        properties.setMetadata(Map.of("tm.orders.search", metadata));
+        properties.setRegistry(Map.of("tm.orders.search", metadata));
         ToolPolicy policy = new ToolPolicy(properties);
 
         ToolPolicyDecision decision = policy.evaluate(orderSearch(), CallerContext.anonymous());
@@ -80,12 +80,18 @@ class ToolPolicyTest {
 
     private ToolPolicyProperties propertiesWithOrderTool() {
         ToolPolicyProperties properties = new ToolPolicyProperties();
-        ToolPolicyProperties.ToolMetadata metadata = new ToolPolicyProperties.ToolMetadata();
-        metadata.setAccessMode(ToolAccessMode.READ);
+        ToolPolicyProperties.ToolMetadata metadata = metadata();
         metadata.setRequiredScopes(List.of("tools:orders.read"));
-        properties.setAllowList(List.of("tm.orders.search"));
-        properties.setMetadata(Map.of("tm.orders.search", metadata));
+        properties.setRegistry(Map.of("tm.orders.search", metadata));
         return properties;
+    }
+
+    private ToolPolicyProperties.ToolMetadata metadata() {
+        ToolPolicyProperties.ToolMetadata metadata = new ToolPolicyProperties.ToolMetadata();
+        metadata.setSource(ToolSourceType.INTERNAL_MCP);
+        metadata.setAccessMode(ToolAccessMode.READ);
+        metadata.setRiskLevel(ToolRiskLevel.LOW);
+        return metadata;
     }
 
     private ToolCandidate orderSearch() {

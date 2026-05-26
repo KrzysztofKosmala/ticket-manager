@@ -7,6 +7,8 @@ import org.springframework.ai.tool.definition.ToolDefinition;
 import pl.ticket.aiagent.toolpolicy.ToolPolicyProperties;
 
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -17,11 +19,26 @@ class ToolCatalogTest {
     @Test
     void shouldExposeConfiguredToolNamesInOrder() {
         ToolPolicyProperties properties = new ToolPolicyProperties();
-        properties.setAllowList(List.of("tm.orders.search", "tm.knowledge.search"));
+        properties.setRegistry(registryWith("tm.orders.search", "tm.knowledge.search"));
         ToolCatalog catalog = new ToolCatalog(properties, List.of());
 
         assertThat(catalog.configuredToolNames())
                 .containsExactly("tm.orders.search", "tm.knowledge.search");
+    }
+
+    @Test
+    void shouldExposeOnlyEnabledConfiguredToolNames() {
+        ToolPolicyProperties.ToolMetadata disabledMetadata = metadata();
+        disabledMetadata.setEnabled(false);
+        Map<String, ToolPolicyProperties.ToolMetadata> registry = new LinkedHashMap<>();
+        registry.put("tm.orders.search", metadata());
+        registry.put("tm.knowledge.search", disabledMetadata);
+        ToolPolicyProperties properties = new ToolPolicyProperties();
+        properties.setRegistry(registry);
+        ToolCatalog catalog = new ToolCatalog(properties, List.of());
+
+        assertThat(catalog.configuredToolNames())
+                .containsExactly("tm.orders.search");
     }
 
     @Test
@@ -46,7 +63,7 @@ class ToolCatalogTest {
     @Test
     void shouldReportConfiguredToolsMissingFromDiscovery() {
         ToolPolicyProperties properties = new ToolPolicyProperties();
-        properties.setAllowList(List.of("tm.orders.search", "tm.knowledge.search"));
+        properties.setRegistry(registryWith("tm.orders.search", "tm.knowledge.search"));
         ToolCallbackProvider provider = providerReturning(callbackNamed("tm.orders.search"));
         ToolCatalog catalog = new ToolCatalog(properties, List.of(provider));
 
@@ -57,9 +74,27 @@ class ToolCatalogTest {
     }
 
     @Test
+    void shouldNotReportDisabledConfiguredToolsMissingFromDiscovery() {
+        ToolPolicyProperties.ToolMetadata disabledMetadata = metadata();
+        disabledMetadata.setEnabled(false);
+        Map<String, ToolPolicyProperties.ToolMetadata> registry = new LinkedHashMap<>();
+        registry.put("tm.orders.search", metadata());
+        registry.put("tm.knowledge.search", disabledMetadata);
+        ToolPolicyProperties properties = new ToolPolicyProperties();
+        properties.setRegistry(registry);
+        ToolCallbackProvider provider = providerReturning(callbackNamed("tm.orders.search"));
+        ToolCatalog catalog = new ToolCatalog(properties, List.of(provider));
+
+        ToolCatalogDiagnostics diagnostics = catalog.diagnostics();
+
+        assertThat(diagnostics.configuredButNotDiscoveredToolNames())
+                .isEmpty();
+    }
+
+    @Test
     void shouldReportDiscoveredToolsMissingFromConfiguration() {
         ToolPolicyProperties properties = new ToolPolicyProperties();
-        properties.setAllowList(List.of("tm.orders.search"));
+        properties.setRegistry(Map.of("tm.orders.search", metadata()));
         ToolCallbackProvider provider = providerReturning(
                 callbackNamed("tm.orders.search"),
                 callbackNamed("tm.internal.unconfigured")
@@ -92,6 +127,22 @@ class ToolCatalogTest {
         ToolCallbackProvider provider = mock(ToolCallbackProvider.class);
         when(provider.getToolCallbacks()).thenReturn(callbacks);
         return provider;
+    }
+
+    private Map<String, ToolPolicyProperties.ToolMetadata> registryWith(String... toolNames) {
+        Map<String, ToolPolicyProperties.ToolMetadata> registry = new LinkedHashMap<>();
+        for (String toolName : toolNames) {
+            registry.put(toolName, metadata());
+        }
+        return registry;
+    }
+
+    private ToolPolicyProperties.ToolMetadata metadata() {
+        ToolPolicyProperties.ToolMetadata metadata = new ToolPolicyProperties.ToolMetadata();
+        metadata.setSource(pl.ticket.aiagent.toolpolicy.ToolSourceType.INTERNAL_MCP);
+        metadata.setAccessMode(pl.ticket.aiagent.toolpolicy.ToolAccessMode.READ);
+        metadata.setRiskLevel(pl.ticket.aiagent.toolpolicy.ToolRiskLevel.LOW);
+        return metadata;
     }
 
     private ToolCallback callbackNamed(String name) {

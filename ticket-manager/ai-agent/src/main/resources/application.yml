@@ -65,14 +65,19 @@ ai-agent:
   answer:
     synthesizer: fake
   tools:
-    allow-list:
-      - tm.orders.search
     enforce-scopes: false
-    metadata:
+    registry:
       "[tm.orders.search]":
+        enabled: true
+        source: INTERNAL_MCP
         access-mode: READ
         required-scopes:
           - tools:orders.read
+        intents:
+          - ORDER
+        risk-level: LOW
+        timeout: 3s
+        max-response-size: 32KB
 
 
 

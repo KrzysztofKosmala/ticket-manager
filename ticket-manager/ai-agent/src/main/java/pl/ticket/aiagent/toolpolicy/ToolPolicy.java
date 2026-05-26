@@ -14,11 +14,15 @@ public class ToolPolicy {
     }
 
     public ToolPolicyDecision evaluate(ToolCandidate candidate, CallerContext callerContext) {
-        if (!properties.getAllowList().contains(candidate.name())) {
-            return ToolPolicyDecision.deny(ToolPolicyDenialReason.NOT_ALLOW_LISTED);
-        }
+        return properties.metadataFor(candidate.name())
+                .map(metadata -> evaluateConfiguredTool(metadata, callerContext))
+                .orElseGet(() -> ToolPolicyDecision.deny(ToolPolicyDenialReason.NOT_ALLOW_LISTED));
+    }
 
-        ToolPolicyProperties.ToolMetadata metadata = properties.metadataFor(candidate.name());
+    private ToolPolicyDecision evaluateConfiguredTool(
+            ToolPolicyProperties.ToolMetadata metadata,
+            CallerContext callerContext
+    ) {
         if (!metadata.isEnabled()) {
             return ToolPolicyDecision.deny(ToolPolicyDenialReason.DISABLED);
         }

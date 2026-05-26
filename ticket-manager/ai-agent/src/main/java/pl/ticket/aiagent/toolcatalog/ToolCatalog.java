@@ -26,7 +26,7 @@ public class ToolCatalog {
     }
 
     public List<String> configuredToolNames() {
-        return toolPolicyProperties.getAllowList();
+        return toolPolicyProperties.enabledToolNames();
     }
 
     public Optional<ToolCallback> callbackByName(String toolName) {
@@ -34,11 +34,12 @@ public class ToolCatalog {
     }
 
     public ToolCatalogDiagnostics diagnostics() {
-        Set<String> configuredToolNames = new LinkedHashSet<>(configuredToolNames());
+        Set<String> configuredToolNames = new LinkedHashSet<>(toolPolicyProperties.getRegistry().keySet());
+        Set<String> enabledToolNames = new LinkedHashSet<>(configuredToolNames());
         List<String> discoveredToolNames = discoveredToolNames();
         Set<String> uniqueDiscoveredToolNames = new LinkedHashSet<>(discoveredToolNames);
 
-        List<String> configuredButNotDiscovered = configuredToolNames.stream()
+        List<String> configuredButNotDiscovered = enabledToolNames.stream()
                 .filter(toolName -> !uniqueDiscoveredToolNames.contains(toolName))
                 .toList();
 

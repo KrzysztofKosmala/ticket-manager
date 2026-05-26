@@ -30,7 +30,7 @@ public class ToolCatalogStartupLogger {
         }
         if (!diagnostics.discoveredButNotConfiguredToolNames().isEmpty()) {
             LOGGER.warn(
-                    "AI tool catalog discovered tools missing policy metadata: {}",
+                    "AI tool catalog discovered tools missing registry metadata: {}",
                     diagnostics.discoveredButNotConfiguredToolNames()
             );
         }

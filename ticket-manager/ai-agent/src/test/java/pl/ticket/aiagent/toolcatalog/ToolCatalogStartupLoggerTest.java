@@ -30,7 +30,7 @@ class ToolCatalogStartupLoggerTest {
         assertThat(output)
                 .contains("AI tool catalog configured tools: [tm.orders.search]")
                 .contains("AI tool catalog configured tools missing from discovery: [tm.knowledge.search]")
-                .contains("AI tool catalog discovered tools missing policy metadata: [tm.internal.unconfigured]")
+                .contains("AI tool catalog discovered tools missing registry metadata: [tm.internal.unconfigured]")
                 .contains("AI tool catalog duplicate discovered tool names: [tm.orders.search]");
     }
 
@@ -46,7 +46,7 @@ class ToolCatalogStartupLoggerTest {
         assertThat(output)
                 .contains("AI tool catalog configured tools: [tm.orders.search]")
                 .doesNotContain("missing from discovery")
-                .doesNotContain("missing policy metadata")
+                .doesNotContain("missing registry metadata")
                 .doesNotContain("duplicate discovered tool names");
     }
 }
