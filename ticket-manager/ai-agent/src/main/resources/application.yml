@@ -73,11 +73,6 @@ ai-agent:
         access-mode: READ
         required-scopes:
           - tools:orders.read
-        intents:
-          - ORDER
-        risk-level: LOW
-        timeout: 3s
-        max-response-size: 32KB
 
 
 

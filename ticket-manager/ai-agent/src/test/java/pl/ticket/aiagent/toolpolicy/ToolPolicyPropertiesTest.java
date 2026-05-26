@@ -25,9 +25,9 @@ class ToolPolicyPropertiesTest {
                 .extracting(violation -> violation.getPropertyPath().toString())
                 .contains(
                         "registry[tm.orders.search].source",
-                        "registry[tm.orders.search].accessMode",
-                        "registry[tm.orders.search].riskLevel"
-                );
+                        "registry[tm.orders.search].accessMode"
+                )
+                .doesNotContain("registry[tm.orders.search].riskLevel");
     }
 
     @Test
@@ -35,7 +35,6 @@ class ToolPolicyPropertiesTest {
         ToolPolicyProperties.ToolMetadata metadata = new ToolPolicyProperties.ToolMetadata();
         metadata.setSource(ToolSourceType.INTERNAL_MCP);
         metadata.setAccessMode(ToolAccessMode.READ);
-        metadata.setRiskLevel(ToolRiskLevel.LOW);
 
         ToolPolicyProperties properties = new ToolPolicyProperties();
         properties.setRegistry(Map.of("tm.orders.search", metadata));

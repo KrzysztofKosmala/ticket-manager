@@ -90,7 +90,6 @@ class ToolPolicyTest {
         ToolPolicyProperties.ToolMetadata metadata = new ToolPolicyProperties.ToolMetadata();
         metadata.setSource(ToolSourceType.INTERNAL_MCP);
         metadata.setAccessMode(ToolAccessMode.READ);
-        metadata.setRiskLevel(ToolRiskLevel.LOW);
         return metadata;
     }
 

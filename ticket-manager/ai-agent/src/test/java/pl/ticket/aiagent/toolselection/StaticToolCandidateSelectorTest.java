@@ -128,7 +128,6 @@ class StaticToolCandidateSelectorTest {
         ToolPolicyProperties.ToolMetadata metadata = new ToolPolicyProperties.ToolMetadata();
         metadata.setSource(pl.ticket.aiagent.toolpolicy.ToolSourceType.INTERNAL_MCP);
         metadata.setAccessMode(pl.ticket.aiagent.toolpolicy.ToolAccessMode.READ);
-        metadata.setRiskLevel(pl.ticket.aiagent.toolpolicy.ToolRiskLevel.LOW);
         return metadata;
     }
 }
