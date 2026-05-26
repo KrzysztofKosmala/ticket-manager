@@ -43,18 +43,13 @@ public class AiAgentService
         CallerContext callerContext = callerContextProvider.current();
         List<ToolCandidate> candidates = toolCandidateSelector.selectFor(userMessage, callerContext);
         ToolCallbackResolution callbackResolution = toolCallbackResolver.resolve(candidates);
-        if (!callbackResolution.missingCandidates().isEmpty()) {
-            return fallback();
-        }
 
         String answer;
         try {
             ChatClient.ChatClientRequestSpec request = chatClient.prompt()
                     .user(userMessage);
 
-            if (callbackResolution.hasCallbacks()) {
-                request = request.toolCallbacks(callbackResolution.callbacks());
-            }
+            request = request.toolCallbacks(callbackResolution.callbacks());
 
             answer = request.call().content();
         } catch (RuntimeException exception) {

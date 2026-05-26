@@ -22,8 +22,4 @@ public record ToolCallbackResolution(
     public static ToolCallbackResolution empty() {
         return new ToolCallbackResolution(List.of(), List.of());
     }
-
-    public boolean hasCallbacks() {
-        return !callbacks.isEmpty();
-    }
 }

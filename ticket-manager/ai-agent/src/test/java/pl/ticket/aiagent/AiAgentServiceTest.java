@@ -14,9 +14,7 @@ import pl.ticket.aiagent.toolselection.ToolCandidateSelector;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -70,7 +68,7 @@ class AiAgentServiceTest {
     }
 
     @Test
-    void shouldNotAttachToolCallbacksWhenResolverReturnsNone() {
+    void shouldAttachEmptyToolCallbacksWhenResolverReturnsNone() {
         Fixture fixture = new Fixture();
         ToolCandidate candidate = new ToolCandidate("tm.orders.search");
         List<ToolCandidate> candidates = List.of(candidate);
@@ -79,21 +77,22 @@ class AiAgentServiceTest {
 
         fixture.service().ask(MESSAGE);
 
-        verify(fixture.requestSpec, never()).toolCallbacks(anyList());
+        verify(fixture.requestSpec).toolCallbacks(List.of());
     }
 
     @Test
-    void shouldReturnFallbackWhenSelectedToolCallbackIsMissing() {
+    void shouldAskModelWithoutToolCallbacksWhenSelectedToolCallbackIsMissing() {
         Fixture fixture = new Fixture();
         ToolCandidate candidate = new ToolCandidate("tm.orders.search");
         List<ToolCandidate> candidates = List.of(candidate);
         fixture.selectedTools(candidates, new ToolCallbackResolution(List.of(), candidates));
+        fixture.modelAnswers("Nie mam teraz dostepu do danych zamowien, ale moge pomoc ogolnie.");
 
         AiAgentResponse response = fixture.service().ask(MESSAGE);
 
-        assertThat(response.status()).isEqualTo(AiAgentResponse.Status.FALLBACK);
-        assertThat(response.answer()).isEqualTo(FALLBACK_ANSWER);
-        verify(fixture.chatClient, never()).prompt();
+        assertThat(response.status()).isEqualTo(AiAgentResponse.Status.COMPLETED);
+        assertThat(response.answer()).isEqualTo("Nie mam teraz dostepu do danych zamowien, ale moge pomoc ogolnie.");
+        verify(fixture.requestSpec).toolCallbacks(List.of());
     }
 
     @Test
@@ -162,6 +161,7 @@ class AiAgentServiceTest {
         private void modelAnswers(String answer) {
             when(chatClient.prompt()).thenReturn(requestSpec);
             when(requestSpec.user(MESSAGE)).thenReturn(requestSpec);
+            when(requestSpec.toolCallbacks(List.of())).thenReturn(requestSpec);
             when(requestSpec.call()).thenReturn(callResponseSpec);
             when(callResponseSpec.content()).thenReturn(answer);
         }

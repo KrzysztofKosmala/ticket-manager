@@ -65,7 +65,6 @@ class SelectedToolCallbackResolverTest {
 
         assertThat(resolution.callbacks()).isEmpty();
         assertThat(resolution.missingCandidates()).isEmpty();
-        assertThat(resolution.hasCallbacks()).isFalse();
     }
 
     private ToolCallbackProvider providerReturning(ToolCallback... callbacks) {
