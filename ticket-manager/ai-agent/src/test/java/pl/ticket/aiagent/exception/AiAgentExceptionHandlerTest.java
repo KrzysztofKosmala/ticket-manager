@@ -3,7 +3,7 @@ package pl.ticket.aiagent.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
-import pl.ticket.aiagent.api.AiAgentResponse;
+import pl.ticket.aiagent.dto.AiAgentResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
