@@ -11,12 +11,9 @@ import pl.ticket.aiagent.caller.CallerContext;
 import pl.ticket.aiagent.caller.CallerContextProvider;
 import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
 import pl.ticket.aiagent.exception.AiModelUnavailableException;
+import pl.ticket.aiagent.run.AgentRun;
 import pl.ticket.aiagent.toolcallback.SelectedToolCallbackResolver;
-import pl.ticket.aiagent.toolcallback.ToolCallbackResolution;
-import pl.ticket.aiagent.toolselection.ToolCandidate;
 import pl.ticket.aiagent.toolselection.ToolCandidateSelector;
-
-import java.util.List;
 
 @Service
 public class AiAgentService
@@ -43,24 +40,27 @@ public class AiAgentService
 
     public AiAgentResponse ask(String userMessage) {
         CallerContext callerContext = callerContextProvider.current();
-        List<ToolCandidate> candidates = toolCandidateSelector.selectFor(userMessage, callerContext);
-        ToolCallbackResolution callbackResolution = toolCallbackResolver.resolve(candidates);
+        AgentRun run = AgentRun.started(userMessage, callerContext);
+        run = run.withSelectedTools(toolCandidateSelector.selectFor(run.userMessage(), run.callerContext()));
+        run = run.withResolvedCallbacks(toolCallbackResolver.resolve(run.selectedTools()));
 
         String answer;
         try {
             answer = chatClient.prompt()
-                    .user(userMessage)
-                    .toolCallbacks(callbackResolution.callbacks())
+                    .user(run.userMessage())
+                    .toolCallbacks(run.toolCallbackResolution().callbacks())
                     .call()
                     .content();
         } catch (TransientAiException | NonTransientAiException | ResourceAccessException exception) {
             throw new AiModelUnavailableException(exception);
         }
 
-        if (!StringUtils.hasText(answer)) {
+        run = run.completed(answer);
+
+        if (!StringUtils.hasText(run.answer())) {
             throw new AiModelEmptyResponseException();
         }
 
-        return new AiAgentResponse(answer, AiAgentResponse.Status.COMPLETED);
+        return new AiAgentResponse(run.answer(), AiAgentResponse.Status.COMPLETED);
     }
 }
