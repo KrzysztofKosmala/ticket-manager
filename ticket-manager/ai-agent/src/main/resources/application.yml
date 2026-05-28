@@ -25,8 +25,6 @@ spring:
     password: password
     url: jdbc:postgresql://localhost:51/ai-agent
     username: admin
-  profiles:
-    active: prod
   jpa:
     hibernate:
       ddl-auto: update
