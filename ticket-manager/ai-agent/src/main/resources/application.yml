@@ -1,6 +1,9 @@
 server:
   port: 8099
 spring:
+  config:
+    import:
+      - optional:classpath:ai-agent-tools.yml
   application:
     name: ai-agent
   ai:
@@ -62,16 +65,6 @@ openapi:
 ai-agent:
   answer:
     synthesizer: fake
-  tools:
-    enforce-scopes: false
-    registry:
-      "[tm.orders.search]":
-        enabled: true
-        source: INTERNAL_MCP
-        access-mode: READ
-        required-scopes:
-          - tools:orders.read
-
 
 
 management:
