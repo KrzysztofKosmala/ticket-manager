@@ -9,8 +9,6 @@ import pl.ticket.aiagent.caller.CallerContext;
 import pl.ticket.aiagent.caller.CallerContextProvider;
 import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
 import pl.ticket.aiagent.exception.AiModelUnavailableException;
-import pl.ticket.aiagent.run.AgentRun;
-import pl.ticket.aiagent.run.AgentRunLogger;
 import pl.ticket.aiagent.toolcallback.SelectedToolCallbackResolver;
 import pl.ticket.aiagent.toolcallback.ToolCallbackResolution;
 import pl.ticket.aiagent.toolselection.ToolCandidate;
@@ -20,8 +18,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -104,28 +100,6 @@ class AiAgentServiceTest {
     }
 
     @Test
-    void shouldLogCompletedRunAfterSuccessfulModelAnswer() {
-        Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm.orders.search");
-        List<ToolCandidate> candidates = List.of(candidate);
-        ToolCallbackResolution resolution = new ToolCallbackResolution(List.of(), candidates);
-        fixture.selectedTools(candidates, resolution);
-        fixture.modelAnswers("Nie mam teraz dostepu do danych zamowien, ale moge pomoc ogolnie.");
-
-        fixture.service().ask(MESSAGE);
-
-        org.mockito.ArgumentCaptor<AgentRun> runCaptor = org.mockito.ArgumentCaptor.forClass(AgentRun.class);
-        verify(fixture.agentRunLogger).logCompleted(runCaptor.capture());
-        AgentRun loggedRun = runCaptor.getValue();
-        assertThat(loggedRun.userMessage()).isEqualTo(MESSAGE);
-        assertThat(loggedRun.callerContext()).isEqualTo(fixture.callerContext);
-        assertThat(loggedRun.selectedTools()).containsExactly(candidate);
-        assertThat(loggedRun.toolCallbackResolution()).isEqualTo(resolution);
-        assertThat(loggedRun.answer())
-                .isEqualTo("Nie mam teraz dostepu do danych zamowien, ale moge pomoc ogolnie.");
-    }
-
-    @Test
     void shouldThrowWhenModelAnswerIsBlank() {
         Fixture fixture = new Fixture();
         fixture.noSelectedTools();
@@ -133,7 +107,6 @@ class AiAgentServiceTest {
 
         assertThatThrownBy(() -> fixture.service().ask(MESSAGE))
                 .isInstanceOf(AiModelEmptyResponseException.class);
-        verify(fixture.agentRunLogger, never()).logCompleted(any());
     }
 
     @Test
@@ -148,7 +121,6 @@ class AiAgentServiceTest {
         assertThatThrownBy(() -> fixture.service().ask(MESSAGE))
                 .isInstanceOf(AiModelUnavailableException.class)
                 .hasCauseInstanceOf(TransientAiException.class);
-        verify(fixture.agentRunLogger, never()).logCompleted(any());
     }
 
     private static class Fixture {
@@ -161,7 +133,6 @@ class AiAgentServiceTest {
         private final ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
         private final SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
         private final CallerContextProvider callerContextProvider = mock(CallerContextProvider.class);
-        private final AgentRunLogger agentRunLogger = mock(AgentRunLogger.class);
         private final CallerContext callerContext = CallerContext.anonymous();
 
         private Fixture() {
@@ -176,8 +147,7 @@ class AiAgentServiceTest {
                     instructions,
                     toolCandidateSelector,
                     toolCallbackResolver,
-                    callerContextProvider,
-                    agentRunLogger
+                    callerContextProvider
             );
         }
 
