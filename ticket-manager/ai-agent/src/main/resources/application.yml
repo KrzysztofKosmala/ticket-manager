@@ -9,69 +9,29 @@ spring:
   ai:
     mcp:
       client:
-        enabled: true
-        request-timeout: 5s
-        sse:
-          connections:
-            ai-tools-gateway:
-              url: http://localhost:8105
-              sse-endpoint: /sse
+        enabled: ${AI_AGENT_MCP_CLIENT_ENABLED:false}
     ollama:
-      base-url: http://127.0.0.1:7869
+      base-url: ${AI_AGENT_OLLAMA_BASE_URL}
       chat:
         options:
-          model: qwen3:8b
-          temperature: 0.2
-  zipkin:
-    base-url: http://localhost:9411
-  datasource:
-    password: password
-    url: jdbc:postgresql://localhost:51/ai-agent
-    username: admin
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
-    defer-datasource-initialization: false
-  sql:
-    init:
-      mode: always
-  liquibase:
-    change-log: classpath:liquibase-changelog.xml
-    drop-first: true
+          model: ${AI_AGENT_OLLAMA_MODEL}
+          temperature: ${AI_AGENT_OLLAMA_TEMPERATURE:0.2}
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8085/realms/ticket-manager-realm
+          issuer-uri: ${AI_AGENT_JWT_ISSUER_URI}
 eureka:
   client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
+    enabled: ${AI_AGENT_EUREKA_ENABLED:false}
 openapi:
   info:
     title: AI Agent Doc
     version: 1.0.0
   service:
     description: AI Agent APIs
-    url: http://localhost:8099
+    url: ${AI_AGENT_OPENAPI_URL}
 
 ai-agent:
   answer:
     synthesizer: fake
-
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-    enabled: true
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans

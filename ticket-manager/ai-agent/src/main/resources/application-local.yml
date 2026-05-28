@@ -1,0 +1,45 @@
+spring:
+  ai:
+    mcp:
+      client:
+        enabled: true
+        request-timeout: 5s
+        sse:
+          connections:
+            ai-tools-gateway:
+              url: http://localhost:8105
+              sse-endpoint: /sse
+    ollama:
+      base-url: http://127.0.0.1:7869
+      chat:
+        options:
+          model: qwen3:8b
+          temperature: 0.2
+  zipkin:
+    base-url: http://localhost:9411
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8085/realms/ticket-manager-realm
+
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+openapi:
+  service:
+    url: http://localhost:8099
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
