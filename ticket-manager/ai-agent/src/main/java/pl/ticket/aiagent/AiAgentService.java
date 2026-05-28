@@ -12,6 +12,7 @@ import pl.ticket.aiagent.caller.CallerContextProvider;
 import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
 import pl.ticket.aiagent.exception.AiModelUnavailableException;
 import pl.ticket.aiagent.run.AgentRun;
+import pl.ticket.aiagent.run.AgentRunLogger;
 import pl.ticket.aiagent.toolcallback.SelectedToolCallbackResolver;
 import pl.ticket.aiagent.toolselection.ToolCandidateSelector;
 
@@ -22,13 +23,15 @@ public class AiAgentService
     private final ToolCandidateSelector toolCandidateSelector;
     private final SelectedToolCallbackResolver toolCallbackResolver;
     private final CallerContextProvider callerContextProvider;
+    private final AgentRunLogger agentRunLogger;
 
     public AiAgentService(
             ChatClient.Builder chatClientBuilder,
             AiAgentInstructions instructions,
             ToolCandidateSelector toolCandidateSelector,
             SelectedToolCallbackResolver toolCallbackResolver,
-            CallerContextProvider callerContextProvider
+            CallerContextProvider callerContextProvider,
+            AgentRunLogger agentRunLogger
     ) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(instructions.systemPrompt())
@@ -36,6 +39,7 @@ public class AiAgentService
         this.toolCandidateSelector = toolCandidateSelector;
         this.toolCallbackResolver = toolCallbackResolver;
         this.callerContextProvider = callerContextProvider;
+        this.agentRunLogger = agentRunLogger;
     }
 
     public AiAgentResponse ask(String userMessage) {
@@ -61,6 +65,7 @@ public class AiAgentService
             throw new AiModelEmptyResponseException();
         }
 
+        agentRunLogger.logCompleted(run);
         return new AiAgentResponse(run.answer(), AiAgentResponse.Status.COMPLETED);
     }
 }
