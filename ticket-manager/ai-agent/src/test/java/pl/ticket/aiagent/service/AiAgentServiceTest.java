@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.retry.TransientAiException;
 import org.springframework.ai.tool.ToolCallback;
+import pl.ticket.aiagent.conversation.Conversation;
+import pl.ticket.aiagent.conversation.ConversationMessage;
+import pl.ticket.aiagent.conversation.ConversationStore;
 import pl.ticket.aiagent.dto.AiAgentResponse;
 import pl.ticket.aiagent.security.CallerContext;
 import pl.ticket.aiagent.security.CallerContextProvider;
@@ -32,6 +35,7 @@ class AiAgentServiceTest {
     void shouldAskModelWithSystemInstructions() {
         Fixture fixture = new Fixture();
         fixture.noSelectedTools();
+        fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
 
         AiAgentResponse response = fixture.service().ask(MESSAGE);
@@ -46,12 +50,36 @@ class AiAgentServiceTest {
     void shouldSelectToolCandidatesForCurrentCallerBeforeAskingModel() {
         Fixture fixture = new Fixture();
         fixture.noSelectedTools();
+        fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
 
         fixture.service().ask(MESSAGE);
 
         verify(fixture.callerContextProvider).current();
         verify(fixture.toolCandidateSelector).selectFor(MESSAGE, fixture.callerContext);
+    }
+
+    @Test
+    void shouldCreateConversationAndStoreUserAndAssistantMessages() {
+        Fixture fixture = new Fixture();
+        fixture.noSelectedTools();
+        fixture.newConversation();
+        fixture.modelAnswers("Masz 2 zamowienia.");
+
+        AiAgentResponse response = fixture.service().ask(MESSAGE);
+
+        assertThat(response.conversationId()).isEqualTo("conversation-123");
+        verify(fixture.conversationStore).getOrCreate(null, fixture.callerContext);
+        verify(fixture.conversationStore).appendMessage(
+                "conversation-123",
+                fixture.callerContext,
+                ConversationMessage.user(MESSAGE)
+        );
+        verify(fixture.conversationStore).appendMessage(
+                "conversation-123",
+                fixture.callerContext,
+                ConversationMessage.assistant("Masz 2 zamowienia.")
+        );
     }
 
     @Test
@@ -62,6 +90,7 @@ class AiAgentServiceTest {
         List<ToolCandidate> candidates = List.of(candidate);
         List<ToolCallback> callbacks = List.of(toolCallback);
         fixture.selectedTools(candidates, ToolCallbackResolution.of(callbacks));
+        fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
         when(fixture.requestSpec.toolCallbacks(callbacks)).thenReturn(fixture.requestSpec);
 
@@ -77,6 +106,7 @@ class AiAgentServiceTest {
         ToolCandidate candidate = new ToolCandidate("tm.orders.search");
         List<ToolCandidate> candidates = List.of(candidate);
         fixture.selectedTools(candidates, ToolCallbackResolution.empty());
+        fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
 
         fixture.service().ask(MESSAGE);
@@ -90,6 +120,7 @@ class AiAgentServiceTest {
         ToolCandidate candidate = new ToolCandidate("tm.orders.search");
         List<ToolCandidate> candidates = List.of(candidate);
         fixture.selectedTools(candidates, new ToolCallbackResolution(List.of(), candidates));
+        fixture.newConversation();
         fixture.modelAnswers("Nie mam teraz dostepu do danych zamowien, ale moge pomoc ogolnie.");
 
         AiAgentResponse response = fixture.service().ask(MESSAGE);
@@ -103,6 +134,7 @@ class AiAgentServiceTest {
     void shouldThrowWhenModelAnswerIsBlank() {
         Fixture fixture = new Fixture();
         fixture.noSelectedTools();
+        fixture.newConversation();
         fixture.modelAnswers("   ");
 
         assertThatThrownBy(() -> fixture.service().ask(MESSAGE))
@@ -113,6 +145,7 @@ class AiAgentServiceTest {
     void shouldThrowAiModelUnavailableWhenChatClientFailsWithKnownAiException() {
         Fixture fixture = new Fixture();
         fixture.noSelectedTools();
+        fixture.newConversation();
         when(fixture.chatClient.prompt()).thenReturn(fixture.requestSpec);
         when(fixture.requestSpec.user(MESSAGE)).thenReturn(fixture.requestSpec);
         when(fixture.requestSpec.toolCallbacks(List.of())).thenReturn(fixture.requestSpec);
@@ -133,7 +166,13 @@ class AiAgentServiceTest {
         private final ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
         private final SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
         private final CallerContextProvider callerContextProvider = mock(CallerContextProvider.class);
+        private final ConversationStore conversationStore = mock(ConversationStore.class);
         private final CallerContext callerContext = CallerContext.anonymous();
+        private final Conversation conversation = new Conversation(
+                "conversation-123",
+                callerContext.subject(),
+                List.of()
+        );
 
         private Fixture() {
             when(builder.defaultSystem(instructions.systemPrompt())).thenReturn(builder);
@@ -147,7 +186,8 @@ class AiAgentServiceTest {
                     instructions,
                     toolCandidateSelector,
                     toolCallbackResolver,
-                    callerContextProvider
+                    callerContextProvider,
+                    conversationStore
             );
         }
 
@@ -158,6 +198,10 @@ class AiAgentServiceTest {
         private void selectedTools(List<ToolCandidate> candidates, ToolCallbackResolution resolution) {
             when(toolCandidateSelector.selectFor(MESSAGE, callerContext)).thenReturn(candidates);
             when(toolCallbackResolver.resolve(candidates)).thenReturn(resolution);
+        }
+
+        private void newConversation() {
+            when(conversationStore.getOrCreate(null, callerContext)).thenReturn(conversation);
         }
 
         private void modelAnswers(String answer) {

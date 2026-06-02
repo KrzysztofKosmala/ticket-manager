@@ -6,6 +6,9 @@ import org.springframework.ai.retry.TransientAiException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
+import pl.ticket.aiagent.conversation.Conversation;
+import pl.ticket.aiagent.conversation.ConversationMessage;
+import pl.ticket.aiagent.conversation.ConversationStore;
 import pl.ticket.aiagent.dto.AiAgentResponse;
 import pl.ticket.aiagent.security.CallerContext;
 import pl.ticket.aiagent.security.CallerContextProvider;
@@ -22,13 +25,15 @@ public class AiAgentService
     private final ToolCandidateSelector toolCandidateSelector;
     private final SelectedToolCallbackResolver toolCallbackResolver;
     private final CallerContextProvider callerContextProvider;
+    private final ConversationStore conversationStore;
 
     public AiAgentService(
             ChatClient.Builder chatClientBuilder,
             AiAgentInstructions instructions,
             ToolCandidateSelector toolCandidateSelector,
             SelectedToolCallbackResolver toolCallbackResolver,
-            CallerContextProvider callerContextProvider
+            CallerContextProvider callerContextProvider,
+            ConversationStore conversationStore
     ) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(instructions.systemPrompt())
@@ -36,10 +41,18 @@ public class AiAgentService
         this.toolCandidateSelector = toolCandidateSelector;
         this.toolCallbackResolver = toolCallbackResolver;
         this.callerContextProvider = callerContextProvider;
+        this.conversationStore = conversationStore;
     }
 
     public AiAgentResponse ask(String userMessage) {
+        return ask(userMessage, null);
+    }
+
+    public AiAgentResponse ask(String userMessage, String conversationId) {
         CallerContext callerContext = callerContextProvider.current();
+        Conversation conversation = conversationStore.getOrCreate(conversationId, callerContext);
+        conversationStore.appendMessage(conversation.id(), callerContext, ConversationMessage.user(userMessage));
+
         AgentRun run = AgentRun.started(userMessage, callerContext);
         run = run.withSelectedTools(toolCandidateSelector.selectFor(run.userMessage(), run.callerContext()));
         run = run.withResolvedCallbacks(toolCallbackResolver.resolve(run.selectedTools()));
@@ -61,6 +74,8 @@ public class AiAgentService
             throw new AiModelEmptyResponseException();
         }
 
-        return new AiAgentResponse(run.answer(), AiAgentResponse.Status.COMPLETED);
+        conversationStore.appendMessage(conversation.id(), callerContext, ConversationMessage.assistant(run.answer()));
+
+        return new AiAgentResponse(run.answer(), AiAgentResponse.Status.COMPLETED, conversation.id());
     }
 }

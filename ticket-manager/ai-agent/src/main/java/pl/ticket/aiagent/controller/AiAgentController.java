@@ -22,9 +22,9 @@ public class AiAgentController
     @PostMapping("/ask")
     public ResponseEntity<AiAgentResponse> ask(@Valid @RequestBody AskRequest request) {
 
-        AiAgentResponse result = aiAgentService.ask(request.message());
+        AiAgentResponse result = aiAgentService.ask(request.message(), request.conversationId());
         return ResponseEntity.ok(result);
     }
 
-    public record AskRequest(@NotBlank String message) {}
+    public record AskRequest(@NotBlank String message, String conversationId) {}
 }
