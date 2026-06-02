@@ -157,7 +157,7 @@ class AiAgentServiceTest {
 
         private void selectedTools(List<ToolCandidate> candidates, ToolCallbackResolution resolution) {
             when(toolCandidateSelector.selectFor(MESSAGE, callerContext)).thenReturn(candidates);
-            when(toolCallbackResolver.resolve(candidates, callerContext)).thenReturn(resolution);
+            when(toolCallbackResolver.resolve(candidates)).thenReturn(resolution);
         }
 
         private void modelAnswers(String answer) {
