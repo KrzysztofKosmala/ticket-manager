@@ -42,7 +42,7 @@ public class AiAgentService
         CallerContext callerContext = callerContextProvider.current();
         AgentRun run = AgentRun.started(userMessage, callerContext);
         run = run.withSelectedTools(toolCandidateSelector.selectFor(run.userMessage(), run.callerContext()));
-        run = run.withResolvedCallbacks(toolCallbackResolver.resolve(run.selectedTools()));
+        run = run.withResolvedCallbacks(toolCallbackResolver.resolve(run.selectedTools(), run.callerContext()));
 
         String answer;
         try {
