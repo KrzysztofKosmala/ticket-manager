@@ -1,20 +1,21 @@
 package pl.ticket.aiagent.service;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.ai.retry.TransientAiException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 import pl.ticket.aiagent.conversation.Conversation;
-import pl.ticket.aiagent.conversation.ConversationMessage;
 import pl.ticket.aiagent.conversation.ConversationStore;
 import pl.ticket.aiagent.dto.AiAgentResponse;
-import pl.ticket.aiagent.security.CallerContext;
-import pl.ticket.aiagent.security.CallerContextProvider;
 import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
 import pl.ticket.aiagent.exception.AiModelUnavailableException;
 import pl.ticket.aiagent.model.AgentRun;
+import pl.ticket.aiagent.security.CallerContext;
+import pl.ticket.aiagent.security.CallerContextProvider;
 import pl.ticket.aiagent.tools.SelectedToolCallbackResolver;
 import pl.ticket.aiagent.tools.ToolCandidateSelector;
 
@@ -30,6 +31,7 @@ public class AiAgentService
     public AiAgentService(
             ChatClient.Builder chatClientBuilder,
             AiAgentInstructions instructions,
+            MessageChatMemoryAdvisor chatMemoryAdvisor,
             ToolCandidateSelector toolCandidateSelector,
             SelectedToolCallbackResolver toolCallbackResolver,
             CallerContextProvider callerContextProvider,
@@ -37,6 +39,7 @@ public class AiAgentService
     ) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(instructions.systemPrompt())
+                .defaultAdvisors(chatMemoryAdvisor)
                 .build();
         this.toolCandidateSelector = toolCandidateSelector;
         this.toolCallbackResolver = toolCallbackResolver;
@@ -51,7 +54,6 @@ public class AiAgentService
     public AiAgentResponse ask(String userMessage, String conversationId) {
         CallerContext callerContext = callerContextProvider.current();
         Conversation conversation = conversationStore.getOrCreate(conversationId, callerContext);
-        conversationStore.appendMessage(conversation.id(), callerContext, ConversationMessage.user(userMessage));
 
         AgentRun run = AgentRun.started(userMessage, callerContext);
         run = run.withSelectedTools(toolCandidateSelector.selectFor(run.userMessage(), run.callerContext()));
@@ -61,6 +63,7 @@ public class AiAgentService
         try {
             answer = chatClient.prompt()
                     .user(run.userMessage())
+                    .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversation.id()))
                     .toolCallbacks(run.toolCallbackResolution().callbacks())
                     .call()
                     .content();
@@ -73,8 +76,6 @@ public class AiAgentService
         if (!StringUtils.hasText(run.answer())) {
             throw new AiModelEmptyResponseException();
         }
-
-        conversationStore.appendMessage(conversation.id(), callerContext, ConversationMessage.assistant(run.answer()));
 
         return new AiAgentResponse(run.answer(), AiAgentResponse.Status.COMPLETED, conversation.id());
     }

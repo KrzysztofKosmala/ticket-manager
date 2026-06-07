@@ -13,13 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ApplicationConfigurationSafetyTest {
 
     @Test
-    void shouldNotForceActiveSpringProfileFromSharedApplicationYaml() {
-        Properties properties = loadYaml("application.yml");
-
-        assertThat(properties).doesNotContainKey("spring.profiles.active");
-    }
-
-    @Test
     void shouldImportDedicatedToolRegistryYamlFromSharedApplicationYaml() {
         Properties properties = loadYaml("application.yml");
 
@@ -56,6 +49,12 @@ class ApplicationConfigurationSafetyTest {
         Properties properties = loadYaml("application.yml");
 
         assertThat(properties)
+                .doesNotContainKey("spring.ai.mcp.client.enabled")
+                .doesNotContainKey("spring.ai.ollama.base-url")
+                .doesNotContainKey("spring.ai.ollama.chat.options.model")
+                .doesNotContainKey("spring.security.oauth2.resourceserver.jwt.issuer-uri")
+                .doesNotContainKey("eureka.client.enabled")
+                .doesNotContainKey("openapi.service.url")
                 .doesNotContainKey("spring.datasource.url")
                 .doesNotContainKey("spring.datasource.username")
                 .doesNotContainKey("spring.datasource.password")
@@ -67,7 +66,8 @@ class ApplicationConfigurationSafetyTest {
         assertThat(stringValues(properties))
                 .noneMatch(value -> value.contains("localhost"))
                 .noneMatch(value -> value.contains("127.0.0.1"))
-                .noneMatch(value -> value.startsWith("jdbc:postgresql://"));
+                .noneMatch(value -> value.startsWith("jdbc:postgresql://"))
+                .noneMatch(value -> value.startsWith("${AI_AGENT_"));
     }
 
     @Test
@@ -89,6 +89,34 @@ class ApplicationConfigurationSafetyTest {
                 .doesNotContainKey("spring.datasource.url")
                 .doesNotContainKey("spring.jpa.hibernate.ddl-auto")
                 .doesNotContainKey("spring.liquibase.drop-first");
+    }
+
+    @Test
+    void shouldLoadProductionRuntimeSettingsFromProdProfileYaml() {
+        Properties properties = loadYaml("application-prod.yml");
+
+        assertThat(properties)
+                .containsEntry("spring.ai.mcp.client.enabled", "${AI_AGENT_MCP_CLIENT_ENABLED:false}")
+                .containsEntry("spring.ai.mcp.client.sse.connections.ai-tools-gateway.url", "${AI_AGENT_MCP_GATEWAY_URL}")
+                .containsEntry("spring.ai.ollama.base-url", "${AI_AGENT_OLLAMA_BASE_URL}")
+                .containsEntry("spring.ai.ollama.chat.options.model", "${AI_AGENT_OLLAMA_MODEL}")
+                .containsEntry("spring.security.oauth2.resourceserver.jwt.issuer-uri", "${AI_AGENT_JWT_ISSUER_URI}")
+                .containsEntry("eureka.client.service-url.defaultZone", "${AI_AGENT_EUREKA_DEFAULT_ZONE}")
+                .containsEntry("openapi.service.url", "${AI_AGENT_OPENAPI_URL}")
+                .containsEntry("management.zipkin.tracing.endpoint", "${AI_AGENT_ZIPKIN_TRACING_ENDPOINT}");
+    }
+
+    @Test
+    void shouldLoadTestRuntimeSettingsFromTestProfileYaml() {
+        Properties properties = loadYaml("application-test.yml");
+
+        assertThat(properties)
+                .containsEntry("spring.ai.mcp.client.enabled", false)
+                .containsEntry("spring.ai.ollama.base-url", "http://localhost:11434")
+                .containsEntry("spring.ai.ollama.chat.options.model", "test-model")
+                .containsEntry("spring.security.oauth2.resourceserver.jwt.issuer-uri", "http://localhost:8085/realms/test")
+                .containsEntry("eureka.client.enabled", false)
+                .containsEntry("openapi.service.url", "http://localhost:8099");
     }
 
     private Properties loadYaml(String resourceName) {

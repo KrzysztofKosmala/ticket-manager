@@ -1,0 +1,43 @@
+spring:
+  ai:
+    mcp:
+      client:
+        enabled: ${AI_AGENT_MCP_CLIENT_ENABLED:false}
+        request-timeout: ${AI_AGENT_MCP_CLIENT_REQUEST_TIMEOUT:5s}
+        sse:
+          connections:
+            ai-tools-gateway:
+              url: ${AI_AGENT_MCP_GATEWAY_URL}
+              sse-endpoint: ${AI_AGENT_MCP_GATEWAY_SSE_ENDPOINT:/sse}
+    ollama:
+      base-url: ${AI_AGENT_OLLAMA_BASE_URL}
+      chat:
+        options:
+          model: ${AI_AGENT_OLLAMA_MODEL}
+          temperature: ${AI_AGENT_OLLAMA_TEMPERATURE:0.2}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AI_AGENT_JWT_ISSUER_URI}
+
+eureka:
+  client:
+    enabled: ${AI_AGENT_EUREKA_ENABLED:true}
+    service-url:
+      defaultZone: ${AI_AGENT_EUREKA_DEFAULT_ZONE}
+    fetch-registry: ${AI_AGENT_EUREKA_FETCH_REGISTRY:true}
+    register-with-eureka: ${AI_AGENT_EUREKA_REGISTER_WITH_EUREKA:true}
+
+openapi:
+  service:
+    url: ${AI_AGENT_OPENAPI_URL}
+
+management:
+  tracing:
+    sampling:
+      probability: ${AI_AGENT_TRACING_SAMPLING_PROBABILITY:1.0}
+    enabled: ${AI_AGENT_TRACING_ENABLED:true}
+  zipkin:
+    tracing:
+      endpoint: ${AI_AGENT_ZIPKIN_TRACING_ENDPOINT}

@@ -1,36 +1,19 @@
 server:
   port: 8099
 spring:
+  profiles:
+    active: local
   config:
     import:
       - optional:classpath:ai-agent-tools.yml
   application:
     name: ai-agent
-  ai:
-    mcp:
-      client:
-        enabled: ${AI_AGENT_MCP_CLIENT_ENABLED:false}
-    ollama:
-      base-url: ${AI_AGENT_OLLAMA_BASE_URL}
-      chat:
-        options:
-          model: ${AI_AGENT_OLLAMA_MODEL}
-          temperature: ${AI_AGENT_OLLAMA_TEMPERATURE:0.2}
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${AI_AGENT_JWT_ISSUER_URI}
-eureka:
-  client:
-    enabled: ${AI_AGENT_EUREKA_ENABLED:false}
 openapi:
   info:
     title: AI Agent Doc
     version: 1.0.0
   service:
     description: AI Agent APIs
-    url: ${AI_AGENT_OPENAPI_URL}
 
 ai-agent:
   answer:

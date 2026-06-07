@@ -5,6 +5,7 @@ import org.springframework.util.StringUtils;
 import pl.ticket.aiagent.security.CallerContext;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,6 +43,45 @@ public class InMemoryConversationStore implements ConversationStore {
             }
             return existingConversation.withMessage(message);
         });
+    }
+
+    @Override
+    public Optional<Conversation> findById(String conversationId, CallerContext callerContext) {
+        CallerContext effectiveCallerContext = callerContext == null ? CallerContext.anonymous() : callerContext;
+        Conversation conversation = conversations.get(conversationId);
+        if (!isOwnedBy(conversation, effectiveCallerContext)) {
+            return Optional.empty();
+        }
+        return Optional.of(conversation);
+    }
+
+    @Override
+    public List<String> findIds(CallerContext callerContext) {
+        CallerContext effectiveCallerContext = callerContext == null ? CallerContext.anonymous() : callerContext;
+        return conversations.values().stream()
+                .filter(conversation -> isOwnedBy(conversation, effectiveCallerContext))
+                .map(Conversation::id)
+                .toList();
+    }
+
+    @Override
+    public Conversation replaceMessages(
+            String conversationId,
+            CallerContext callerContext,
+            List<ConversationMessage> messages
+    ) {
+        CallerContext effectiveCallerContext = callerContext == null ? CallerContext.anonymous() : callerContext;
+        return conversations.compute(conversationId, (id, existingConversation) -> {
+            if (!isOwnedBy(existingConversation, effectiveCallerContext)) {
+                throw new IllegalArgumentException("Conversation not found for current caller");
+            }
+            return new Conversation(id, existingConversation.ownerSubject(), messages);
+        });
+    }
+
+    @Override
+    public Conversation clearMessages(String conversationId, CallerContext callerContext) {
+        return replaceMessages(conversationId, callerContext, List.of());
     }
 
     private boolean isOwnedBy(Conversation conversation, CallerContext callerContext) {
