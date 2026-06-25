@@ -8,6 +8,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.retry.TransientAiException;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.definition.ToolDefinition;
 import pl.ticket.aiagent.conversation.Conversation;
 import pl.ticket.aiagent.conversation.ConversationMessage;
 import pl.ticket.aiagent.conversation.ConversationStore;
@@ -16,10 +17,12 @@ import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
 import pl.ticket.aiagent.exception.AiModelUnavailableException;
 import pl.ticket.aiagent.security.CallerContext;
 import pl.ticket.aiagent.security.CallerContextProvider;
+import pl.ticket.aiagent.tools.ObservedToolCallback;
 import pl.ticket.aiagent.tools.SelectedToolCallbackResolver;
 import pl.ticket.aiagent.tools.ToolCallbackResolution;
 import pl.ticket.aiagent.tools.ToolCandidate;
 import pl.ticket.aiagent.tools.ToolCandidateSelector;
+import pl.ticket.aiagent.tools.ToolInvocationRecorder;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -115,21 +118,42 @@ class AiAgentServiceTest {
     }
 
     @Test
-    void shouldPassResolvedToolCallbacksToChatClientRequest() {
+    void shouldPassObservedResolvedToolCallbacksToChatClientRequest() {
         Fixture fixture = new Fixture();
         ToolCandidate candidate = new ToolCandidate("tm.orders.search");
         ToolCallback toolCallback = mock(ToolCallback.class);
+        ToolDefinition toolDefinition = mock(ToolDefinition.class);
         List<ToolCandidate> candidates = List.of(candidate);
         List<ToolCallback> callbacks = List.of(toolCallback);
         fixture.selectedTools(candidates, ToolCallbackResolution.of(callbacks));
         fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
-        when(fixture.requestSpec.toolCallbacks(callbacks)).thenReturn(fixture.requestSpec);
+        when(toolCallback.getToolDefinition()).thenReturn(toolDefinition);
+        when(toolDefinition.name()).thenReturn("tm.orders.search");
+        when(toolCallback.call("{}")).thenReturn("{\"orders\":[]}");
 
         AiAgentResponse response = fixture.service().ask(MESSAGE);
 
         assertThat(response.status()).isEqualTo(AiAgentResponse.Status.COMPLETED);
-        verify(fixture.requestSpec).toolCallbacks(callbacks);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<ToolCallback>> callbacksCaptor = ArgumentCaptor.forClass(List.class);
+        verify(fixture.requestSpec).toolCallbacks(callbacksCaptor.capture());
+
+        List<ToolCallback> observedCallbacks = callbacksCaptor.getValue();
+        assertThat(observedCallbacks)
+                .hasSize(1)
+                .first()
+                .isInstanceOf(ObservedToolCallback.class);
+
+        String toolResult = observedCallbacks.get(0).call("{}");
+
+        assertThat(toolResult).isEqualTo("{\"orders\":[]}");
+        verify(fixture.toolInvocationRecorder).recordSuccess(
+                "conversation-123",
+                "tm.orders.search",
+                "{}",
+                "{\"orders\":[]}"
+        );
     }
 
     @Test
@@ -202,6 +226,7 @@ class AiAgentServiceTest {
         private final ChatClient.CallResponseSpec callResponseSpec = mock(ChatClient.CallResponseSpec.class);
         private final ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
         private final SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
+        private final ToolInvocationRecorder toolInvocationRecorder = mock(ToolInvocationRecorder.class);
         private final CallerContextProvider callerContextProvider = mock(CallerContextProvider.class);
         private final ConversationStore conversationStore = mock(ConversationStore.class);
         private final CallerContext callerContext = CallerContext.anonymous();
@@ -225,6 +250,7 @@ class AiAgentServiceTest {
                     chatMemoryAdvisor,
                     toolCandidateSelector,
                     toolCallbackResolver,
+                    toolInvocationRecorder,
                     callerContextProvider,
                     conversationStore
             );
@@ -248,7 +274,7 @@ class AiAgentServiceTest {
             when(requestSpec.user(MESSAGE)).thenReturn(requestSpec);
             when(requestSpec.advisors(org.mockito.ArgumentMatchers.<Consumer<ChatClient.AdvisorSpec>>any()))
                     .thenReturn(requestSpec);
-            when(requestSpec.toolCallbacks(List.of())).thenReturn(requestSpec);
+            when(requestSpec.toolCallbacks(org.mockito.ArgumentMatchers.<List<ToolCallback>>any())).thenReturn(requestSpec);
             when(requestSpec.call()).thenReturn(callResponseSpec);
             when(callResponseSpec.content()).thenReturn(answer);
         }
