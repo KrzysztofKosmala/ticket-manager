@@ -1,7 +1,5 @@
 package pl.ticket.aiagent.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -29,14 +27,13 @@ import java.util.List;
 @Service
 public class AiAgentService
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AiAgentService.class);
-
     private final ChatClient chatClient;
     private final ToolCandidateSelector toolCandidateSelector;
     private final SelectedToolCallbackResolver toolCallbackResolver;
     private final ToolInvocationRecorder toolInvocationRecorder;
     private final CallerContextProvider callerContextProvider;
     private final ConversationStore conversationStore;
+    private final AiAgentFlowLogger flowLogger;
 
     public AiAgentService(
             // Spring AI tworzy builder automatycznie; na nim doklejamy system prompt, advisor i potem budujemy ChatClient.
@@ -54,7 +51,9 @@ public class AiAgentService
             // Nasz @Component. Czyta aktualnego uzytkownika, role i scope'y z SecurityContext.
             CallerContextProvider callerContextProvider,
             // Nasz interface; Spring wstrzykuje InMemoryConversationStore z rozmowami trzymanymi w pamieci JVM.
-            ConversationStore conversationStore
+            ConversationStore conversationStore,
+            // Nasz @Component tylko od logow diagnostycznych flow: selected tools, resolved callbacks, completed request.
+            AiAgentFlowLogger flowLogger
     ) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(instructions.systemPrompt())
@@ -66,6 +65,7 @@ public class AiAgentService
         this.toolInvocationRecorder = toolInvocationRecorder;
         this.callerContextProvider = callerContextProvider;
         this.conversationStore = conversationStore;
+        this.flowLogger = flowLogger;
     }
 
     public AiAgentResponse ask(String userMessage) {
@@ -81,19 +81,11 @@ public class AiAgentService
 
         // Selector wybiera kandydatow z registry/polityki, jeszcze bez dotykania callbackow MCP.
         List<ToolCandidate> selectedTools = toolCandidateSelector.selectFor(userMessage, callerContext);
-        LOGGER.info(
-                "AI agent request started: conversationId={}, selectedTools={}",
-                conversation.id(),
-                selectedToolNames(selectedTools)
-        );
+        flowLogger.requestStarted(conversation.id(), selectedTools);
 
         // Resolver zamienia nazwy kandydatow na realne ToolCallback; brak callbacka oznacza blad konfiguracji/discovery.
         List<ToolCallback> callbacks = toolCallbackResolver.resolve(selectedTools);
-        LOGGER.info(
-                "AI agent resolved tool callbacks: conversationId={}, callbacks={}",
-                conversation.id(),
-                callbackNames(callbacks)
-        );
+        flowLogger.toolCallbacksResolved(conversation.id(), callbacks);
 
         // Spring AI zna tylko ToolCallback. Opakowujemy prawdziwe callbacki, zeby w call() zapisac ich uzycie.
         List<ToolCallback> observedCallbacks = callbacks.stream()
@@ -121,7 +113,7 @@ public class AiAgentService
             throw new AiModelEmptyResponseException();
         }
 
-        LOGGER.info("AI agent request completed: conversationId={}", conversation.id());
+        flowLogger.requestCompleted(conversation.id());
 
         // Zwracamy id rozmowy, zeby kolejne pytanie moglo trafic do tej samej pamieci/advisora.
         return new AiAgentResponse(answer, AiAgentResponse.Status.COMPLETED, conversation.id());
@@ -130,17 +122,5 @@ public class AiAgentService
     private ToolCallback observeToolCallback(String conversationId, ToolCallback callback) {
         // Recorder jest nasz; Spring go nie zna. Wywola tylko ToolCallback.call(), a wrapper zapisze success/failure.
         return new ObservedToolCallback(conversationId, callback, toolInvocationRecorder);
-    }
-
-    private List<String> selectedToolNames(List<ToolCandidate> selectedTools) {
-        return selectedTools.stream()
-                .map(ToolCandidate::name)
-                .toList();
-    }
-
-    private List<String> callbackNames(List<ToolCallback> callbacks) {
-        return callbacks.stream()
-                .map(callback -> callback.getToolDefinition().name())
-                .toList();
     }
 }

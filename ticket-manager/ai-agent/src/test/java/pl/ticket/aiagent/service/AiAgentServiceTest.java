@@ -233,6 +233,7 @@ class AiAgentServiceTest {
         private final ToolInvocationRecorder toolInvocationRecorder = mock(ToolInvocationRecorder.class);
         private final CallerContextProvider callerContextProvider = mock(CallerContextProvider.class);
         private final ConversationStore conversationStore = mock(ConversationStore.class);
+        private final AiAgentFlowLogger flowLogger = new AiAgentFlowLogger();
         private final CallerContext callerContext = CallerContext.anonymous();
         private final Conversation conversation = new Conversation(
                 "conversation-123",
@@ -256,7 +257,8 @@ class AiAgentServiceTest {
                     toolCallbackResolver,
                     toolInvocationRecorder,
                     callerContextProvider,
-                    conversationStore
+                    conversationStore,
+                    flowLogger
             );
         }
 
