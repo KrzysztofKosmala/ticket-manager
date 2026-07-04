@@ -1,7 +1,10 @@
 package pl.ticket.aiagent.service;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -19,7 +22,6 @@ import pl.ticket.aiagent.security.CallerContext;
 import pl.ticket.aiagent.security.CallerContextProvider;
 import pl.ticket.aiagent.tools.ObservedToolCallback;
 import pl.ticket.aiagent.tools.SelectedToolCallbackResolver;
-import pl.ticket.aiagent.tools.ToolCallbackResolution;
 import pl.ticket.aiagent.tools.ToolCandidate;
 import pl.ticket.aiagent.tools.ToolCandidateSelector;
 import pl.ticket.aiagent.tools.ToolInvocationRecorder;
@@ -36,11 +38,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(OutputCaptureExtension.class)
 class AiAgentServiceTest {
 
     private static final String MESSAGE = "Pokaz moje zamowienia";
-    private static final String FALLBACK_ANSWER =
-            "Nie udalo mi sie teraz przygotowac odpowiedzi. Sprobuj ponownie za chwile.";
 
     @Test
     void shouldAskModelWithSystemInstructions() {
@@ -120,16 +121,16 @@ class AiAgentServiceTest {
     @Test
     void shouldPassObservedResolvedToolCallbacksToChatClientRequest() {
         Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm.orders.search");
+        ToolCandidate candidate = new ToolCandidate("tm_orders_search");
         ToolCallback toolCallback = mock(ToolCallback.class);
         ToolDefinition toolDefinition = mock(ToolDefinition.class);
         List<ToolCandidate> candidates = List.of(candidate);
         List<ToolCallback> callbacks = List.of(toolCallback);
-        fixture.selectedTools(candidates, ToolCallbackResolution.of(callbacks));
+        fixture.selectedTools(candidates, callbacks);
         fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
         when(toolCallback.getToolDefinition()).thenReturn(toolDefinition);
-        when(toolDefinition.name()).thenReturn("tm.orders.search");
+        when(toolDefinition.name()).thenReturn("tm_orders_search");
         when(toolCallback.call("{}")).thenReturn("{\"orders\":[]}");
 
         AiAgentResponse response = fixture.service().ask(MESSAGE);
@@ -150,39 +151,42 @@ class AiAgentServiceTest {
         assertThat(toolResult).isEqualTo("{\"orders\":[]}");
         verify(fixture.toolInvocationRecorder).recordSuccess(
                 "conversation-123",
-                "tm.orders.search",
+                "tm_orders_search",
                 "{}",
                 "{\"orders\":[]}"
         );
     }
 
     @Test
-    void shouldAttachEmptyToolCallbacksWhenResolverReturnsNone() {
+    void shouldLogToolSelectionAndResolution(CapturedOutput output) {
         Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm.orders.search");
+        ToolCandidate candidate = new ToolCandidate("tm_orders_search");
+        ToolCallback toolCallback = mock(ToolCallback.class);
+        ToolDefinition toolDefinition = mock(ToolDefinition.class);
         List<ToolCandidate> candidates = List.of(candidate);
-        fixture.selectedTools(candidates, ToolCallbackResolution.empty());
+        fixture.selectedTools(candidates, List.of(toolCallback));
+        fixture.newConversation();
+        fixture.modelAnswers("Masz 2 zamowienia.");
+        when(toolCallback.getToolDefinition()).thenReturn(toolDefinition);
+        when(toolDefinition.name()).thenReturn("tm_orders_search");
+
+        fixture.service().ask(MESSAGE);
+
+        assertThat(output)
+                .contains("AI agent request started: conversationId=conversation-123, selectedTools=[tm_orders_search]")
+                .contains("AI agent resolved tool callbacks: conversationId=conversation-123, callbacks=[tm_orders_search]")
+                .contains("AI agent request completed: conversationId=conversation-123");
+    }
+
+    @Test
+    void shouldAttachEmptyToolCallbacksWhenNoToolsWereSelected() {
+        Fixture fixture = new Fixture();
+        fixture.noSelectedTools();
         fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
 
         fixture.service().ask(MESSAGE);
 
-        verify(fixture.requestSpec).toolCallbacks(List.of());
-    }
-
-    @Test
-    void shouldAskModelWithoutToolCallbacksWhenSelectedToolCallbackIsMissing() {
-        Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm.orders.search");
-        List<ToolCandidate> candidates = List.of(candidate);
-        fixture.selectedTools(candidates, new ToolCallbackResolution(List.of(), candidates));
-        fixture.newConversation();
-        fixture.modelAnswers("Nie mam teraz dostepu do danych zamowien, ale moge pomoc ogolnie.");
-
-        AiAgentResponse response = fixture.service().ask(MESSAGE);
-
-        assertThat(response.status()).isEqualTo(AiAgentResponse.Status.COMPLETED);
-        assertThat(response.answer()).isEqualTo("Nie mam teraz dostepu do danych zamowien, ale moge pomoc ogolnie.");
         verify(fixture.requestSpec).toolCallbacks(List.of());
     }
 
@@ -257,12 +261,12 @@ class AiAgentServiceTest {
         }
 
         private void noSelectedTools() {
-            selectedTools(List.of(), ToolCallbackResolution.empty());
+            selectedTools(List.of(), List.of());
         }
 
-        private void selectedTools(List<ToolCandidate> candidates, ToolCallbackResolution resolution) {
+        private void selectedTools(List<ToolCandidate> candidates, List<ToolCallback> callbacks) {
             when(toolCandidateSelector.selectFor(MESSAGE, callerContext)).thenReturn(candidates);
-            when(toolCallbackResolver.resolve(candidates)).thenReturn(resolution);
+            when(toolCallbackResolver.resolve(candidates)).thenReturn(callbacks);
         }
 
         private void newConversation() {

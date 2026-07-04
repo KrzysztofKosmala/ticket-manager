@@ -26,10 +26,10 @@ class ApplicationConfigurationSafetyTest {
 
         assertThat(properties)
                 .doesNotContainKey("ai-agent.tools.enforce-scopes")
-                .doesNotContainKey("ai-agent.tools.registry[tm.orders.search].enabled")
-                .doesNotContainKey("ai-agent.tools.registry[tm.orders.search].source")
-                .doesNotContainKey("ai-agent.tools.registry[tm.orders.search].access-mode")
-                .doesNotContainKey("ai-agent.tools.registry[tm.orders.search].required-scopes[0]");
+                .doesNotContainKey("ai-agent.tools.registry[tm_orders_search].enabled")
+                .doesNotContainKey("ai-agent.tools.registry[tm_orders_search].source")
+                .doesNotContainKey("ai-agent.tools.registry[tm_orders_search].access-mode")
+                .doesNotContainKey("ai-agent.tools.registry[tm_orders_search].required-scopes[0]");
     }
 
     @Test
@@ -38,10 +38,13 @@ class ApplicationConfigurationSafetyTest {
 
         assertThat(properties)
                 .containsEntry("ai-agent.tools.enforce-scopes", false)
-                .containsEntry("ai-agent.tools.registry[tm.orders.search].enabled", true)
-                .containsEntry("ai-agent.tools.registry[tm.orders.search].source", "INTERNAL_MCP")
-                .containsEntry("ai-agent.tools.registry[tm.orders.search].access-mode", "READ")
-                .containsEntry("ai-agent.tools.registry[tm.orders.search].required-scopes[0]", "tools:orders.read");
+                .containsEntry("ai-agent.tools.registry[tm_orders_search].enabled", true)
+                .containsEntry("ai-agent.tools.registry[tm_orders_search].source", "INTERNAL_MCP")
+                .containsEntry("ai-agent.tools.registry[tm_orders_search].access-mode", "READ")
+                .containsEntry("ai-agent.tools.registry[tm_orders_search].required-scopes[0]", "tools:orders.read")
+                .containsEntry("ai-agent.tools.registry[tm_smoke_ping].enabled", true)
+                .containsEntry("ai-agent.tools.registry[tm_smoke_ping].source", "INTERNAL_MCP")
+                .containsEntry("ai-agent.tools.registry[tm_smoke_ping].access-mode", "READ");
     }
 
     @Test

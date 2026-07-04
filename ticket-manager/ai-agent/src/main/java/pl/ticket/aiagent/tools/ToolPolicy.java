@@ -3,6 +3,8 @@ package pl.ticket.aiagent.tools;
 import org.springframework.stereotype.Component;
 import pl.ticket.aiagent.security.CallerContext;
 
+import java.util.List;
+
 @Component
 public class ToolPolicy {
 
@@ -10,6 +12,10 @@ public class ToolPolicy {
 
     public ToolPolicy(ToolPolicyProperties properties) {
         this.properties = properties;
+    }
+
+    public List<String> enabledToolNames() {
+        return properties.enabledToolNames();
     }
 
     public ToolPolicyDecision evaluate(ToolCandidate candidate, CallerContext callerContext) {

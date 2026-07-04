@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +31,7 @@ public class ToolPolicyProperties {
     }
 
     public void setRegistry(Map<String, ToolMetadata> registry) {
-        this.registry = registry == null ? Map.of() : new LinkedHashMap<>(registry);
+        this.registry = registry == null ? Map.of() : registry;
     }
 
     public List<String> enabledToolNames() {

@@ -7,7 +7,7 @@ import pl.ticket.aiagent.security.CallerContext;
 import java.util.List;
 
 @Component
-@Profile("!local & !test & !smoke")
+@Profile("!local & !test")
 public class NoopToolCandidateSelector implements ToolCandidateSelector {
 
     @Override

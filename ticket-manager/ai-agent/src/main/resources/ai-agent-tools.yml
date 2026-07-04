@@ -2,9 +2,13 @@ ai-agent:
   tools:
     enforce-scopes: false
     registry:
-      "[tm.orders.search]":
+      "[tm_orders_search]":
         enabled: true
         source: INTERNAL_MCP
         access-mode: READ
         required-scopes:
           - tools:orders.read
+      "[tm_smoke_ping]":
+        enabled: true
+        source: INTERNAL_MCP
+        access-mode: READ

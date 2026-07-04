@@ -7,50 +7,43 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class ToolCatalog {
 
-    private final ToolPolicyProperties toolPolicyProperties;
     private final List<ToolCallbackProvider> toolCallbackProviders;
 
-    public ToolCatalog(ToolPolicyProperties toolPolicyProperties, List<ToolCallbackProvider> toolCallbackProviders) {
-        this.toolPolicyProperties = toolPolicyProperties;
+    public ToolCatalog(List<ToolCallbackProvider> toolCallbackProviders) {
         this.toolCallbackProviders = toolCallbackProviders == null ? List.of() : List.copyOf(toolCallbackProviders);
-    }
-
-    public List<String> configuredToolNames() {
-        return toolPolicyProperties.enabledToolNames();
     }
 
     public Optional<ToolCallback> callbackByName(String toolName) {
         return Optional.ofNullable(callbacksByName().get(toolName));
     }
 
-    public ToolCatalogDiagnostics diagnostics() {
-        Set<String> configuredToolNames = new LinkedHashSet<>(toolPolicyProperties.getRegistry().keySet());
-        Set<String> enabledToolNames = new LinkedHashSet<>(configuredToolNames());
-        List<String> discoveredToolNames = discoveredToolNames();
-        Set<String> uniqueDiscoveredToolNames = new LinkedHashSet<>(discoveredToolNames);
-
-        List<String> configuredButNotDiscovered = enabledToolNames.stream()
-                .filter(toolName -> !uniqueDiscoveredToolNames.contains(toolName))
+    public List<ToolProviderDiagnostics> discoveredToolProviders() {
+        return toolCallbackProviders.stream()
+                .map(provider -> new ToolProviderDiagnostics(
+                        provider.getClass().getName(),
+                        Arrays.stream(provider.getToolCallbacks())
+                                .map(callback -> callback.getToolDefinition().name())
+                                .toList()
+                ))
                 .toList();
+    }
 
-        List<String> discoveredButNotConfigured = uniqueDiscoveredToolNames.stream()
-                .filter(toolName -> !configuredToolNames.contains(toolName))
+    public List<String> discoveredToolNames() {
+        return toolCallbackProviders.stream()
+                .flatMap(provider -> Arrays.stream(provider.getToolCallbacks()))
+                .map(callback -> callback.getToolDefinition().name())
                 .toList();
+    }
 
-        return new ToolCatalogDiagnostics(
-                configuredButNotDiscovered,
-                discoveredButNotConfigured,
-                duplicateToolNames(discoveredToolNames)
-        );
+    public List<String> duplicateDiscoveredToolNames() {
+        return duplicateToolNames(discoveredToolNames());
     }
 
     private Map<String, ToolCallback> callbacksByName() {
@@ -63,13 +56,6 @@ public class ToolCatalog {
                     ));
         }
         return callbacksByName;
-    }
-
-    private List<String> discoveredToolNames() {
-        return toolCallbackProviders.stream()
-                .flatMap(provider -> Arrays.stream(provider.getToolCallbacks()))
-                .map(callback -> callback.getToolDefinition().name())
-                .toList();
     }
 
     private List<String> duplicateToolNames(List<String> discoveredToolNames) {

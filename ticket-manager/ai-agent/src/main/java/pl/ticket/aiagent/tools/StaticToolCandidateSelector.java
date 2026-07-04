@@ -8,15 +8,13 @@ import pl.ticket.aiagent.security.CallerContext;
 import java.util.List;
 
 @Component
-@Profile({"local", "test", "smoke"})
+@Profile({"local", "test"})
 public class StaticToolCandidateSelector implements ToolCandidateSelector {
 
     private final ToolPolicy toolPolicy;
-    private final ToolCatalog toolCatalog;
 
-    public StaticToolCandidateSelector(ToolPolicy toolPolicy, ToolCatalog toolCatalog) {
+    public StaticToolCandidateSelector(ToolPolicy toolPolicy) {
         this.toolPolicy = toolPolicy;
-        this.toolCatalog = toolCatalog;
     }
 
     @Override
@@ -25,7 +23,7 @@ public class StaticToolCandidateSelector implements ToolCandidateSelector {
             return List.of();
         }
 
-        return toolCatalog.configuredToolNames().stream()
+        return toolPolicy.enabledToolNames().stream()
                 .map(ToolCandidate::new)
                 .filter(candidate -> isAllowed(candidate, callerContext))
                 .toList();

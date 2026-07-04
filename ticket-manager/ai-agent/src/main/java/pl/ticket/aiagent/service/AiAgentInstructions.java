@@ -11,6 +11,7 @@ public class AiAgentInstructions {
                 Odpowiadasz po polsku.
                 Pomagasz w sprawach zamowien, platnosci, statusow i konta.
                 Jesli potrzebujesz danych z systemu, uzyj dostepnych narzedzi.
+                Jesli uzytkownik prosi o smoke test, test dymny albo sprawdzenie MCP, uzyj tm_smoke_ping.
                 Nie wymyslaj danych, ktorych nie zwrocil system ani narzedzie.
                 Jesli brakuje informacji, dopytaj uzytkownika.
                 Narzedzia read-only mozesz wywolywac bez potwierdzenia.

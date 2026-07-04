@@ -8,6 +8,7 @@ import org.springframework.ai.tool.definition.ToolDefinition;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -15,53 +16,51 @@ class SelectedToolCallbackResolverTest {
 
     @Test
     void shouldResolveCallbacksForSelectedCandidates() {
-        ToolCallback orderSearchCallback = callbackNamed("tm.orders.search");
+        ToolCallback orderSearchCallback = callbackNamed("tm_orders_search");
         ToolCallbackProvider provider = providerReturning(orderSearchCallback);
         SelectedToolCallbackResolver resolver = resolverWith(provider);
 
-        ToolCallbackResolution resolution = resolver.resolve(List.of(
-                new ToolCandidate("tm.orders.search")
+        List<ToolCallback> callbacks = resolver.resolve(List.of(
+                new ToolCandidate("tm_orders_search")
         ));
 
-        assertThat(resolution.callbacks()).containsExactly(orderSearchCallback);
-        assertThat(resolution.missingCandidates()).isEmpty();
+        assertThat(callbacks).containsExactly(orderSearchCallback);
     }
 
     @Test
     void shouldPreserveCandidateOrder() {
-        ToolCallback firstCallback = callbackNamed("first.tool");
-        ToolCallback secondCallback = callbackNamed("second.tool");
+        ToolCallback firstCallback = callbackNamed("first_tool");
+        ToolCallback secondCallback = callbackNamed("second_tool");
         ToolCallbackProvider provider = providerReturning(secondCallback, firstCallback);
         SelectedToolCallbackResolver resolver = resolverWith(provider);
 
-        ToolCallbackResolution resolution = resolver.resolve(List.of(
-                new ToolCandidate("first.tool"),
-                new ToolCandidate("second.tool")
+        List<ToolCallback> callbacks = resolver.resolve(List.of(
+                new ToolCandidate("first_tool"),
+                new ToolCandidate("second_tool")
         ));
 
-        assertThat(resolution.callbacks()).containsExactly(firstCallback, secondCallback);
+        assertThat(callbacks).containsExactly(firstCallback, secondCallback);
     }
 
     @Test
-    void shouldReportMissingCandidates() {
-        ToolCallbackProvider provider = providerReturning(callbackNamed("tm.orders.search"));
+    void shouldThrowWhenSelectedCandidateWasNotDiscovered() {
+        ToolCallbackProvider provider = providerReturning(callbackNamed("tm_orders_search"));
         SelectedToolCallbackResolver resolver = resolverWith(provider);
 
-        ToolCandidate missingCandidate = new ToolCandidate("missing.tool");
-        ToolCallbackResolution resolution = resolver.resolve(List.of(missingCandidate));
+        ToolCandidate missingCandidate = new ToolCandidate("missing_tool");
 
-        assertThat(resolution.callbacks()).isEmpty();
-        assertThat(resolution.missingCandidates()).containsExactly(missingCandidate);
+        assertThatThrownBy(() -> resolver.resolve(List.of(missingCandidate)))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Selected tool callback was not discovered: missing_tool");
     }
 
     @Test
-    void shouldReturnEmptyResolutionWhenNoCandidatesWereSelected() {
-        SelectedToolCallbackResolver resolver = resolverWith(providerReturning(callbackNamed("tm.orders.search")));
+    void shouldReturnEmptyListWhenNoCandidatesWereSelected() {
+        SelectedToolCallbackResolver resolver = resolverWith(providerReturning(callbackNamed("tm_orders_search")));
 
-        ToolCallbackResolution resolution = resolver.resolve(List.of());
+        List<ToolCallback> callbacks = resolver.resolve(List.of());
 
-        assertThat(resolution.callbacks()).isEmpty();
-        assertThat(resolution.missingCandidates()).isEmpty();
+        assertThat(callbacks).isEmpty();
     }
 
     private ToolCallbackProvider providerReturning(ToolCallback... callbacks) {
@@ -71,7 +70,7 @@ class SelectedToolCallbackResolverTest {
     }
 
     private SelectedToolCallbackResolver resolverWith(ToolCallbackProvider provider) {
-        return new SelectedToolCallbackResolver(new ToolCatalog(new ToolPolicyProperties(), List.of(provider)));
+        return new SelectedToolCallbackResolver(new ToolCatalog(List.of(provider)));
     }
 
     private ToolCallback callbackNamed(String name) {

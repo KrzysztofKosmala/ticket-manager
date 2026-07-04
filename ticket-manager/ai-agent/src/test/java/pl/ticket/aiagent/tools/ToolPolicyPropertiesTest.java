@@ -17,17 +17,17 @@ class ToolPolicyPropertiesTest {
     @Test
     void shouldRejectRegistryEntryMissingRequiredPolicyFields() {
         ToolPolicyProperties properties = new ToolPolicyProperties();
-        properties.setRegistry(Map.of("tm.orders.search", new ToolPolicyProperties.ToolMetadata()));
+        properties.setRegistry(Map.of("tm_orders_search", new ToolPolicyProperties.ToolMetadata()));
 
         Set<ConstraintViolation<ToolPolicyProperties>> violations = validator.validate(properties);
 
         assertThat(violations)
                 .extracting(violation -> violation.getPropertyPath().toString())
                 .contains(
-                        "registry[tm.orders.search].source",
-                        "registry[tm.orders.search].accessMode"
+                        "registry[tm_orders_search].source",
+                        "registry[tm_orders_search].accessMode"
                 )
-                .doesNotContain("registry[tm.orders.search].riskLevel");
+                .doesNotContain("registry[tm_orders_search].riskLevel");
     }
 
     @Test
@@ -37,7 +37,7 @@ class ToolPolicyPropertiesTest {
         metadata.setAccessMode(ToolAccessMode.READ);
 
         ToolPolicyProperties properties = new ToolPolicyProperties();
-        properties.setRegistry(Map.of("tm.orders.search", metadata));
+        properties.setRegistry(Map.of("tm_orders_search", metadata));
 
         Set<ConstraintViolation<ToolPolicyProperties>> violations = validator.validate(properties);
 

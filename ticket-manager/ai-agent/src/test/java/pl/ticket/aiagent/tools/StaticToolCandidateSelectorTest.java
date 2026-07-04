@@ -21,15 +21,15 @@ class StaticToolCandidateSelectorTest {
 
         assertThat(candidates)
                 .extracting(ToolCandidate::name)
-                .containsExactly("tm.orders.search");
+                .containsExactly("tm_orders_search");
     }
 
     @Test
     void shouldSelectAllConfiguredToolsWhenPolicyAllowsThem() {
         ToolPolicyProperties properties = properties();
         Map<String, ToolPolicyProperties.ToolMetadata> registry = new LinkedHashMap<>();
-        registry.put("tm.orders.search", metadataWithRequiredScope("tools:orders.read"));
-        registry.put("tm.knowledge.search", metadata());
+        registry.put("tm_orders_search", metadataWithRequiredScope("tools:orders.read"));
+        registry.put("tm_knowledge_search", metadata());
         properties.setRegistry(registry);
         StaticToolCandidateSelector selector = selector(properties);
 
@@ -37,7 +37,7 @@ class StaticToolCandidateSelectorTest {
 
         assertThat(candidates)
                 .extracting(ToolCandidate::name)
-                .containsExactly("tm.orders.search", "tm.knowledge.search");
+                .containsExactly("tm_orders_search", "tm_knowledge_search");
     }
 
     @Test
@@ -45,8 +45,8 @@ class StaticToolCandidateSelectorTest {
         ToolPolicyProperties.ToolMetadata disabledMetadata = metadata();
         disabledMetadata.setEnabled(false);
         Map<String, ToolPolicyProperties.ToolMetadata> registry = new LinkedHashMap<>();
-        registry.put("tm.orders.search", metadataWithRequiredScope("tools:orders.read"));
-        registry.put("tm.knowledge.search", disabledMetadata);
+        registry.put("tm_orders_search", metadataWithRequiredScope("tools:orders.read"));
+        registry.put("tm_knowledge_search", disabledMetadata);
         ToolPolicyProperties properties = new ToolPolicyProperties();
         properties.setRegistry(registry);
         StaticToolCandidateSelector selector = selector(properties);
@@ -55,7 +55,7 @@ class StaticToolCandidateSelectorTest {
 
         assertThat(candidates)
                 .extracting(ToolCandidate::name)
-                .containsExactly("tm.orders.search");
+                .containsExactly("tm_orders_search");
     }
 
     @Test
@@ -101,18 +101,18 @@ class StaticToolCandidateSelectorTest {
 
         assertThat(candidates)
                 .extracting(ToolCandidate::name)
-                .containsExactly("tm.orders.search");
+                .containsExactly("tm_orders_search");
     }
 
     private ToolPolicyProperties properties() {
         ToolPolicyProperties properties = new ToolPolicyProperties();
         ToolPolicyProperties.ToolMetadata metadata = metadataWithRequiredScope("tools:orders.read");
-        properties.setRegistry(Map.of("tm.orders.search", metadata));
+        properties.setRegistry(Map.of("tm_orders_search", metadata));
         return properties;
     }
 
     private StaticToolCandidateSelector selector(ToolPolicyProperties properties) {
-        return new StaticToolCandidateSelector(new ToolPolicy(properties), new ToolCatalog(properties, List.of()));
+        return new StaticToolCandidateSelector(new ToolPolicy(properties));
     }
 
     private ToolPolicyProperties.ToolMetadata metadataWithRequiredScope(String requiredScope) {

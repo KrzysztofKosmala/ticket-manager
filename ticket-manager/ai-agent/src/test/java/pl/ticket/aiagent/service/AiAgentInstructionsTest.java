@@ -16,6 +16,7 @@ class AiAgentInstructionsTest {
                 .contains("Jestes asystentem obslugi klienta Ticket Manager.")
                 .contains("Odpowiadasz po polsku.")
                 .contains("Jesli potrzebujesz danych z systemu, uzyj dostepnych narzedzi.")
+                .contains("Jesli uzytkownik prosi o smoke test, test dymny albo sprawdzenie MCP, uzyj tm_smoke_ping.")
                 .contains("Nie wymyslaj danych, ktorych nie zwrocil system ani narzedzie.")
                 .contains("Akcje zmieniajace stan wymagaja potwierdzenia uzytkownika.")
                 .doesNotContain("PLANU DZIALANIA")

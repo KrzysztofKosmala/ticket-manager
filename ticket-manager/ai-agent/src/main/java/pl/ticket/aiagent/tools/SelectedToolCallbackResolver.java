@@ -15,22 +15,21 @@ public class SelectedToolCallbackResolver {
         this.toolCatalog = toolCatalog;
     }
 
-    public ToolCallbackResolution resolve(List<ToolCandidate> candidates) {
+    public List<ToolCallback> resolve(List<ToolCandidate> candidates) {
         if (candidates == null || candidates.isEmpty()) {
-            return ToolCallbackResolution.empty();
+            return List.of();
         }
 
-        List<ToolCallback> resolvedCallbacks = new ArrayList<>();
-        List<ToolCandidate> missingCandidates = new ArrayList<>();
+        List<ToolCallback> callbacks = new ArrayList<>();
 
         for (ToolCandidate candidate : candidates) {
-            toolCatalog.callbackByName(candidate.name())
-                    .ifPresentOrElse(
-                            resolvedCallbacks::add,
-                            () -> missingCandidates.add(candidate)
-                    );
+            ToolCallback callback = toolCatalog.callbackByName(candidate.name())
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Selected tool callback was not discovered: " + candidate.name()
+                    ));
+            callbacks.add(callback);
         }
 
-        return new ToolCallbackResolution(resolvedCallbacks, missingCandidates);
+        return callbacks;
     }
 }
