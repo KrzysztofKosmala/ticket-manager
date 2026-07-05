@@ -25,11 +25,12 @@ class ApplicationConfigurationSafetyTest {
         Properties properties = loadYaml("application.yml");
 
         assertThat(properties)
+                .doesNotContainKey("ai-agent.tools.selection-mode")
                 .doesNotContainKey("ai-agent.tools.enforce-scopes")
-                .doesNotContainKey("ai-agent.tools.registry[tm_orders_search].enabled")
-                .doesNotContainKey("ai-agent.tools.registry[tm_orders_search].source")
-                .doesNotContainKey("ai-agent.tools.registry[tm_orders_search].access-mode")
-                .doesNotContainKey("ai-agent.tools.registry[tm_orders_search].required-scopes[0]");
+                .doesNotContainKey("ai-agent.tools.registry[tm_my_orders_search].enabled")
+                .doesNotContainKey("ai-agent.tools.registry[tm_my_orders_search].source")
+                .doesNotContainKey("ai-agent.tools.registry[tm_my_orders_search].access-mode")
+                .doesNotContainKey("ai-agent.tools.registry[tm_my_orders_search].required-scopes[0]");
     }
 
     @Test
@@ -38,13 +39,55 @@ class ApplicationConfigurationSafetyTest {
 
         assertThat(properties)
                 .containsEntry("ai-agent.tools.enforce-scopes", false)
-                .containsEntry("ai-agent.tools.registry[tm_orders_search].enabled", true)
-                .containsEntry("ai-agent.tools.registry[tm_orders_search].source", "INTERNAL_MCP")
-                .containsEntry("ai-agent.tools.registry[tm_orders_search].access-mode", "READ")
-                .containsEntry("ai-agent.tools.registry[tm_orders_search].required-scopes[0]", "tools:orders.read")
-                .containsEntry("ai-agent.tools.registry[tm_smoke_ping].enabled", true)
-                .containsEntry("ai-agent.tools.registry[tm_smoke_ping].source", "INTERNAL_MCP")
-                .containsEntry("ai-agent.tools.registry[tm_smoke_ping].access-mode", "READ");
+                .containsEntry("ai-agent.tools.registry[tm_my_orders_search].enabled", true)
+                .containsEntry("ai-agent.tools.registry[tm_my_orders_search].source", "INTERNAL_MCP")
+                .containsEntry("ai-agent.tools.registry[tm_my_orders_search].access-mode", "READ")
+                .containsEntry("ai-agent.tools.registry[tm_my_orders_search].required-scopes[0]", "tools:orders.read")
+                .containsEntry("ai-agent.tools.registry[tm_my_order_status_get].required-scopes[0]", "tools:orders.read")
+                .containsEntry("ai-agent.tools.registry[tm_my_cart_get].required-scopes[0]", "tools:cart.read")
+                .containsEntry("ai-agent.tools.registry[tm_my_cart_items_count].required-scopes[0]", "tools:cart.read")
+                .containsEntry("ai-agent.tools.registry[tm_my_order_payment_status_get].required-scopes[0]", "tools:payments.read")
+                .containsEntry("ai-agent.tools.registry[tm_events_search].required-scopes[0]", "tools:events.read")
+                .containsEntry("ai-agent.tools.registry[tm_event_capacity_check].required-scopes[0]", "tools:events.read")
+                .containsEntry("ai-agent.tools.registry[tm_event_details_get].required-scopes[0]", "tools:events.read");
+        assertThat(properties.keySet().stream()
+                .map(Object::toString)
+                .filter(key -> key.startsWith("ai-agent.tools.registry"))
+                .toList())
+                .containsExactlyInAnyOrder(
+                        "ai-agent.tools.registry[tm_my_orders_search].enabled",
+                        "ai-agent.tools.registry[tm_my_orders_search].source",
+                        "ai-agent.tools.registry[tm_my_orders_search].access-mode",
+                        "ai-agent.tools.registry[tm_my_orders_search].required-scopes[0]",
+                        "ai-agent.tools.registry[tm_my_order_status_get].enabled",
+                        "ai-agent.tools.registry[tm_my_order_status_get].source",
+                        "ai-agent.tools.registry[tm_my_order_status_get].access-mode",
+                        "ai-agent.tools.registry[tm_my_order_status_get].required-scopes[0]",
+                        "ai-agent.tools.registry[tm_my_cart_get].enabled",
+                        "ai-agent.tools.registry[tm_my_cart_get].source",
+                        "ai-agent.tools.registry[tm_my_cart_get].access-mode",
+                        "ai-agent.tools.registry[tm_my_cart_get].required-scopes[0]",
+                        "ai-agent.tools.registry[tm_my_cart_items_count].enabled",
+                        "ai-agent.tools.registry[tm_my_cart_items_count].source",
+                        "ai-agent.tools.registry[tm_my_cart_items_count].access-mode",
+                        "ai-agent.tools.registry[tm_my_cart_items_count].required-scopes[0]",
+                        "ai-agent.tools.registry[tm_my_order_payment_status_get].enabled",
+                        "ai-agent.tools.registry[tm_my_order_payment_status_get].source",
+                        "ai-agent.tools.registry[tm_my_order_payment_status_get].access-mode",
+                        "ai-agent.tools.registry[tm_my_order_payment_status_get].required-scopes[0]",
+                        "ai-agent.tools.registry[tm_events_search].enabled",
+                        "ai-agent.tools.registry[tm_events_search].source",
+                        "ai-agent.tools.registry[tm_events_search].access-mode",
+                        "ai-agent.tools.registry[tm_events_search].required-scopes[0]",
+                        "ai-agent.tools.registry[tm_event_capacity_check].enabled",
+                        "ai-agent.tools.registry[tm_event_capacity_check].source",
+                        "ai-agent.tools.registry[tm_event_capacity_check].access-mode",
+                        "ai-agent.tools.registry[tm_event_capacity_check].required-scopes[0]",
+                        "ai-agent.tools.registry[tm_event_details_get].enabled",
+                        "ai-agent.tools.registry[tm_event_details_get].source",
+                        "ai-agent.tools.registry[tm_event_details_get].access-mode",
+                        "ai-agent.tools.registry[tm_event_details_get].required-scopes[0]"
+                );
     }
 
     @Test
@@ -78,11 +121,13 @@ class ApplicationConfigurationSafetyTest {
         Properties properties = loadYaml("application-local.yml");
 
         assertThat(properties)
+                .containsEntry("ai-agent.tools.selection-mode", "static")
                 .containsEntry("spring.ai.mcp.client.enabled", true)
+                .containsEntry("spring.ai.mcp.client.request-timeout", "5m")
                 .containsEntry("spring.ai.mcp.client.sse.connections.ai-tools-gateway.url", "http://localhost:8105")
                 .containsEntry("spring.ai.mcp.client.sse.connections.ai-tools-gateway.sse-endpoint", "/sse")
                 .containsEntry("spring.ai.ollama.base-url", "http://127.0.0.1:7869")
-                .containsEntry("spring.ai.ollama.chat.options.model", "qwen3:8b")
+                .containsEntry("spring.ai.ollama.chat.options.model", "llama3.2:3b")
                 .containsEntry("spring.security.oauth2.resourceserver.jwt.issuer-uri", "http://localhost:8085/realms/ticket-manager-realm")
                 .containsEntry("eureka.client.service-url.defaultZone", "http://localhost:8761/eureka")
                 .containsEntry("openapi.service.url", "http://localhost:8099")

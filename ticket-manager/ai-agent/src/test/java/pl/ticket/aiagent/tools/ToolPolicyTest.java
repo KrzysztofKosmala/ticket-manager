@@ -69,7 +69,7 @@ class ToolPolicyTest {
         ToolPolicyProperties properties = propertiesWithOrderTool();
         ToolPolicyProperties.ToolMetadata metadata = metadata();
         metadata.setAccessMode(ToolAccessMode.WRITE);
-        properties.setRegistry(Map.of("tm_orders_search", metadata));
+        properties.setRegistry(Map.of("tm_my_orders_search", metadata));
         ToolPolicy policy = new ToolPolicy(properties);
 
         ToolPolicyDecision decision = policy.evaluate(orderSearch(), CallerContext.anonymous());
@@ -84,20 +84,20 @@ class ToolPolicyTest {
         ToolPolicyProperties.ToolMetadata disabledMetadata = metadata();
         disabledMetadata.setEnabled(false);
         Map<String, ToolPolicyProperties.ToolMetadata> registry = new LinkedHashMap<>();
-        registry.put("tm_orders_search", metadata());
+        registry.put("tm_my_orders_search", metadata());
         registry.put("tm_disabled_search", disabledMetadata);
         properties.setRegistry(registry);
         ToolPolicy policy = new ToolPolicy(properties);
 
         assertThat(policy.enabledToolNames())
-                .containsExactly("tm_orders_search");
+                .containsExactly("tm_my_orders_search");
     }
 
     private ToolPolicyProperties propertiesWithOrderTool() {
         ToolPolicyProperties properties = new ToolPolicyProperties();
         ToolPolicyProperties.ToolMetadata metadata = metadata();
         metadata.setRequiredScopes(List.of("tools:orders.read"));
-        properties.setRegistry(Map.of("tm_orders_search", metadata));
+        properties.setRegistry(Map.of("tm_my_orders_search", metadata));
         return properties;
     }
 
@@ -109,6 +109,6 @@ class ToolPolicyTest {
     }
 
     private ToolCandidate orderSearch() {
-        return new ToolCandidate("tm_orders_search");
+        return new ToolCandidate("tm_my_orders_search");
     }
 }

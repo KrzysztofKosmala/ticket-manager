@@ -12,12 +12,12 @@ class InMemoryToolInvocationRecorderTest {
     void shouldStoreSuccessfulInvocationsByConversationId() {
         InMemoryToolInvocationRecorder recorder = new InMemoryToolInvocationRecorder();
 
-        recorder.recordSuccess("conversation-123", "tm_orders_search", "{\"status\":\"PAID\"}", "[{\"id\":\"order-1\"}]");
+        recorder.recordSuccess("conversation-123", "tm_my_orders_search", "{\"status\":\"PAID\"}", "[{\"id\":\"order-1\"}]");
 
         assertThat(recorder.findByConversationId("conversation-123"))
                 .containsExactly(new ToolInvocation(
                         "conversation-123",
-                        "tm_orders_search",
+                        "tm_my_orders_search",
                         "{\"status\":\"PAID\"}",
                         ToolInvocationStatus.SUCCESS,
                         "[{\"id\":\"order-1\"}]",
@@ -30,12 +30,12 @@ class InMemoryToolInvocationRecorderTest {
         InMemoryToolInvocationRecorder recorder = new InMemoryToolInvocationRecorder();
         RuntimeException failure = new RuntimeException("tool unavailable");
 
-        recorder.recordFailure("conversation-123", "tm_orders_search", "{}", failure);
+        recorder.recordFailure("conversation-123", "tm_my_orders_search", "{}", failure);
 
         assertThat(recorder.findByConversationId("conversation-123"))
                 .containsExactly(new ToolInvocation(
                         "conversation-123",
-                        "tm_orders_search",
+                        "tm_my_orders_search",
                         "{}",
                         ToolInvocationStatus.FAILED,
                         null,

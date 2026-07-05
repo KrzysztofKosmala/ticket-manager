@@ -121,7 +121,7 @@ class AiAgentServiceTest {
     @Test
     void shouldPassObservedResolvedToolCallbacksToChatClientRequest() {
         Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm_orders_search");
+        ToolCandidate candidate = new ToolCandidate("tm_my_orders_search");
         ToolCallback toolCallback = mock(ToolCallback.class);
         ToolDefinition toolDefinition = mock(ToolDefinition.class);
         List<ToolCandidate> candidates = List.of(candidate);
@@ -130,7 +130,7 @@ class AiAgentServiceTest {
         fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
         when(toolCallback.getToolDefinition()).thenReturn(toolDefinition);
-        when(toolDefinition.name()).thenReturn("tm_orders_search");
+        when(toolDefinition.name()).thenReturn("tm_my_orders_search");
         when(toolCallback.call("{}")).thenReturn("{\"orders\":[]}");
 
         AiAgentResponse response = fixture.service().ask(MESSAGE);
@@ -151,7 +151,7 @@ class AiAgentServiceTest {
         assertThat(toolResult).isEqualTo("{\"orders\":[]}");
         verify(fixture.toolInvocationRecorder).recordSuccess(
                 "conversation-123",
-                "tm_orders_search",
+                "tm_my_orders_search",
                 "{}",
                 "{\"orders\":[]}"
         );
@@ -160,7 +160,7 @@ class AiAgentServiceTest {
     @Test
     void shouldLogToolSelectionAndResolution(CapturedOutput output) {
         Fixture fixture = new Fixture();
-        ToolCandidate candidate = new ToolCandidate("tm_orders_search");
+        ToolCandidate candidate = new ToolCandidate("tm_my_orders_search");
         ToolCallback toolCallback = mock(ToolCallback.class);
         ToolDefinition toolDefinition = mock(ToolDefinition.class);
         List<ToolCandidate> candidates = List.of(candidate);
@@ -168,13 +168,13 @@ class AiAgentServiceTest {
         fixture.newConversation();
         fixture.modelAnswers("Masz 2 zamowienia.");
         when(toolCallback.getToolDefinition()).thenReturn(toolDefinition);
-        when(toolDefinition.name()).thenReturn("tm_orders_search");
+        when(toolDefinition.name()).thenReturn("tm_my_orders_search");
 
         fixture.service().ask(MESSAGE);
 
         assertThat(output)
-                .contains("AI agent request started: conversationId=conversation-123, selectedTools=[tm_orders_search]")
-                .contains("AI agent resolved tool callbacks: conversationId=conversation-123, callbacks=[tm_orders_search]")
+                .contains("AI agent request started: conversationId=conversation-123, selectedTools=[tm_my_orders_search]")
+                .contains("AI agent resolved tool callbacks: conversationId=conversation-123, callbacks=[tm_my_orders_search]")
                 .contains("AI agent request completed: conversationId=conversation-123");
     }
 

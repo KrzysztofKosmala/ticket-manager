@@ -1,6 +1,6 @@
 package pl.ticket.aiagent.tools;
 
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import pl.ticket.aiagent.security.CallerContext;
@@ -8,7 +8,7 @@ import pl.ticket.aiagent.security.CallerContext;
 import java.util.List;
 
 @Component
-@Profile({"local", "test"})
+@ConditionalOnProperty(name = "ai-agent.tools.selection-mode", havingValue = "static")
 public class StaticToolCandidateSelector implements ToolCandidateSelector {
 
     private final ToolPolicy toolPolicy;

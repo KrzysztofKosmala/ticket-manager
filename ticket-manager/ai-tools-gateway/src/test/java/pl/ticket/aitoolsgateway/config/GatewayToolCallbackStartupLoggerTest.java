@@ -20,8 +20,11 @@ class GatewayToolCallbackStartupLoggerTest {
     @Test
     void shouldLogGatewayToolCallbackProviders(CapturedOutput output) {
         ToolCallbackProvider provider = providerReturning(
-                callbackNamed("tm_orders_search"),
-                callbackNamed("tm_smoke_ping")
+                callbackNamed("tm_my_orders_search"),
+                callbackNamed("tm_my_cart_get"),
+                callbackNamed("tm_my_order_payment_status_get"),
+                callbackNamed("tm_events_search"),
+                callbackNamed("tm_event_capacity_check")
         );
         GatewayToolCallbackStartupLogger logger = new GatewayToolCallbackStartupLogger(List.of(provider));
 
@@ -29,8 +32,11 @@ class GatewayToolCallbackStartupLoggerTest {
 
         assertThat(output)
                 .contains("AI tools gateway callback providers:")
-                .contains("tm_orders_search")
-                .contains("tm_smoke_ping");
+                .contains("tm_my_orders_search")
+                .contains("tm_my_cart_get")
+                .contains("tm_my_order_payment_status_get")
+                .contains("tm_events_search")
+                .contains("tm_event_capacity_check");
     }
 
     private ToolCallbackProvider providerReturning(ToolCallback... callbacks) {

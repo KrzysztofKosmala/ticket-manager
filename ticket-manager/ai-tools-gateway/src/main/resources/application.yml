@@ -48,3 +48,11 @@ ai-tools-gateway:
   tools:
     timeout-ms: 3000
     audit-enabled: true
+    orders:
+      handler: fake
+    cart:
+      handler: fake
+    payment:
+      handler: fake
+    event:
+      handler: fake

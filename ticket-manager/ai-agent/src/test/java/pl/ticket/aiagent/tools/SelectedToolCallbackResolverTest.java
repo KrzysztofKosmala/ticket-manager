@@ -16,12 +16,12 @@ class SelectedToolCallbackResolverTest {
 
     @Test
     void shouldResolveCallbacksForSelectedCandidates() {
-        ToolCallback orderSearchCallback = callbackNamed("tm_orders_search");
+        ToolCallback orderSearchCallback = callbackNamed("tm_my_orders_search");
         ToolCallbackProvider provider = providerReturning(orderSearchCallback);
         SelectedToolCallbackResolver resolver = resolverWith(provider);
 
         List<ToolCallback> callbacks = resolver.resolve(List.of(
-                new ToolCandidate("tm_orders_search")
+                new ToolCandidate("tm_my_orders_search")
         ));
 
         assertThat(callbacks).containsExactly(orderSearchCallback);
@@ -44,7 +44,7 @@ class SelectedToolCallbackResolverTest {
 
     @Test
     void shouldThrowWhenSelectedCandidateWasNotDiscovered() {
-        ToolCallbackProvider provider = providerReturning(callbackNamed("tm_orders_search"));
+        ToolCallbackProvider provider = providerReturning(callbackNamed("tm_my_orders_search"));
         SelectedToolCallbackResolver resolver = resolverWith(provider);
 
         ToolCandidate missingCandidate = new ToolCandidate("missing_tool");
@@ -56,7 +56,7 @@ class SelectedToolCallbackResolverTest {
 
     @Test
     void shouldReturnEmptyListWhenNoCandidatesWereSelected() {
-        SelectedToolCallbackResolver resolver = resolverWith(providerReturning(callbackNamed("tm_orders_search")));
+        SelectedToolCallbackResolver resolver = resolverWith(providerReturning(callbackNamed("tm_my_orders_search")));
 
         List<ToolCallback> callbacks = resolver.resolve(List.of());
 

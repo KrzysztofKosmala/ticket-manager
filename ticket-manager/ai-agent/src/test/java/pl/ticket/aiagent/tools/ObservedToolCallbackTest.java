@@ -22,7 +22,7 @@ class ObservedToolCallbackTest {
         ToolDefinition definition = mock(ToolDefinition.class);
         ToolInvocationRecorder recorder = mock(ToolInvocationRecorder.class);
         when(originalCallback.getToolDefinition()).thenReturn(definition);
-        when(definition.name()).thenReturn("tm_orders_search");
+        when(definition.name()).thenReturn("tm_my_orders_search");
         when(originalCallback.call("{\"status\":\"PAID\"}")).thenReturn("[{\"id\":\"order-1\"}]");
 
         ObservedToolCallback callback = new ObservedToolCallback("conversation-123", originalCallback, recorder);
@@ -32,7 +32,7 @@ class ObservedToolCallbackTest {
         assertThat(result).isEqualTo("[{\"id\":\"order-1\"}]");
         verify(recorder).recordSuccess(
                 "conversation-123",
-                "tm_orders_search",
+                "tm_my_orders_search",
                 "{\"status\":\"PAID\"}",
                 "[{\"id\":\"order-1\"}]"
         );
@@ -44,16 +44,16 @@ class ObservedToolCallbackTest {
         ToolDefinition definition = mock(ToolDefinition.class);
         ToolInvocationRecorder recorder = mock(ToolInvocationRecorder.class);
         when(originalCallback.getToolDefinition()).thenReturn(definition);
-        when(definition.name()).thenReturn("tm_smoke_ping");
-        when(originalCallback.call("{}")).thenReturn("{\"status\":\"SMOKE_OK\"}");
+        when(definition.name()).thenReturn("tm_my_orders_search");
+        when(originalCallback.call("{}")).thenReturn("{\"totalCount\":0}");
 
         ObservedToolCallback callback = new ObservedToolCallback("conversation-123", originalCallback, recorder);
 
         callback.call("{}");
 
         assertThat(output)
-                .contains("AI tool invocation started: conversationId=conversation-123, toolName=tm_smoke_ping")
-                .contains("AI tool invocation succeeded: conversationId=conversation-123, toolName=tm_smoke_ping");
+                .contains("AI tool invocation started: conversationId=conversation-123, toolName=tm_my_orders_search")
+                .contains("AI tool invocation succeeded: conversationId=conversation-123, toolName=tm_my_orders_search");
     }
 
     @Test
@@ -63,7 +63,7 @@ class ObservedToolCallbackTest {
         ToolInvocationRecorder recorder = mock(ToolInvocationRecorder.class);
         RuntimeException failure = new RuntimeException("tool unavailable");
         when(originalCallback.getToolDefinition()).thenReturn(definition);
-        when(definition.name()).thenReturn("tm_orders_search");
+        when(definition.name()).thenReturn("tm_my_orders_search");
         when(originalCallback.call("{}")).thenThrow(failure);
 
         ObservedToolCallback callback = new ObservedToolCallback("conversation-123", originalCallback, recorder);
@@ -72,7 +72,7 @@ class ObservedToolCallbackTest {
                 .isSameAs(failure);
         verify(recorder).recordFailure(
                 "conversation-123",
-                "tm_orders_search",
+                "tm_my_orders_search",
                 "{}",
                 failure
         );

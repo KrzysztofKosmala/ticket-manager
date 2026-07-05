@@ -104,6 +104,13 @@ services:
     pull_policy: always
     tty: true
     restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
     networks:
       - postgres
     healthcheck:
@@ -117,7 +124,7 @@ services:
     container_name: ollama-model-init
     environment:
       - OLLAMA_HOST=http://ollama:11434
-    command: pull qwen3:8b
+    command: pull llama3.2:3b
     depends_on:
       ollama:
         condition: service_healthy

@@ -14,17 +14,17 @@ class ToolCatalogTest {
 
     @Test
     void shouldResolveDiscoveredCallbackByName() {
-        ToolCallback orderSearchCallback = callbackNamed("tm_orders_search");
+        ToolCallback orderSearchCallback = callbackNamed("tm_my_orders_search");
         ToolCallbackProvider provider = providerReturning(orderSearchCallback);
         ToolCatalog catalog = new ToolCatalog(List.of(provider));
 
-        assertThat(catalog.callbackByName("tm_orders_search"))
+        assertThat(catalog.callbackByName("tm_my_orders_search"))
                 .contains(orderSearchCallback);
     }
 
     @Test
     void shouldReturnEmptyOptionalWhenCallbackWasNotDiscovered() {
-        ToolCallbackProvider provider = providerReturning(callbackNamed("tm_orders_search"));
+        ToolCallbackProvider provider = providerReturning(callbackNamed("tm_my_orders_search"));
         ToolCatalog catalog = new ToolCatalog(List.of(provider));
 
         assertThat(catalog.callbackByName("tm_knowledge_search"))
@@ -34,27 +34,27 @@ class ToolCatalogTest {
     @Test
     void shouldExposeDiscoveredToolNamesInProviderOrder() {
         ToolCallbackProvider provider = providerReturning(
-                callbackNamed("tm_orders_search"),
+                callbackNamed("tm_my_orders_search"),
                 callbackNamed("tm_internal_unconfigured")
         );
         ToolCatalog catalog = new ToolCatalog(List.of(provider));
 
         assertThat(catalog.discoveredToolNames())
-                .containsExactly("tm_orders_search", "tm_internal_unconfigured");
+                .containsExactly("tm_my_orders_search", "tm_internal_unconfigured");
     }
 
     @Test
     void shouldReportDuplicateDiscoveredToolNames() {
-        ToolCallbackProvider firstProvider = providerReturning(callbackNamed("tm_orders_search"));
+        ToolCallbackProvider firstProvider = providerReturning(callbackNamed("tm_my_orders_search"));
         ToolCallbackProvider secondProvider = providerReturning(
-                callbackNamed("tm_orders_search"),
-                callbackNamed("tm_orders_search"),
+                callbackNamed("tm_my_orders_search"),
+                callbackNamed("tm_my_orders_search"),
                 callbackNamed("tm_knowledge_search")
         );
         ToolCatalog catalog = new ToolCatalog(List.of(firstProvider, secondProvider));
 
         assertThat(catalog.duplicateDiscoveredToolNames())
-                .containsExactly("tm_orders_search");
+                .containsExactly("tm_my_orders_search");
     }
 
     private ToolCallbackProvider providerReturning(ToolCallback... callbacks) {
