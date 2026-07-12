@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import pl.ticket.aiagent.configuration.security.SecurityConfig;
-import pl.ticket.aiagent.tools.NoopToolCandidateSelector;
-import pl.ticket.aiagent.tools.StaticToolCandidateSelector;
+import pl.ticket.aiagent.service.tools.NoopToolCandidateSelector;
+import pl.ticket.aiagent.service.tools.StaticToolCandidateSelector;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

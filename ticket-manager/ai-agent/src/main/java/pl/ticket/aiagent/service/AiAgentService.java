@@ -1,5 +1,7 @@
 package pl.ticket.aiagent.service;
 
+import pl.ticket.aiagent.service.tools.ToolCandidateSelector;
+import pl.ticket.aiagent.service.tools.ToolInvocationRecorder;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -9,19 +11,18 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
-import pl.ticket.aiagent.conversation.Conversation;
-import pl.ticket.aiagent.conversation.ConversationStore;
+import pl.ticket.aiagent.logging.AiAgentFlowLogger;
+import pl.ticket.aiagent.model.conversation.Conversation;
+import pl.ticket.aiagent.service.conversation.ConversationStore;
 import pl.ticket.aiagent.dto.AiAgentResponse;
 import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
 import pl.ticket.aiagent.exception.AiModelUnavailableException;
-import pl.ticket.aiagent.run.AgentRunRecorder;
+import pl.ticket.aiagent.service.run.AgentRunRecorder;
 import pl.ticket.aiagent.security.CallerContext;
 import pl.ticket.aiagent.security.CallerContextProvider;
-import pl.ticket.aiagent.tools.ObservedToolCallback;
-import pl.ticket.aiagent.tools.SelectedToolCallbackResolver;
-import pl.ticket.aiagent.tools.ToolCandidate;
-import pl.ticket.aiagent.tools.ToolCandidateSelector;
-import pl.ticket.aiagent.tools.ToolInvocationRecorder;
+import pl.ticket.aiagent.service.tools.ObservedToolCallback;
+import pl.ticket.aiagent.service.tools.SelectedToolCallbackResolver;
+import pl.ticket.aiagent.model.tools.ToolCandidate;
 
 import java.util.List;
 

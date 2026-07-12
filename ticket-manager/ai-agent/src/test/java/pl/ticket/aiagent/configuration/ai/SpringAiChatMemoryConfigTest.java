@@ -7,11 +7,11 @@ import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import pl.ticket.aiagent.conversation.Conversation;
-import pl.ticket.aiagent.conversation.ConversationChatMemoryRepository;
-import pl.ticket.aiagent.conversation.ConversationMessage;
-import pl.ticket.aiagent.conversation.ConversationStore;
-import pl.ticket.aiagent.conversation.InMemoryConversationStore;
+import pl.ticket.aiagent.model.conversation.Conversation;
+import pl.ticket.aiagent.service.conversation.ConversationChatMemoryRepository;
+import pl.ticket.aiagent.model.conversation.ConversationMessage;
+import pl.ticket.aiagent.service.conversation.ConversationStore;
+import pl.ticket.aiagent.service.conversation.InMemoryConversationStore;
 import pl.ticket.aiagent.security.CallerContext;
 import pl.ticket.aiagent.security.CallerContextProvider;
 
