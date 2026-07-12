@@ -122,6 +122,14 @@ class ApplicationConfigurationSafetyTest {
 
         assertThat(properties)
                 .containsEntry("ai-agent.tools.selection-mode", "static")
+                .containsEntry("ai-agent.persistence.mode", "jpa")
+                .containsEntry("spring.datasource.url", "jdbc:postgresql://localhost:51/ai")
+                .containsEntry("spring.datasource.username", "admin")
+                .containsEntry("spring.datasource.password", "password")
+                .containsEntry("spring.jpa.hibernate.ddl-auto", "validate")
+                .containsEntry("spring.jpa.show-sql", false)
+                .containsEntry("spring.liquibase.change-log", "classpath:liquibase-changelog.xml")
+                .containsEntry("spring.liquibase.drop-first", false)
                 .containsEntry("spring.ai.mcp.client.enabled", true)
                 .containsEntry("spring.ai.mcp.client.request-timeout", "5m")
                 .containsEntry("spring.ai.mcp.client.sse.connections.ai-tools-gateway.url", "http://localhost:8105")
@@ -134,9 +142,7 @@ class ApplicationConfigurationSafetyTest {
                 .containsEntry("management.zipkin.tracing.endpoint", "http://localhost:9411/api/v2/spans");
 
         assertThat(properties)
-                .doesNotContainKey("spring.datasource.url")
-                .doesNotContainKey("spring.jpa.hibernate.ddl-auto")
-                .doesNotContainKey("spring.liquibase.drop-first");
+                .doesNotContainKey("spring.sql.init.mode");
     }
 
     @Test
@@ -144,6 +150,14 @@ class ApplicationConfigurationSafetyTest {
         Properties properties = loadYaml("application-prod.yml");
 
         assertThat(properties)
+                .containsEntry("ai-agent.persistence.mode", "${AI_AGENT_PERSISTENCE_MODE:jpa}")
+                .containsEntry("spring.datasource.url", "${AI_AGENT_DATASOURCE_URL}")
+                .containsEntry("spring.datasource.username", "${AI_AGENT_DATASOURCE_USERNAME}")
+                .containsEntry("spring.datasource.password", "${AI_AGENT_DATASOURCE_PASSWORD}")
+                .containsEntry("spring.jpa.hibernate.ddl-auto", "validate")
+                .containsEntry("spring.jpa.show-sql", false)
+                .containsEntry("spring.liquibase.change-log", "classpath:liquibase-changelog.xml")
+                .containsEntry("spring.liquibase.drop-first", false)
                 .containsEntry("spring.ai.mcp.client.enabled", "${AI_AGENT_MCP_CLIENT_ENABLED:false}")
                 .containsEntry("spring.ai.mcp.client.sse.connections.ai-tools-gateway.url", "${AI_AGENT_MCP_GATEWAY_URL}")
                 .containsEntry("spring.ai.ollama.base-url", "${AI_AGENT_OLLAMA_BASE_URL}")
@@ -159,6 +173,11 @@ class ApplicationConfigurationSafetyTest {
         Properties properties = loadYaml("application-test.yml");
 
         assertThat(properties)
+                .containsEntry("ai-agent.persistence.mode", "jpa")
+                .containsEntry("spring.datasource.url", "jdbc:h2:mem:ai-agent-test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH")
+                .containsEntry("spring.jpa.hibernate.ddl-auto", "validate")
+                .containsEntry("spring.liquibase.change-log", "classpath:liquibase-changelog.xml")
+                .containsEntry("spring.liquibase.drop-first", true)
                 .containsEntry("spring.ai.mcp.client.enabled", false)
                 .containsEntry("spring.ai.ollama.base-url", "http://localhost:11434")
                 .containsEntry("spring.ai.ollama.chat.options.model", "test-model")

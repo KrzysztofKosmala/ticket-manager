@@ -18,6 +18,7 @@ import pl.ticket.aiagent.conversation.ConversationStore;
 import pl.ticket.aiagent.dto.AiAgentResponse;
 import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
 import pl.ticket.aiagent.exception.AiModelUnavailableException;
+import pl.ticket.aiagent.run.AgentRunRecorder;
 import pl.ticket.aiagent.security.CallerContext;
 import pl.ticket.aiagent.security.CallerContextProvider;
 import pl.ticket.aiagent.tools.ObservedToolCallback;
@@ -151,6 +152,7 @@ class AiAgentServiceTest {
         assertThat(toolResult).isEqualTo("{\"orders\":[]}");
         verify(fixture.toolInvocationRecorder).recordSuccess(
                 "conversation-123",
+                "run-123",
                 "tm_my_orders_search",
                 "{}",
                 "{\"orders\":[]}"
@@ -231,6 +233,7 @@ class AiAgentServiceTest {
         private final ToolCandidateSelector toolCandidateSelector = mock(ToolCandidateSelector.class);
         private final SelectedToolCallbackResolver toolCallbackResolver = mock(SelectedToolCallbackResolver.class);
         private final ToolInvocationRecorder toolInvocationRecorder = mock(ToolInvocationRecorder.class);
+        private final AgentRunRecorder agentRunRecorder = mock(AgentRunRecorder.class);
         private final CallerContextProvider callerContextProvider = mock(CallerContextProvider.class);
         private final ConversationStore conversationStore = mock(ConversationStore.class);
         private final AiAgentFlowLogger flowLogger = new AiAgentFlowLogger();
@@ -246,6 +249,8 @@ class AiAgentServiceTest {
             when(builder.defaultAdvisors(chatMemoryAdvisor)).thenReturn(builder);
             when(builder.build()).thenReturn(chatClient);
             when(callerContextProvider.current()).thenReturn(callerContext);
+            when(agentRunRecorder.start(anyString(), anyString(), org.mockito.ArgumentMatchers.<List<ToolCandidate>>any()))
+                    .thenReturn("run-123");
         }
 
         private AiAgentService service() {
@@ -258,7 +263,8 @@ class AiAgentServiceTest {
                     toolInvocationRecorder,
                     callerContextProvider,
                     conversationStore,
-                    flowLogger
+                    flowLogger,
+                    agentRunRecorder
             );
         }
 

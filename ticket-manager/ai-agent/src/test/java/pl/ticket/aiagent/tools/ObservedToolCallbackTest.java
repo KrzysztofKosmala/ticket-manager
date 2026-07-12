@@ -32,6 +32,7 @@ class ObservedToolCallbackTest {
         assertThat(result).isEqualTo("[{\"id\":\"order-1\"}]");
         verify(recorder).recordSuccess(
                 "conversation-123",
+                null,
                 "tm_my_orders_search",
                 "{\"status\":\"PAID\"}",
                 "[{\"id\":\"order-1\"}]"
@@ -72,6 +73,7 @@ class ObservedToolCallbackTest {
                 .isSameAs(failure);
         verify(recorder).recordFailure(
                 "conversation-123",
+                null,
                 "tm_my_orders_search",
                 "{}",
                 failure

@@ -13,11 +13,22 @@ public class ObservedToolCallback implements ToolCallback {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservedToolCallback.class);
 
     private final String conversationId;
+    private final String runId;
     private final ToolCallback originalCallback;
     private final ToolInvocationRecorder recorder;
 
     public ObservedToolCallback(String conversationId, ToolCallback originalCallback, ToolInvocationRecorder recorder) {
+        this(conversationId, null, originalCallback, recorder);
+    }
+
+    public ObservedToolCallback(
+            String conversationId,
+            String runId,
+            ToolCallback originalCallback,
+            ToolInvocationRecorder recorder
+    ) {
         this.conversationId = conversationId;
+        this.runId = runId;
         this.originalCallback = originalCallback;
         this.recorder = recorder;
     }
@@ -38,7 +49,7 @@ public class ObservedToolCallback implements ToolCallback {
         LOGGER.info("AI tool invocation started: conversationId={}, toolName={}", conversationId, toolName);
         try {
             String result = originalCallback.call(toolInput);
-            recorder.recordSuccess(conversationId, toolName, toolInput, result);
+            recorder.recordSuccess(conversationId, runId, toolName, toolInput, result);
             LOGGER.info(
                     "AI tool invocation succeeded: conversationId={}, toolName={}, resultCharacters={}",
                     conversationId,
@@ -47,7 +58,7 @@ public class ObservedToolCallback implements ToolCallback {
             );
             return result;
         } catch (RuntimeException exception) {
-            recorder.recordFailure(conversationId, toolName, toolInput, exception);
+            recorder.recordFailure(conversationId, runId, toolName, toolInput, exception);
             LOGGER.warn(
                     "AI tool invocation failed: conversationId={}, toolName={}, error={}",
                     conversationId,
@@ -64,7 +75,7 @@ public class ObservedToolCallback implements ToolCallback {
         LOGGER.info("AI tool invocation started: conversationId={}, toolName={}", conversationId, toolName);
         try {
             String result = originalCallback.call(toolInput, toolContext);
-            recorder.recordSuccess(conversationId, toolName, toolInput, result);
+            recorder.recordSuccess(conversationId, runId, toolName, toolInput, result);
             LOGGER.info(
                     "AI tool invocation succeeded: conversationId={}, toolName={}, resultCharacters={}",
                     conversationId,
@@ -73,7 +84,7 @@ public class ObservedToolCallback implements ToolCallback {
             );
             return result;
         } catch (RuntimeException exception) {
-            recorder.recordFailure(conversationId, toolName, toolInput, exception);
+            recorder.recordFailure(conversationId, runId, toolName, toolInput, exception);
             LOGGER.warn(
                     "AI tool invocation failed: conversationId={}, toolName={}, error={}",
                     conversationId,

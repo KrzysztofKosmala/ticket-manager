@@ -17,6 +17,7 @@ class InMemoryToolInvocationRecorderTest {
         assertThat(recorder.findByConversationId("conversation-123"))
                 .containsExactly(new ToolInvocation(
                         "conversation-123",
+                        null,
                         "tm_my_orders_search",
                         "{\"status\":\"PAID\"}",
                         ToolInvocationStatus.SUCCESS,
@@ -35,6 +36,7 @@ class InMemoryToolInvocationRecorderTest {
         assertThat(recorder.findByConversationId("conversation-123"))
                 .containsExactly(new ToolInvocation(
                         "conversation-123",
+                        null,
                         "tm_my_orders_search",
                         "{}",
                         ToolInvocationStatus.FAILED,

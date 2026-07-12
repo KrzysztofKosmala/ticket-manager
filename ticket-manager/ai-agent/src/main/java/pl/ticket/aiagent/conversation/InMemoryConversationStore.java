@@ -1,5 +1,6 @@
 package pl.ticket.aiagent.conversation;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import pl.ticket.aiagent.security.CallerContext;
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Component
+@ConditionalOnProperty(name = "ai-agent.persistence.mode", havingValue = "memory", matchIfMissing = true)
 public class InMemoryConversationStore implements ConversationStore {
 
     private final ConcurrentMap<String, Conversation> conversations = new ConcurrentHashMap<>();

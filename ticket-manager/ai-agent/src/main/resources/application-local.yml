@@ -1,4 +1,19 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:51/ai
+    username: admin
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+  liquibase:
+    change-log: classpath:liquibase-changelog.xml
+    drop-first: false
   ai:
     mcp:
       client:
@@ -38,6 +53,8 @@ openapi:
 ai-agent:
   tools:
     selection-mode: static
+  persistence:
+    mode: jpa
 
 management:
   tracing:

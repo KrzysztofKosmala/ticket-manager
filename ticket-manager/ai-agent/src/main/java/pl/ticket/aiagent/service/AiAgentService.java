@@ -14,6 +14,7 @@ import pl.ticket.aiagent.conversation.ConversationStore;
 import pl.ticket.aiagent.dto.AiAgentResponse;
 import pl.ticket.aiagent.exception.AiModelEmptyResponseException;
 import pl.ticket.aiagent.exception.AiModelUnavailableException;
+import pl.ticket.aiagent.run.AgentRunRecorder;
 import pl.ticket.aiagent.security.CallerContext;
 import pl.ticket.aiagent.security.CallerContextProvider;
 import pl.ticket.aiagent.tools.ObservedToolCallback;
@@ -34,6 +35,7 @@ public class AiAgentService
     private final CallerContextProvider callerContextProvider;
     private final ConversationStore conversationStore;
     private final AiAgentFlowLogger flowLogger;
+    private final AgentRunRecorder agentRunRecorder;
 
     public AiAgentService(
             // Spring AI tworzy builder automatycznie; na nim doklejamy system prompt, advisor i potem budujemy ChatClient.
@@ -46,14 +48,16 @@ public class AiAgentService
             ToolCandidateSelector toolCandidateSelector,
             // Nasz @Component. Zamienia wybrane nazwy tooli na realne ToolCallback z ToolCatalog.
             SelectedToolCallbackResolver toolCallbackResolver,
-            // Nasz interface; Spring wstrzykuje InMemoryToolInvocationRecorder, ktory zapisuje historie wywolan w mapie.
+            // Nasz interface. Spring wybiera implementacje po ai-agent.persistence.mode: memory trzyma w mapie, jpa zapisuje do bazy.
             ToolInvocationRecorder toolInvocationRecorder,
             // Nasz @Component. Czyta aktualnego uzytkownika, role i scope'y z SecurityContext.
             CallerContextProvider callerContextProvider,
-            // Nasz interface; Spring wstrzykuje InMemoryConversationStore z rozmowami trzymanymi w pamieci JVM.
+            // Nasz interface. Spring wybiera implementacje po ai-agent.persistence.mode: memory albo jpa.
             ConversationStore conversationStore,
             // Nasz @Component tylko od logow diagnostycznych flow: selected tools, resolved callbacks, completed request.
-            AiAgentFlowLogger flowLogger
+            AiAgentFlowLogger flowLogger,
+            // Nasz interface. Przy persistence=jpa zapisuje przebieg jednego ask() jako ai_agent_run.
+            AgentRunRecorder agentRunRecorder
     ) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(instructions.systemPrompt())
@@ -66,6 +70,7 @@ public class AiAgentService
         this.callerContextProvider = callerContextProvider;
         this.conversationStore = conversationStore;
         this.flowLogger = flowLogger;
+        this.agentRunRecorder = agentRunRecorder;
     }
 
     public AiAgentResponse ask(String userMessage) {
@@ -82,6 +87,7 @@ public class AiAgentService
         // Selector wybiera kandydatow z registry/polityki, jeszcze bez dotykania callbackow MCP.
         List<ToolCandidate> selectedTools = toolCandidateSelector.selectFor(userMessage, callerContext);
         flowLogger.requestStarted(conversation.id(), selectedTools);
+        String runId = agentRunRecorder.start(conversation.id(), userMessage, selectedTools);
 
         // Resolver zamienia nazwy kandydatow na realne ToolCallback; brak callbacka oznacza blad konfiguracji/discovery.
         List<ToolCallback> callbacks = toolCallbackResolver.resolve(selectedTools);
@@ -89,7 +95,7 @@ public class AiAgentService
 
         // Spring AI zna tylko ToolCallback. Opakowujemy prawdziwe callbacki, zeby w call() zapisac ich uzycie.
         List<ToolCallback> observedCallbacks = callbacks.stream()
-                .map(callback -> observeToolCallback(conversation.id(), callback))
+                .map(callback -> observeToolCallback(conversation.id(), runId, callback))
                 .toList();
 
         String answer;
@@ -105,22 +111,25 @@ public class AiAgentService
                     .content();
         } catch (TransientAiException | NonTransientAiException | ResourceAccessException exception) {
             // Bledy klienta/modelu mapujemy na nasz wyjatek HTTP/API.
+            agentRunRecorder.fail(runId, exception);
             throw new AiModelUnavailableException(exception);
         }
 
         if (!StringUtils.hasText(answer)) {
             // Pusta odpowiedz modelu traktujemy jako blad kontraktu odpowiedzi.
+            agentRunRecorder.fail(runId, new AiModelEmptyResponseException());
             throw new AiModelEmptyResponseException();
         }
 
+        agentRunRecorder.complete(runId, answer);
         flowLogger.requestCompleted(conversation.id());
 
         // Zwracamy id rozmowy, zeby kolejne pytanie moglo trafic do tej samej pamieci/advisora.
         return new AiAgentResponse(answer, AiAgentResponse.Status.COMPLETED, conversation.id());
     }
 
-    private ToolCallback observeToolCallback(String conversationId, ToolCallback callback) {
+    private ToolCallback observeToolCallback(String conversationId, String runId, ToolCallback callback) {
         // Recorder jest nasz; Spring go nie zna. Wywola tylko ToolCallback.call(), a wrapper zapisze success/failure.
-        return new ObservedToolCallback(conversationId, callback, toolInvocationRecorder);
+        return new ObservedToolCallback(conversationId, runId, callback, toolInvocationRecorder);
     }
 }

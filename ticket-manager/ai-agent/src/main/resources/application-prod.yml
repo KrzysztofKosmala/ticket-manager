@@ -1,4 +1,18 @@
 spring:
+  datasource:
+    url: ${AI_AGENT_DATASOURCE_URL}
+    username: ${AI_AGENT_DATASOURCE_USERNAME}
+    password: ${AI_AGENT_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+  liquibase:
+    change-log: classpath:liquibase-changelog.xml
+    drop-first: false
   ai:
     mcp:
       client:
@@ -41,3 +55,7 @@ management:
   zipkin:
     tracing:
       endpoint: ${AI_AGENT_ZIPKIN_TRACING_ENDPOINT}
+
+ai-agent:
+  persistence:
+    mode: ${AI_AGENT_PERSISTENCE_MODE:jpa}
