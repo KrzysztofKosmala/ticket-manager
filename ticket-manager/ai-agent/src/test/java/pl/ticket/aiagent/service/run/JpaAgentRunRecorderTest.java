@@ -40,15 +40,15 @@ class JpaAgentRunRecorderTest {
 
         String runId = recorder.start(
                 "conversation-123",
-                "Czy zamowienie 1001 jest oplacone?",
-                List.of(new ToolCandidate("tm_my_order_payment_status_get"))
+                "Pokaz moje zamowienia.",
+                List.of(new ToolCandidate("tm_my_orders_search"))
         );
-        recorder.complete(runId, "Zamowienie 1001 jest oplacone.");
+        recorder.complete(runId, "Znalazlem twoje zamowienia.");
 
         AiAgentRunEntity run = runRepository.findById(runId).orElseThrow();
         assertThat(run.getStatus()).isEqualTo("COMPLETED");
-        assertThat(run.getSelectedToolsJson()).isEqualTo("[\"tm_my_order_payment_status_get\"]");
-        assertThat(run.getAnswer()).isEqualTo("Zamowienie 1001 jest oplacone.");
+        assertThat(run.getSelectedToolsJson()).isEqualTo("[\"tm_my_orders_search\"]");
+        assertThat(run.getAnswer()).isEqualTo("Znalazlem twoje zamowienia.");
     }
 
     @Test

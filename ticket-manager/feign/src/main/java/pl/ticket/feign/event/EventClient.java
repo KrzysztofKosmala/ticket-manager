@@ -4,8 +4,8 @@ package pl.ticket.feign.event;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-import pl.ticket.dto.ConcreteTicketDto;
-import pl.ticket.dto.OrderRowDto;
+import pl.ticket.dto.EventSearchRequest;
+import pl.ticket.dto.EventSearchResponse;
 import pl.ticket.dto.TicketWithDetailsDto;
 
 import java.util.List;
@@ -18,5 +18,8 @@ public interface EventClient
 
     @GetMapping("api/v1/internal/tickets")
     List<TicketWithDetailsDto> getTicketsWithDetailsByTicketIds(@RequestParam("ticketIds") List<Long> ticketIds);
+
+    @PostMapping("/internal/ai/events/search")
+    EventSearchResponse searchEvents(@RequestBody(required = false) EventSearchRequest request);
 
 }

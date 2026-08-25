@@ -43,13 +43,7 @@ class ApplicationConfigurationSafetyTest {
                 .containsEntry("ai-agent.tools.registry[tm_my_orders_search].source", "INTERNAL_MCP")
                 .containsEntry("ai-agent.tools.registry[tm_my_orders_search].access-mode", "READ")
                 .containsEntry("ai-agent.tools.registry[tm_my_orders_search].required-scopes[0]", "tools:orders.read")
-                .containsEntry("ai-agent.tools.registry[tm_my_order_status_get].required-scopes[0]", "tools:orders.read")
-                .containsEntry("ai-agent.tools.registry[tm_my_cart_get].required-scopes[0]", "tools:cart.read")
-                .containsEntry("ai-agent.tools.registry[tm_my_cart_items_count].required-scopes[0]", "tools:cart.read")
-                .containsEntry("ai-agent.tools.registry[tm_my_order_payment_status_get].required-scopes[0]", "tools:payments.read")
-                .containsEntry("ai-agent.tools.registry[tm_events_search].required-scopes[0]", "tools:events.read")
-                .containsEntry("ai-agent.tools.registry[tm_event_capacity_check].required-scopes[0]", "tools:events.read")
-                .containsEntry("ai-agent.tools.registry[tm_event_details_get].required-scopes[0]", "tools:events.read");
+                .containsEntry("ai-agent.tools.registry[tm_events_search].required-scopes[0]", "tools:events.read");
         assertThat(properties.keySet().stream()
                 .map(Object::toString)
                 .filter(key -> key.startsWith("ai-agent.tools.registry"))
@@ -59,34 +53,10 @@ class ApplicationConfigurationSafetyTest {
                         "ai-agent.tools.registry[tm_my_orders_search].source",
                         "ai-agent.tools.registry[tm_my_orders_search].access-mode",
                         "ai-agent.tools.registry[tm_my_orders_search].required-scopes[0]",
-                        "ai-agent.tools.registry[tm_my_order_status_get].enabled",
-                        "ai-agent.tools.registry[tm_my_order_status_get].source",
-                        "ai-agent.tools.registry[tm_my_order_status_get].access-mode",
-                        "ai-agent.tools.registry[tm_my_order_status_get].required-scopes[0]",
-                        "ai-agent.tools.registry[tm_my_cart_get].enabled",
-                        "ai-agent.tools.registry[tm_my_cart_get].source",
-                        "ai-agent.tools.registry[tm_my_cart_get].access-mode",
-                        "ai-agent.tools.registry[tm_my_cart_get].required-scopes[0]",
-                        "ai-agent.tools.registry[tm_my_cart_items_count].enabled",
-                        "ai-agent.tools.registry[tm_my_cart_items_count].source",
-                        "ai-agent.tools.registry[tm_my_cart_items_count].access-mode",
-                        "ai-agent.tools.registry[tm_my_cart_items_count].required-scopes[0]",
-                        "ai-agent.tools.registry[tm_my_order_payment_status_get].enabled",
-                        "ai-agent.tools.registry[tm_my_order_payment_status_get].source",
-                        "ai-agent.tools.registry[tm_my_order_payment_status_get].access-mode",
-                        "ai-agent.tools.registry[tm_my_order_payment_status_get].required-scopes[0]",
                         "ai-agent.tools.registry[tm_events_search].enabled",
                         "ai-agent.tools.registry[tm_events_search].source",
                         "ai-agent.tools.registry[tm_events_search].access-mode",
-                        "ai-agent.tools.registry[tm_events_search].required-scopes[0]",
-                        "ai-agent.tools.registry[tm_event_capacity_check].enabled",
-                        "ai-agent.tools.registry[tm_event_capacity_check].source",
-                        "ai-agent.tools.registry[tm_event_capacity_check].access-mode",
-                        "ai-agent.tools.registry[tm_event_capacity_check].required-scopes[0]",
-                        "ai-agent.tools.registry[tm_event_details_get].enabled",
-                        "ai-agent.tools.registry[tm_event_details_get].source",
-                        "ai-agent.tools.registry[tm_event_details_get].access-mode",
-                        "ai-agent.tools.registry[tm_event_details_get].required-scopes[0]"
+                        "ai-agent.tools.registry[tm_events_search].required-scopes[0]"
                 );
     }
 

@@ -8,43 +8,7 @@ ai-agent:
         access-mode: READ
         required-scopes:
           - tools:orders.read
-      "[tm_my_order_status_get]":
-        enabled: true
-        source: INTERNAL_MCP
-        access-mode: READ
-        required-scopes:
-          - tools:orders.read
-      "[tm_my_cart_get]":
-        enabled: true
-        source: INTERNAL_MCP
-        access-mode: READ
-        required-scopes:
-          - tools:cart.read
-      "[tm_my_cart_items_count]":
-        enabled: true
-        source: INTERNAL_MCP
-        access-mode: READ
-        required-scopes:
-          - tools:cart.read
-      "[tm_my_order_payment_status_get]":
-        enabled: true
-        source: INTERNAL_MCP
-        access-mode: READ
-        required-scopes:
-          - tools:payments.read
       "[tm_events_search]":
-        enabled: true
-        source: INTERNAL_MCP
-        access-mode: READ
-        required-scopes:
-          - tools:events.read
-      "[tm_event_capacity_check]":
-        enabled: true
-        source: INTERNAL_MCP
-        access-mode: READ
-        required-scopes:
-          - tools:events.read
-      "[tm_event_details_get]":
         enabled: true
         source: INTERNAL_MCP
         access-mode: READ
