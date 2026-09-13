@@ -43,7 +43,11 @@ class ApplicationConfigurationSafetyTest {
                 .containsEntry("ai-agent.tools.registry[tm_my_orders_search].source", "INTERNAL_MCP")
                 .containsEntry("ai-agent.tools.registry[tm_my_orders_search].access-mode", "READ")
                 .containsEntry("ai-agent.tools.registry[tm_my_orders_search].required-scopes[0]", "tools:orders.read")
-                .containsEntry("ai-agent.tools.registry[tm_events_search].required-scopes[0]", "tools:events.read");
+                .containsEntry("ai-agent.tools.registry[tm_events_search].required-scopes[0]", "tools:events.read")
+                .containsEntry("ai-agent.tools.registry[tm_knowledge_search].enabled", true)
+                .containsEntry("ai-agent.tools.registry[tm_knowledge_search].source", "INTERNAL_MCP")
+                .containsEntry("ai-agent.tools.registry[tm_knowledge_search].access-mode", "READ")
+                .containsEntry("ai-agent.tools.registry[tm_knowledge_search].required-scopes[0]", "tools:knowledge.read");
         assertThat(properties.keySet().stream()
                 .map(Object::toString)
                 .filter(key -> key.startsWith("ai-agent.tools.registry"))
@@ -56,7 +60,19 @@ class ApplicationConfigurationSafetyTest {
                         "ai-agent.tools.registry[tm_events_search].enabled",
                         "ai-agent.tools.registry[tm_events_search].source",
                         "ai-agent.tools.registry[tm_events_search].access-mode",
-                        "ai-agent.tools.registry[tm_events_search].required-scopes[0]"
+                        "ai-agent.tools.registry[tm_events_search].required-scopes[0]",
+                        "ai-agent.tools.registry[tm_knowledge_search].enabled",
+                        "ai-agent.tools.registry[tm_knowledge_search].source",
+                        "ai-agent.tools.registry[tm_knowledge_search].access-mode",
+                        "ai-agent.tools.registry[tm_knowledge_search].required-scopes[0]",
+                        "ai-agent.tools.registry[weather_geocode_city].enabled",
+                        "ai-agent.tools.registry[weather_geocode_city].source",
+                        "ai-agent.tools.registry[weather_geocode_city].access-mode",
+                        "ai-agent.tools.registry[weather_geocode_city].required-scopes",
+                        "ai-agent.tools.registry[weather_forecast_get].enabled",
+                        "ai-agent.tools.registry[weather_forecast_get].source",
+                        "ai-agent.tools.registry[weather_forecast_get].access-mode",
+                        "ai-agent.tools.registry[weather_forecast_get].required-scopes"
                 );
     }
 

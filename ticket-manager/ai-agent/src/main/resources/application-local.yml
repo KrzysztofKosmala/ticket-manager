@@ -13,7 +13,7 @@ spring:
     show-sql: false
   liquibase:
     change-log: classpath:liquibase-changelog.xml
-    drop-first: false
+    drop-first: true
   ai:
     mcp:
       client:
@@ -23,6 +23,9 @@ spring:
           connections:
             ai-tools-gateway:
               url: http://localhost:8105
+              sse-endpoint: /sse
+            external-weather-mcp:
+              url: http://localhost:8110
               sse-endpoint: /sse
     ollama:
       base-url: http://127.0.0.1:7869

@@ -27,6 +27,7 @@
         <module>discount</module>
         <module>ai-agent</module>
         <module>ai-tools-gateway</module>
+        <module>knowledge-service</module>
     </modules>
     <!-- update versions -->
     <properties>

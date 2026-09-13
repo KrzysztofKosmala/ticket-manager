@@ -16,7 +16,8 @@ class AiToolsGatewayConfigurationTest {
         Properties properties = loadYaml("application.yml");
 
         assertThat(properties)
-                .containsEntry("spring.ai.mcp.server.annotation-scanner.enabled", true);
+                .containsEntry("spring.ai.mcp.server.annotation-scanner.enabled", true)
+                .containsEntry("clients.knowledge-service.url", "${KNOWLEDGE_SERVICE_URL:http://localhost:8111}");
     }
 
     private Properties loadYaml(String resourceName) {

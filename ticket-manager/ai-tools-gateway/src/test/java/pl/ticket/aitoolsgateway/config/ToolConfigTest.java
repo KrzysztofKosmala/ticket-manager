@@ -3,6 +3,7 @@ package pl.ticket.aitoolsgateway.config;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import pl.ticket.aitoolsgateway.event.EventToolHandler;
+import pl.ticket.aitoolsgateway.knowledge.KnowledgeToolHandler;
 import pl.ticket.aitoolsgateway.orders.OrdersToolHandler;
 import pl.ticket.aitoolsgateway.service.AiToolsGatewayService;
 
@@ -15,7 +16,8 @@ class ToolConfigTest {
     void shouldExposeGatewayServiceToolsAsSpringAiToolCallbackProvider() {
         AiToolsGatewayService service = new AiToolsGatewayService(
                 mock(OrdersToolHandler.class),
-                mock(EventToolHandler.class)
+                mock(EventToolHandler.class),
+                mock(KnowledgeToolHandler.class)
         );
         ToolConfig config = new ToolConfig();
 
@@ -25,7 +27,8 @@ class ToolConfigTest {
                 .extracting(callback -> callback.getToolDefinition().name())
                 .containsExactlyInAnyOrder(
                         "tm_my_orders_search",
-                        "tm_events_search"
+                        "tm_events_search",
+                        "tm_knowledge_search"
                 );
     }
 }

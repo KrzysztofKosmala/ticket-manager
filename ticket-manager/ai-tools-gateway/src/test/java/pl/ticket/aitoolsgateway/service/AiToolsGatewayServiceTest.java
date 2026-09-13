@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import pl.ticket.aitoolsgateway.event.EventToolHandler;
+import pl.ticket.aitoolsgateway.knowledge.KnowledgeToolHandler;
 import pl.ticket.aitoolsgateway.orders.OrdersToolHandler;
 import pl.ticket.dto.EventSearchRequest;
 import pl.ticket.dto.EventSearchResponse;
+import pl.ticket.dto.KnowledgeSearchResult;
 import pl.ticket.dto.OrderSearchRequest;
 import pl.ticket.dto.OrderSearchResponse;
 
@@ -29,7 +31,8 @@ class AiToolsGatewayServiceTest {
                 .extracting(callback -> callback.getToolDefinition().name())
                 .containsExactlyInAnyOrder(
                         "tm_my_orders_search",
-                        "tm_events_search"
+                        "tm_events_search",
+                        "tm_knowledge_search"
                 );
     }
 
@@ -62,11 +65,29 @@ class AiToolsGatewayServiceTest {
         when(eventToolHandler.searchEvents(searchRequest)).thenReturn(searchResponse);
         AiToolsGatewayService service = new AiToolsGatewayService(
                 ordersToolHandler,
-                eventToolHandler
+                eventToolHandler,
+                mock(KnowledgeToolHandler.class)
         );
 
         assertThat(service.searchEvents(searchRequest)).isSameAs(searchResponse);
         verify(eventToolHandler).searchEvents(searchRequest);
+    }
+
+    @Test
+    void shouldSearchKnowledgeThroughConfiguredHandler() {
+        KnowledgeToolHandler knowledgeToolHandler = mock(KnowledgeToolHandler.class);
+        List<KnowledgeSearchResult> response = List.of(
+                new KnowledgeSearchResult("PAID means accepted payment.", "statuses.md", 0.9)
+        );
+        when(knowledgeToolHandler.searchKnowledge("What does PAID mean?")).thenReturn(response);
+        AiToolsGatewayService service = new AiToolsGatewayService(
+                mock(OrdersToolHandler.class),
+                mock(EventToolHandler.class),
+                knowledgeToolHandler
+        );
+
+        assertThat(service.searchKnowledge("What does PAID mean?")).isSameAs(response);
+        verify(knowledgeToolHandler).searchKnowledge("What does PAID mean?");
     }
 
     private ToolCallbackProvider toolCallbackProvider(AiToolsGatewayService service) {
@@ -82,7 +103,8 @@ class AiToolsGatewayServiceTest {
     private AiToolsGatewayService service(OrdersToolHandler ordersToolHandler) {
         return new AiToolsGatewayService(
                 ordersToolHandler,
-                mock(EventToolHandler.class)
+                mock(EventToolHandler.class),
+                mock(KnowledgeToolHandler.class)
         );
     }
 }

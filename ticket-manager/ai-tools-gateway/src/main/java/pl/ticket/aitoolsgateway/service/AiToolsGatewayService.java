@@ -6,11 +6,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.ticket.aitoolsgateway.event.EventToolHandler;
+import pl.ticket.aitoolsgateway.knowledge.KnowledgeToolHandler;
 import pl.ticket.aitoolsgateway.orders.OrdersToolHandler;
 import pl.ticket.dto.EventSearchRequest;
 import pl.ticket.dto.EventSearchResponse;
+import pl.ticket.dto.KnowledgeSearchResult;
 import pl.ticket.dto.OrderSearchRequest;
 import pl.ticket.dto.OrderSearchResponse;
+
+import java.util.List;
 
 @Service
 public class AiToolsGatewayService {
@@ -19,13 +23,16 @@ public class AiToolsGatewayService {
 
     private final OrdersToolHandler ordersToolHandler;
     private final EventToolHandler eventToolHandler;
+    private final KnowledgeToolHandler knowledgeToolHandler;
 
     public AiToolsGatewayService(
             OrdersToolHandler ordersToolHandler,
-            EventToolHandler eventToolHandler
+            EventToolHandler eventToolHandler,
+            KnowledgeToolHandler knowledgeToolHandler
     ) {
         this.ordersToolHandler = ordersToolHandler;
         this.eventToolHandler = eventToolHandler;
+        this.knowledgeToolHandler = knowledgeToolHandler;
     }
 
     @Tool(
@@ -58,6 +65,22 @@ public class AiToolsGatewayService {
         LOGGER.info(
                 "AI tools gateway tool completed: toolName=tm_events_search, returnedEvents={}",
                 response.items().size()
+        );
+        return response;
+    }
+
+    @Tool(
+            name = "tm_knowledge_search",
+            description = "Przeszukuje dokumentacje i stala baze wiedzy Ticket Managera. Uzywaj do pytan o znaczenie statusow, zasady i przebieg procesow. Nie uzywaj do biezacych danych konkretnego uzytkownika."
+    )
+    public List<KnowledgeSearchResult> searchKnowledge(
+            @ToolParam(description = "Pytanie lub fraza opisujaca szukana informacje.", required = true)
+            String query) {
+        LOGGER.info("AI tools gateway tool started: toolName=tm_knowledge_search, query={}", query);
+        List<KnowledgeSearchResult> response = knowledgeToolHandler.searchKnowledge(query);
+        LOGGER.info(
+                "AI tools gateway tool completed: toolName=tm_knowledge_search, returnedChunks={}",
+                response.size()
         );
         return response;
     }

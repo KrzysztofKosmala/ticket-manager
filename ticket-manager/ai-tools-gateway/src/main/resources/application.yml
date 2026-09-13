@@ -56,3 +56,7 @@ ai-tools-gateway:
       handler: fake
     event:
       handler: fake
+
+clients:
+  knowledge-service:
+    url: ${KNOWLEDGE_SERVICE_URL:http://localhost:8111}

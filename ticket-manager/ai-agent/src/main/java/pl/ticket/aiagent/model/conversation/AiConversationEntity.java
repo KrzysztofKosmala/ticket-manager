@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,13 +16,16 @@ import java.util.List;
 @Table(name = "ai_conversation")
 public class AiConversationEntity {
 
+    @Getter
     @Id
     private String id;
+    @Getter
     private String ownerSubject;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String status;
 
+    @Getter
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("messageOrder ASC")
     private List<AiConversationMessageEntity> messages = new ArrayList<>();
@@ -35,18 +39,6 @@ public class AiConversationEntity {
         this.createdAt = now;
         this.updatedAt = now;
         this.status = "ACTIVE";
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getOwnerSubject() {
-        return ownerSubject;
-    }
-
-    public List<AiConversationMessageEntity> getMessages() {
-        return messages;
     }
 
     public void appendMessage(ConversationMessage message) {

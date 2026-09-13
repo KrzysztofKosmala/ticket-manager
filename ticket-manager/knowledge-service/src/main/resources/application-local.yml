@@ -1,0 +1,32 @@
+spring:
+  ai:
+    model:
+      chat: none
+      embedding: ollama
+    ollama:
+      base-url: http://127.0.0.1:7869
+      embedding:
+        model: embeddinggemma
+    vectorstore:
+      pgvector:
+        initialize-schema: false
+        schema-name: public
+        table-name: knowledge_document
+        schema-validation: true
+        dimensions: 768
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+  datasource:
+    url: jdbc:postgresql://localhost:52/knowledge
+    username: admin
+    password: password
+  liquibase:
+    change-log: classpath:liquibase-changelog.xml
+
+management:
+  tracing:
+    enabled: false
+
+knowledge:
+  ingestion:
+    on-startup: false
