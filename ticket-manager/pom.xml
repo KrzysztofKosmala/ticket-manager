@@ -28,6 +28,7 @@
         <module>ai-agent</module>
         <module>ai-tools-gateway</module>
         <module>knowledge-service</module>
+        <module>ai-agent-evals</module>
     </modules>
     <!-- update versions -->
     <properties>

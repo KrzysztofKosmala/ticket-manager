@@ -1,0 +1,6 @@
+eval.base-url=http://localhost:8099
+eval.request-timeout-seconds=300
+eval.database.url=jdbc:postgresql://localhost:51/ai?connectTimeout=5&socketTimeout=15
+eval.database.username=admin
+eval.database.password=password
+eval.token=
