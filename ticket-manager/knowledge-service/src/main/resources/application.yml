@@ -1,0 +1,11 @@
+server:
+  port: 8111
+
+spring:
+  application:
+    name: knowledge-service
+  profiles:
+    default: local
+  mvc:
+    problemdetails:
+      enabled: true

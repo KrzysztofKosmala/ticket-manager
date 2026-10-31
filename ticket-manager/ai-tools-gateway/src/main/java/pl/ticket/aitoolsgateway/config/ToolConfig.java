@@ -10,7 +10,7 @@ import pl.ticket.aitoolsgateway.service.AiToolsGatewayService;
 public class ToolConfig {
 
     @Bean
-    public ToolCallbackProvider toolCallbackProvider(AiToolsGatewayService aiToolsGatewayService) {
+    public ToolCallbackProvider gatewayToolCallbackProvider(AiToolsGatewayService aiToolsGatewayService) {
         return MethodToolCallbackProvider.builder()
                 .toolObjects(aiToolsGatewayService)
                 .build();

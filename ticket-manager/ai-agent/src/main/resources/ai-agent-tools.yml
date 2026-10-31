@@ -1,0 +1,32 @@
+ai-agent:
+  tools:
+    enforce-scopes: false
+    registry:
+      "[tm_my_orders_search]":
+        enabled: true
+        source: INTERNAL_MCP
+        access-mode: READ
+        required-scopes:
+          - tools:orders.read
+      "[tm_events_search]":
+        enabled: true
+        source: INTERNAL_MCP
+        access-mode: READ
+        required-scopes:
+          - tools:events.read
+      "[tm_knowledge_search]":
+        enabled: true
+        source: INTERNAL_MCP
+        access-mode: READ
+        required-scopes:
+          - tools:knowledge.read
+      "[weather_geocode_city]":
+        enabled: true
+        source: EXTERNAL_MCP
+        access-mode: READ
+        required-scopes: []
+      "[weather_forecast_get]":
+        enabled: true
+        source: EXTERNAL_MCP
+        access-mode: READ
+        required-scopes: []

@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:8111
+
+### Search the indexed knowledge. Run ingestion once before this request.
+POST {{baseUrl}}/internal/knowledge/search
+Content-Type: application/json
+
+{
+  "query": "Co oznacza status platnosci PAID?",
+  "topK": 3
+}
+
+### Search for event documentation, not live event availability.
+POST {{baseUrl}}/internal/knowledge/search
+Content-Type: application/json
+
+{
+  "query": "Jak wyszukiwac wydarzenia i terminy?",
+  "topK": 3
+}
+
+### Read the documented limits of the return policy.
+POST {{baseUrl}}/internal/knowledge/search
+Content-Type: application/json
+
+{
+  "query": "Czy istnieje polityka zwrotu biletow?",
+  "topK": 3
+}
+
+### Validation example: HTTP 400, no embedding call.
+POST {{baseUrl}}/internal/knowledge/search
+Content-Type: application/json
+
+{
+  "query": " ",
+  "topK": 3
+}

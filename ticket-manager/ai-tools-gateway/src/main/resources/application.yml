@@ -48,3 +48,15 @@ ai-tools-gateway:
   tools:
     timeout-ms: 3000
     audit-enabled: true
+    orders:
+      handler: fake
+    cart:
+      handler: fake
+    payment:
+      handler: fake
+    event:
+      handler: fake
+
+clients:
+  knowledge-service:
+    url: ${KNOWLEDGE_SERVICE_URL:http://localhost:8111}

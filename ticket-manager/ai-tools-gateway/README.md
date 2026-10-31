@@ -25,7 +25,7 @@ W tej warstwie agent nie wywołuje klasycznych endpointów REST typu `/api/v1/to
         |
         | Feign / REST / gRPC
         v
-[order-service] [crm-service] [billing-service]
+[order-service] [event-service] [knowledge-service]
 ```
 
 MCP służy do komunikacji agentowej, a nie do zastąpienia całej komunikacji między mikroserwisami domenowymi.
@@ -52,6 +52,8 @@ Przykład znajduje się w pliku:
 
 - `src/main/resources/application-mcp-client-example.yml`
 
-## Dostępne narzędzie
+## Dostępne narzędzia
 
-- `order-service.searchOrders` — deleguje do `order-service` przez `OrderClient`.
+- `tm_my_orders_search` - deleguje do `order-service` przez `OrderClient`.
+- `tm_events_search` - deleguje do `event-service` przez `EventClient`.
+- `tm_knowledge_search` - deleguje do `knowledge-service` przez `KnowledgeClient`.
